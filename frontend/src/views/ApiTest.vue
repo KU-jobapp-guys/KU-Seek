@@ -19,7 +19,7 @@ const addTask = async () => {
   await fetch("http://localhost:8000/api/v1/test/tasks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: text.value, completed: false }),
+    body: JSON.stringify({ name: text.value, completed: false }),
   })
   text.value = ""
   loadTasks()

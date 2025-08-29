@@ -61,7 +61,7 @@ const makeLink = (page: String) => {
           leave-from-class="transform opacity-100 translate-x-0"
           leave-to-class="transform opacity-0 translate-x-full"
         >
-          <MenuItems v-if="open" class="fixed right-0 top-16 z-[50] py-6 w-[50vw] h-screen bg-gray-200 shadow-lg">
+          <MenuItems v-if="open" class="fixed right-0 top-16 z-[50] py-6 w-[54vw] h-screen bg-gray-200 shadow-lg">
             <div v-for="page in pageList" :key="page">
               <MenuItem v-slot="{ active }">
                 <a :href="makeLink(page)" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','block px-8 py-3 text-sm focus:outline-none hover:bg-gray-50']">

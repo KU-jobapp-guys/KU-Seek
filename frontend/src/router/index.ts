@@ -35,9 +35,11 @@ const router = createRouter({
       component: CompanyDashboardView,
     },
     {
-      path: "/:notFound",
+      path: '/:pathMatch(.*)*',
+      name: 'not found',
       component: NotFound,
-    },
+    }
+    
   ],
 })
 

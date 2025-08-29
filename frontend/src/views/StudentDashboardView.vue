@@ -142,7 +142,7 @@ import searchIcon from '@/assets/search-icon.svg'
     <!-- Bookmarked Jobs Section -->
     <section class="px-12 py-10 bg-white">
       <div class="flex items-center mb-4">
-        <img :src="bigBookmarkIcon" alt="Star" class="w-12 h-12 mr-2" />
+        <img :src="bigBookmarkIcon" alt="Applied" class="w-12 h-12 mr-2" />
         <h2 class="text-black text-6xl font-bold">Bookmarked Jobs</h2>
       </div>
       <input

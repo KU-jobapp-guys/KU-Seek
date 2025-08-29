@@ -1,80 +1,327 @@
-<template>
-  <div class="dashboard-bg min-h-screen">
-    <!-- Header Section -->
-    <header
-      class="bg-gradient-to-r from-green-400 to-green-700 flex items-center justify-between px-8 py-4"
-    >
-      <div class="font-bold text-white text-xl">KU SEEK</div>
-      <nav class="flex space-x-8 text-white">
-        <router-link to="/announcements">Announcements</router-link>
-        <router-link to="/explore-job">Explore Job</router-link>
-        <router-link to="/explore-company">Explore Company</router-link>
-        <router-link to="/board">Board</router-link>
-        <router-link to="/dashboard" class="font-bold underline">Dashboard</router-link>
-        <router-link to="/profile">Profile</router-link>
-      </nav>
-    </header>
+<script setup lang="ts">
+import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
+import StudentJobCard from '@/components/dashboards/StudentJobCard.vue'
 
+import appliedIcon from '@/assets/applied-icon.svg'
+import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'
+import searchIcon from '@/assets/search-icon.svg'
+</script>
+
+<template>
+  <div class="dashboard-bg min-h-screen pb-0">
     <!-- Main Dashboard Section -->
-    <section class="bg-black text-white px-12 py-10 relative">
-      <h1 class="text-5xl font-bold mb-2">My Dashboard</h1>
-      <p class="text-xl mb-8">Welcome back!</p>
+    <section
+      class="bg-black text-white top-0 bottom-10 px-12 pt-10 pb-0 relative overflow-visible min-h-[500px]"
+    >
+      <img
+        src="@/assets/dashboard-pic.png"
+        alt="Dashboard Illustration"
+        class="absolute top-8 right-16 w-[600px] h-auto object-cover z-0"
+      />
       <img
         src="@/assets/dashboard-illustration.png"
-        alt="Dashboard Illustration"
-        class="absolute top-8 right-16 w-64 h-auto"
+        alt="Dashboard Line"
+        class="absolute left-0 top-16 w-full h-auto object-cover z-20"
       />
-      <!-- Decorative line (SVG or CSS) can be added here -->
-      <div class="flex space-x-8 mt-16">
-        <div class="bg-blue-700 rounded-xl p-8 flex-1 relative text-white">
-          <div class="text-lg mb-2">Bookmarked Jobs</div>
-          <div class="text-5xl font-bold">6</div>
-          <div class="mt-2">Jobs saved for later</div>
-          <img
-            src="@/assets/star-icon.svg"
-            alt="Star"
-            class="absolute bottom-4 right-4 w-16 h-16 opacity-30"
-          />
-        </div>
-        <div class="bg-white border-4 border-yellow-400 rounded-xl p-8 flex-1 text-black relative">
-          <div class="text-lg mb-2">Recently Viewed Jobs</div>
-          <div class="text-5xl font-bold">7</div>
-          <div class="mt-2">Jobs you've explored today</div>
-          <img
-            src="@/assets/search-icon.svg"
-            alt="Search"
-            class="absolute bottom-4 right-4 w-16 h-16 opacity-30"
-          />
-        </div>
+      <h1 class="text-8xl font-bold mb-2 z-10 relative">My Dashboard</h1>
+      <p class="text-3xl mb-8 z-10 relative">Welcome back!</p>
+      <!-- 3 boxes: perfectly centered between black and white -->
+      <div
+        class="flex flex-row space-x-8 absolute left-1/2 -translate-x-1/2 bottom-[-90px] w-[80%] z-30"
+      >
+        <DashboardStatCard
+          title="Applied Jobs"
+          :value="6"
+          description="Jobs you've applied"
+          :icon="appliedIcon"
+          cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+        />
+        <DashboardStatCard
+          title="Bookmarked Jobs"
+          :value="6"
+          description="Jobs saved for later"
+          :icon="bigBookmarkIcon"
+          cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+        />
+        <DashboardStatCard
+          title="Recently Viewed Jobs"
+          :value="7"
+          description="Jobs you've explored today"
+          :icon="searchIcon"
+          cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+        />
+      </div>
+    </section>
+
+    <!-- Applied Jobs Section -->
+    <section class="px-12 pt-40 pb-10 bg-white">
+      <div class="flex items-center mb-4">
+        <img :src="appliedIcon" alt="Applied" class="w-12 h-12 mr-2" />
+        <h2 class="text-black text-6xl font-bold">Applied Jobs</h2>
+      </div>
+      <input
+        type="text"
+        placeholder="Search here.."
+        class="w-full p-3 rounded-lg border mb-8 text-black"
+      />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="true"
+          :bookmarked="true"
+          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="true"
+          :bookmarked="false"
+          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="true"
+          :bookmarked="false"
+          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+      </div>
+      <div
+        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
+      >
+        View More +
       </div>
     </section>
 
     <!-- Bookmarked Jobs Section -->
-    <section class="px-12 py-10">
+    <section class="px-12 py-10 bg-white">
       <div class="flex items-center mb-4">
-        <img src="@/assets/star-icon.svg" alt="Star" class="w-8 h-8 mr-2" />
-        <h2 class="text-3xl font-bold">Bookmarked Jobs</h2>
+        <img :src="bigBookmarkIcon" alt="Star" class="w-12 h-12 mr-2" />
+        <h2 class="text-black text-6xl font-bold">Bookmarked Jobs</h2>
       </div>
-      <input type="text" placeholder="Search here.." class="w-full p-3 rounded-lg border mb-8" />
+      <input
+        type="text"
+        placeholder="Search here.."
+        class="w-full p-3 rounded-lg border mb-8 text-black"
+      />
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <JobCard v-for="n in 3" :key="n" />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="true"
+          :bookmarked="true"
+          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="false"
+          :bookmarked="true"
+          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="false"
+          :bookmarked="true"
+          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
       </div>
-      <div class="text-right mt-4 text-green-700 font-semibold cursor-pointer">View More +</div>
+      <div
+        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
+      >
+        View More +
+      </div>
     </section>
 
-    <!-- Decorative bottom wave -->
-    <div class="w-full h-16 bg-gradient-to-r from-green-400 to-green-700 rounded-t-3xl mt-12"></div>
+    <!-- Recently Viewed Jobs Section -->
+    <section class="px-12 py-10 bg-white">
+      <div class="flex items-center mb-4">
+        <img :src="searchIcon" alt="Search" class="w-12 h-12 mr-2" />
+        <h2 class="text-black text-6xl font-bold">Recently Viewed Jobs</h2>
+      </div>
+      <input
+        type="text"
+        placeholder="Search here.."
+        class="w-full p-3 rounded-lg border mb-8 text-black"
+      />
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="false"
+          :bookmarked="false"
+          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="true"
+          :bookmarked="true"
+          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+        <StudentJobCard
+          company="Techhahaha Inc."
+          job="Frontend Developer"
+          place="Nonthaburi, Thailand"
+          days="3 days ago"
+          description="Our company is so good!!! ..."
+          type="Full-time"
+          :applied="true"
+          :bookmarked="true"
+          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
+          :tags="[
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
+            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
+            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
+            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
+            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
+          ]"
+        />
+      </div>
+      <div
+        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
+      >
+        View More +
+      </div>
+    </section>
   </div>
 </template>
-
-<script setup>
-import JobCard from '@/components/JobCard.vue'
-</script>
 
 <style scoped>
 .dashboard-bg {
   background: #f5f6fa;
   min-height: 100vh;
   position: relative;
+}
+section.bg-black {
+  position: relative;
+  padding-bottom: 0;
 }
 </style>

@@ -11,7 +11,7 @@ const router = createRouter({
       component: LandingView,
     },
     {
-      path: '/dashboard',
+      path: '/student/dashboard',
       name: 'StudentDashboard',
       component: StudentDashboardView
     },

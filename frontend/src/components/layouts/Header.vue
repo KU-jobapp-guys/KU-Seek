@@ -2,8 +2,17 @@
 import { computed } from 'vue'
 
 import briefcase from '@/assets/icons/briefcase.svg'
+import building from '@/assets/icons/building.svg'
+import board from '@/assets/icons/board.svg'
+
 import jobBoardBg from '@/assets/backgrounds/jobBoardBg.png'
+import companyBoardBg from '@/assets/backgrounds/companyBoardBg.png'
+import dashboardBg from '@/assets/backgrounds/dashboardBg.png'
+
 import jobBoardDeco from '@/assets/images/jobBoardDeco.png'
+import companyBoardDeco from '@/assets/images/companyBoardDeco.png'
+import studentDashboardDeco from '@/assets/images/studentDashboardDeco.png'
+import companyDashboardDeco from '@/assets/images/companyDashboardDeco.png'
 
 const props = defineProps({page: String});
 
@@ -23,6 +32,27 @@ const headerConfigs: Record<string, HeaderConfig> = {
     icon: briefcase,
     deco: jobBoardDeco,
   },
+  companyBoard: {
+    title: "Explore by Company",
+    detail: "See job listings organized by employers.",
+    background: companyBoardBg,
+    icon: building,
+    deco: companyBoardDeco,
+  },
+  studentDashboard: {
+    title: "My Dashboard",
+    detail: "Welcome Back!!!",
+    background: dashboardBg,
+    icon: board,
+    deco: studentDashboardDeco,
+  },
+  companyDashboard: {
+    title: "Company Dashboard",
+    detail: "Welcome Back!!!",
+    background: dashboardBg,
+    icon: board,
+    deco: companyDashboardDeco,
+  }
   // add more page with their component here
 };
 

@@ -6,7 +6,7 @@ import Footer from './components/layouts/Footer.vue';
 </script>
 
 <template>
-  <NavBar role="student"/>
+  <NavBar role="company"/>
   
   <div class="min-h-screen">
     <RouterView/>

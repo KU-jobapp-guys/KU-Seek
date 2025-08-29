@@ -1,37 +1,39 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
-  role: String
+  role: String,
 })
 
-const companyList = ["Dashboard", "Profile"]
-const studentList = ["Explore Job", "Explore Company", "Announcement", "Dashboard", "Profile"]
+const companyList = ['Dashboard', 'Profile']
+const studentList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Profile']
 
 const pageList = computed(() => {
-  if (props.role === "company") return companyList
-  if (props.role === "student") return studentList
+  if (props.role === 'company') return companyList
+  if (props.role === 'student') return studentList
   return []
 })
 
 const makeLink = (page: String) => {
-  return props.role ? `/${props.role}/${page.toLowerCase().replace(/\s+/g, "-")}` : ''
+  return props.role ? `/${props.role}/${page.toLowerCase().replace(/\s+/g, '-')}` : ''
 }
 </script>
 
 <template>
-  <nav class="fixed top-0 left-0 h-16 w-full bg-gradient-to-r from-[#03A96B] to-[#01432A] flex items-center justify-between px-[4vw] text-white z-[60]">
+  <nav
+    class="fixed top-0 left-0 h-16 w-full bg-gradient-to-r from-[#03A96B] to-[#01432A] flex items-center justify-between px-[4vw] text-white z-[60]"
+  >
     <a class="font-bold" href="/">KU SEEK</a>
-    
+
     <!-- Desktop Menu List -->
     <ul class="hidden md:flex gap-8">
       <li v-for="page in pageList" :key="page" class="hover:text-green-300">
         <a :href="makeLink(page)">{{ page }}</a>
       </li>
     </ul>
-    
+
     <!-- Mobile Dropdown -->
     <Menu as="div" class="relative inline-block md:hidden" v-slot="{ open }">
       <MenuButton class="flex w-full">
@@ -61,10 +63,19 @@ const makeLink = (page: String) => {
           leave-from-class="transform opacity-100 translate-x-0"
           leave-to-class="transform opacity-0 translate-x-full"
         >
-          <MenuItems v-if="open" class="fixed right-0 top-16 z-[50] py-6 w-[54vw] h-screen bg-gray-200 shadow-lg">
+          <MenuItems
+            v-if="open"
+            class="fixed right-0 top-16 z-[50] py-6 w-[54vw] h-screen bg-gray-200 shadow-lg"
+          >
             <div v-for="page in pageList" :key="page">
               <MenuItem v-slot="{ active }">
-                <a :href="makeLink(page)" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','block px-8 py-3 text-sm focus:outline-none hover:bg-gray-50']">
+                <a
+                  :href="makeLink(page)"
+                  :class="[
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'block px-8 py-3 text-sm focus:outline-none hover:bg-gray-50',
+                  ]"
+                >
                   {{ page }}
                 </a>
               </MenuItem>
@@ -73,6 +84,5 @@ const makeLink = (page: String) => {
         </transition>
       </Teleport>
     </Menu>
-
   </nav>
 </template>

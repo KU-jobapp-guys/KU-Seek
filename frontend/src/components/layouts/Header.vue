@@ -14,53 +14,53 @@ import companyBoardDeco from '@/assets/images/companyBoardDeco.png'
 import studentDashboardDeco from '@/assets/images/studentDashboardDeco.png'
 import companyDashboardDeco from '@/assets/images/companyDashboardDeco.png'
 
-const props = defineProps({page: String});
+const props = defineProps({ page: String })
 
 interface HeaderConfig {
-  title: string;
-  detail: string;
-  background: string;
-  icon: string;
-  deco: string;
+  title: string
+  detail: string
+  background: string
+  icon: string
+  deco: string
 }
 
 const headerConfigs: Record<string, HeaderConfig> = {
   jobBoard: {
-    title: "Explore Job & Internship",
-    detail: "Search for opportunities and take the next step in your career.",
+    title: 'Explore Job & Internship',
+    detail: 'Search for opportunities and take the next step in your career.',
     background: jobBoardBg,
     icon: briefcase,
     deco: jobBoardDeco,
   },
   companyBoard: {
-    title: "Explore by Company",
-    detail: "See job listings organized by employers.",
+    title: 'Explore by Company',
+    detail: 'See job listings organized by employers.',
     background: companyBoardBg,
     icon: building,
     deco: companyBoardDeco,
   },
   studentDashboard: {
-    title: "My Dashboard",
-    detail: "Welcome Back!!!",
+    title: 'My Dashboard',
+    detail: 'Welcome Back!!!',
     background: dashboardBg,
     icon: board,
     deco: studentDashboardDeco,
   },
   companyDashboard: {
-    title: "Company Dashboard",
-    detail: "Welcome Back!!!",
+    title: 'Company Dashboard',
+    detail: 'Welcome Back!!!',
     background: dashboardBg,
     icon: board,
     deco: companyDashboardDeco,
-  }
+  },
   // add more page with their component here
-};
+}
 
-const config = computed(() => headerConfigs[props.page || "dashBoard"]);
+const config = computed(() => headerConfigs[props.page || 'dashBoard'])
 </script>
 
 <template>
-  <header class="relative h-[360px] w-full bg-black text-white overflow-hidden"> 
+  <header class="relative h-[360px] w-full bg-black text-white overflow-hidden">
     <img :src="config.background" class="absolute bottom-0 w-full" />
     <div class="absolute inset-0 px-[12vw] pt-16 flex flex-col">
       <div class="w-full flex gap-x-8">

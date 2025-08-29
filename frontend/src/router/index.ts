@@ -4,7 +4,7 @@ import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import StudentDashboardView from '@/views/StudentDashboardView.vue'
 import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
-import NotFound from '@/components/NotFound.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,9 +37,8 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'not found',
-      component: NotFound,
-    }
-    
+      component: NotFoundView,
+    },
   ],
 })
 

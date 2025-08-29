@@ -5,7 +5,7 @@ const props = defineProps({
 })
 
 const companyList = ["Dashboard", "Profile"]
-const studentList = ["Explore Job", "Explore Company", 'Dashboard', "Profile"]
+const studentList = ["Explore Job", "Explore Company", "Announcement", "Dashboard", "Profile"]
 
 const pageList = computed(() => {
   if (props.role === "company") return companyList

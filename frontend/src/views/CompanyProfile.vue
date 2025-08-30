@@ -19,28 +19,41 @@
 
 <template>
     <div class="px-48 py-16">
-        <div class="proflie">
-            <div class="h-[40%]">
-                <img :src="companyData.bannerPhoto" class="rounded-t-[20px]" alt="Company Banner"/>
+        <section class="profile">
+            <div class="h-[40%] w-full object-cover ">
+                <img :src="companyData.bannerPhoto" class="rounded-t-[20px] w-[100%]" alt="Company Banner"/>
             </div>
 
             <div class="relative bg-gradient-to-b from-[#045c3a44] to-white p-8">
-                <img :src="companyData.profilePhoto" class="absolute -top-20 rounded-full" alt="Company Banner"/>
+                <img :src="companyData.profilePhoto" class="absolute -top-20 ring-8 max-w-44 ring-[#BCBCBC] ring-offset-0 rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.25)]" alt="Company Banner"/>
                 
-                <div class="flex justify-between items-end mt-32 w-full px-8">
+                
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    width="46" height="46" viewBox="0 0 24 24" fill="none" alt="edit btn"
+                    stroke="#000000" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="absolute right-20 lucide lucide-square-pen-icon lucide-square-pen">
+                    <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/>
+                </svg>
+
+                <div class="flex justify-between items-end mt-24 w-full px-6">
                     <div>
-                        <h1 class="font-semibold text-2xl">{{ companyData.name }}</h1>
+                        <h1 class="font-semibold text-3xl">{{ companyData.name }}</h1>
                         <p class="font-medium">{{ companyData.type }}</p>
                         <p>{{ companyData.location }}</p>
                     </div>
 
-                    <button class="bg-white rounded-lg shadow-[0_4px_6px_rgba(0,0,0,0.25)] px-8 py-1 text-[#01432A]">see jobs</button>
-                   
-                </div>
+                    <button class="bg-white rounded-lg shadow-[0_4px_6px_rgba(0,0,0,0.25)] px-8 py-1 text-[#01432A] [text-shadow:-1px_-1px_0_#B1B1B1,1px_-1px_0_#B1B1B1,-1px_1px_0_#B1B1B1,1px_1px_0_#B1B1B1]">see jobs</button>                </div>
              
             </div>
 
             <div class="w-full h-8 bg-gradient-to-r from-[#03A96B] to-[#01432A] rounded-b-[10px]"></div>
-        </div>
+        </section>
+
+        <section class="data">
+            <div class="bg-gradient-to-b from-[#045c3a44] to-white">
+
+            </div>
+        </section>
     </div>
 </template>

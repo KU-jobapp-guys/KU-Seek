@@ -15,6 +15,16 @@
         bannerPhoto: "/images/companies/mockUp/image.png",
         profilePhoto: "/images/companies/mockUp/logo.png"
     })
+
+    const jobData = ref({
+        company: "Techhahaha Inc.",
+        role: "Frontend Developer",
+        location: "Nontaburi, Thailand",
+        postTime: "3 days ago",
+        description: "Our company is so good!!! Please apply this job I’m begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something-- Please apply this job I’m begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something ahhhhhhhhhhhhhhhh...",
+        jobType: "Full-time",
+        skills: ["React", "CSS", "TypeScript", "Python"]
+    })
 </script>
 
 <template>
@@ -51,8 +61,11 @@
         </section>
 
         <section class="data">
-            <div class="bg-gradient-to-b from-[#045c3a44] to-white">
-
+            <div class="bg-gradient-to-b from-[#045c3a44] to-white rounded-[20px] w-[100%]">
+                <div class="flex">
+                    Overview
+                    Job
+                </div>
             </div>
         </section>
     </div>

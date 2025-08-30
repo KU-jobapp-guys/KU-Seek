@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Tag from '@/components/dashboards/Tag.vue'
+import BookmarkBlackIcon from '@/assets/bookmark-black.svg'
+import BookmarkWhiteIcon from '@/assets/bookmark-white.svg'
 
 defineProps<{
   company: string
@@ -8,6 +10,7 @@ defineProps<{
   days: string
   description: string
   type: string
+  bookmarked: boolean
   cardClass?: string
   tags: Array<{ label: string; color: string; bg: string }>
 }>()
@@ -28,6 +31,14 @@ defineProps<{
       cardClass,
     ]"
   >
+    <div class="absolute top-6 right-6 flex items-center space-x-2">
+      <img
+        :src="bookmarked ? BookmarkBlackIcon : BookmarkWhiteIcon"
+        alt="Bookmark"
+        class="w-10 h-10 transform transition-transform duration-200 hover:scale-125"
+      />
+    </div>
+
     <div class="text-gray-600 font-bold text-2xl mb-1 group-hover:text-white">
       {{ company }}
     </div>

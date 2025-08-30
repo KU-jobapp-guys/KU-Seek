@@ -72,7 +72,6 @@ import searchIcon from '@/assets/search-icon.svg'
           days="3 days ago"
           description="Our company is so good!!! ..."
           type="Full-time"
-          :bookmarked="true"
           cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
           :tags="[
             { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
@@ -93,7 +92,6 @@ import searchIcon from '@/assets/search-icon.svg'
           days="3 days ago"
           description="Our company is so good!!! ..."
           type="Full-time"
-          :bookmarked="false"
           cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
           :tags="[
             { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
@@ -114,7 +112,6 @@ import searchIcon from '@/assets/search-icon.svg'
           days="3 days ago"
           description="Our company is so good!!! ..."
           type="Full-time"
-          :bookmarked="false"
           cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
           :tags="[
             { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
@@ -155,7 +152,6 @@ import searchIcon from '@/assets/search-icon.svg'
           days="3 days ago"
           description="Our company is so good!!! ..."
           type="Full-time"
-          :bookmarked="true"
           cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
           :tags="[
             { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
@@ -176,7 +172,6 @@ import searchIcon from '@/assets/search-icon.svg'
           days="3 days ago"
           description="Our company is so good!!! ..."
           type="Full-time"
-          :bookmarked="true"
           cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
           :tags="[
             { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
@@ -197,92 +192,7 @@ import searchIcon from '@/assets/search-icon.svg'
           days="3 days ago"
           description="Our company is so good!!! ..."
           type="Full-time"
-          :bookmarked="true"
           cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-      </div>
-      <div
-        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
-      >
-        View More +
-      </div>
-    </section>
-
-    <!-- Profile Views Section -->
-    <section class="px-12 py-10 bg-white">
-      <div class="flex items-center mb-4">
-        <img :src="searchIcon" alt="Search" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Profile Views</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-3 rounded-lg border mb-8 text-black"
-      />
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :bookmarked="false"
-          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :bookmarked="true"
-          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :bookmarked="true"
-          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
           :tags="[
             { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
             { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },

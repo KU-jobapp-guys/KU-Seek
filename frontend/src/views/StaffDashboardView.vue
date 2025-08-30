@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
-import CompanyJobCard from '@/components/dashboards/CompanyJobCard.vue'
+import StaffJobCard from '@/components/dashboards/StaffJobCard.vue'
 
 import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'
 import searchIcon from '@/assets/search-icon.svg'
@@ -57,7 +57,7 @@ import searchIcon from '@/assets/search-icon.svg'
         class="w-full p-3 rounded-lg border mb-8 text-black"
       />
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <CompanyJobCard
+        <StaffJobCard
           company="Techhahaha Inc."
           job="Frontend Developer"
           place="Nonthaburi, Thailand"
@@ -78,7 +78,7 @@ import searchIcon from '@/assets/search-icon.svg'
             { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
           ]"
         />
-        <CompanyJobCard
+        <StaffJobCard
           company="Techhahaha Inc."
           job="Frontend Developer"
           place="Nonthaburi, Thailand"
@@ -99,7 +99,7 @@ import searchIcon from '@/assets/search-icon.svg'
             { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
           ]"
         />
-        <CompanyJobCard
+        <StaffJobCard
           company="Techhahaha Inc."
           job="Frontend Developer"
           place="Nonthaburi, Thailand"
@@ -141,7 +141,7 @@ import searchIcon from '@/assets/search-icon.svg'
       />
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <CompanyJobCard
+        <StaffJobCard
           company="Techhahaha Inc."
           job="Frontend Developer"
           place="Nonthaburi, Thailand"
@@ -162,7 +162,7 @@ import searchIcon from '@/assets/search-icon.svg'
             { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
           ]"
         />
-        <CompanyJobCard
+        <StaffJobCard
           company="Techhahaha Inc."
           job="Frontend Developer"
           place="Nonthaburi, Thailand"
@@ -183,7 +183,7 @@ import searchIcon from '@/assets/search-icon.svg'
             { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
           ]"
         />
-        <CompanyJobCard
+        <StaffJobCard
           company="Techhahaha Inc."
           job="Frontend Developer"
           place="Nonthaburi, Thailand"

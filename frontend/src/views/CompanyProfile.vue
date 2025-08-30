@@ -77,7 +77,11 @@
     const activeTab = ref('overview')
     const showAllJobs = ref(false)
     const expandedSkills = ref(new Set())
-    const skillsContainerRefs = ref({})
+    
+    // For calculate area of profile img
+    const profileImageRef = ref(null)
+    const containerRef = ref(null)
+    const dynamicMarginTop = ref('96px') 
 
     const switchTab = (tab) => {
         activeTab.value = tab
@@ -134,10 +138,37 @@
         }
     }
 
-
     const getJobIndex = (job, rowIndex, jobIndexInRow) => {
         return rowIndex * 3 + jobIndexInRow
     }
+
+    // Calculate dynamic margin for thing below profile photo
+    const calculateDynamicMargin = () => {
+        if (profileImageRef.value && containerRef.value) {
+            const profileImageRect = profileImageRef.value.getBoundingClientRect()
+            const containerRect = containerRef.value.getBoundingClientRect()
+            
+            const profileImageBottom = profileImageRect.bottom - containerRect.top
+            
+            const marginTop = Math.max(profileImageBottom + 4, 2)
+            
+            dynamicMarginTop.value = `${marginTop}px`
+        }
+    }
+
+    const onImageLoad = () => {
+        nextTick(() => {
+            calculateDynamicMargin()
+        })
+    }
+
+    onMounted(() => {
+        nextTick(() => {
+            calculateDynamicMargin()
+        })
+
+        window.addEventListener('resize', calculateDynamicMargin)
+    })
 
     const badgeColor = ["#5C56F6", "#FB2B20", "#FF8800", "#FF4EA4", "#3BC7DD", "#9C3BDD", "#42C600"]
     
@@ -151,8 +182,14 @@
                 <img :src="companyData.bannerPhoto" class="rounded-t-[20px] w-[100%]" alt="Company Banner"/>
             </div>
 
-            <div class="relative bg-gradient-to-b from-[#045c3a44] ring-1 ring-[#B1B1B1] ring-inset to-white p-8">
-                <img :src="companyData.profilePhoto" class="absolute -top-20 ring-8 max-w-44 ring-[#BCBCBC] ring-offset-0 rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.25)]" alt="Company Banner"/>
+            <div ref="containerRef" class="relative bg-gradient-to-b from-[#045c3a44] ring-1 ring-[#B1B1B1] ring-inset to-white p-8">
+                <img 
+                    ref="profileImageRef"
+                    :src="companyData.profilePhoto" 
+                    @load="onImageLoad"
+                    class="absolute -top-20 ring-8 max-w-44 ring-[#BCBCBC] ring-offset-0 rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.25)]" 
+                    alt="Company Profile"
+                />
                 
                 
                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +200,7 @@
                     <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/>
                 </svg>
 
-                <div class="flex justify-between items-end mt-24 w-full px-6">
+                <div class="flex justify-between items-end w-full px-6" :style="{ marginTop: dynamicMarginTop }">
                     <div>
                         <h1 class="font-semibold text-3xl">{{ companyData.name }}</h1>
                         <p class="font-medium">{{ companyData.type }}</p>

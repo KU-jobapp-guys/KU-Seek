@@ -3,6 +3,9 @@ import LandingView from '@/views/LandingView.vue'
 import StudentDashboardView from '@/views/StudentDashboardView.vue'
 import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
 import StaffDashboardView from '@/views/StaffDashboardView.vue'
+import JobBoardView from '@/views/JobBoardView.vue'
+import CompanyBoardView from '@/views/CompanyBoardView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,17 +18,42 @@ const router = createRouter({
     {
       path: '/student/dashboard',
       name: 'StudentDashboard',
-      component: StudentDashboardView
+      component: StudentDashboardView,
     },
     {
       path: '/company/dashboard',
       name: 'CompanyDashboard',
-      component: CompanyDashboardView
+      component: CompanyDashboardView,
     },
     {
       path: '/staff/dashboard',
       name: 'StaffDashboard',
       component: StaffDashboardView
+    },
+    {
+      path: '/student/explore-job',
+      name: 'job board',
+      component: JobBoardView,
+    },
+    {
+      path: '/student/explore-company',
+      name: 'company board',
+      component: CompanyBoardView,
+    },
+    {
+      path: '/student/dashboard',
+      name: 'student dashboard',
+      component: StudentDashboardView,
+    },
+    {
+      path: '/company/dashboard',
+      name: 'company dashboard',
+      component: CompanyDashboardView,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not found',
+      component: NotFoundView,
     },
   ],
 })

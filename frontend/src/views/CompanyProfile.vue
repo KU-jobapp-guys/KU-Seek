@@ -216,14 +216,14 @@
         </section>
 
         <section class="data mt-8">
-            <div class="bg-gradient-to-b from-[#045c3a44] to-white rounded-[20px] ring-1 ring-[#B1B1B1] ring-inset w-[100%]  p-8">
+            <div class="bg-gradient-to-b from-[#72908484] to-white rounded-[20px] ring-1 ring-[#B1B1B1] ring-inset w-[100%]  p-8">
 
                 <!-- Switch Tab Button IS HEREEEEE -->
                 <div class="flex">
                     <button 
                         @click="switchTab('overview')"
                         :class="[
-                            'px-6 py-4 font-medium text-sm rounded-t-[20px] transition-colors duration-200',
+                            'px-6 py-4 text-xl rounded-t-[20px] transition-colors duration-200',
                             activeTab === 'overview' 
                                 ? 'text-[#01432A] font-black' 
                                 : 'text-gray-600 hover:text-[#01432A]'
@@ -234,7 +234,7 @@
                     <button 
                         @click="switchTab('job')"
                         :class="[
-                            'px-6 py-4 font-medium text-sm rounded-t-[20px] transition-colors duration-200',
+                            'px-6 py-4 text-xl rounded-t-[20px] transition-colors duration-200',
                             activeTab === 'job' 
                                 ? 'text-[#01432A] font-black' 
                                 : 'text-gray-600 hover:text-[#01432A]'
@@ -244,7 +244,7 @@
                     </button>
                 </div>
 
-                <div class="w-full h-1 bg-[#CECECE]"></div>
+                <div class="w-full h-1 bg-[#afafaf]"></div>
 
                 <!-- Tab Content -->
                 <div class="p-8">

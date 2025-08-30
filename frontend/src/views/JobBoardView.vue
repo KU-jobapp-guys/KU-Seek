@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import Header from '@/components/layouts/Header.vue'
+import FilterBox from '@/components/jobBoard/FilterBox.vue';
 </script>
 
 <template>
   <Header page="jobBoard" />
 
-  <div class="relative -mt-24 px-[12vw]">
-    <div class="bg-[#F9F9F9] h-[240px] w-full shadow-xl">
-      <div class="w-full h-4 bg-gradient-to-r from-[#FFA100] to-[#FF6A0D]"></div>
-    </div>
-  </div>
+  <FilterBox />
 
   <div class="px-[12vw] p-2 mt-12 flex h-[600px] gap-x-4">
     <div class="w-full pr-4 h-[600px] gap-y-4 overflow-y-auto">

@@ -1,27 +1,44 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import LandingView from '@/views/LandingView.vue'
+import JobBoardView from '@/views/JobBoardView.vue'
+import CompanyBoardView from '@/views/CompanyBoardView.vue'
+import StudentDashboardView from '@/views/StudentDashboardView.vue'
+import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'landing',
+      component: LandingView,
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/student/explore-job',
+      name: 'job board',
+      component: JobBoardView,
     },
     {
-      path: '/api',
-      name: 'api',
-      component: () => import('../views/ApiTest.vue')
-    }
+      path: '/student/explore-company',
+      name: 'company board',
+      component: CompanyBoardView,
+    },
+    {
+      path: '/student/dashboard',
+      name: 'student dashboard',
+      component: StudentDashboardView,
+    },
+    {
+      path: '/company/dashboard',
+      name: 'company dashboard',
+      component: CompanyDashboardView,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not found',
+      component: NotFoundView,
+    },
   ],
 })
 

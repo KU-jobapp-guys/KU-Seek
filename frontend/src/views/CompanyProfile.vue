@@ -1,5 +1,5 @@
 <script setup>
-    import {ref} from 'vue'
+    import {ref, computed, onMounted, nextTick} from 'vue'
 
     const companyData = ref({
         name: "Urban Mobility Tech",
@@ -16,7 +16,7 @@
         profilePhoto: "/images/companies/mockUp/logo.png"
     })
 
-    const jobData = ref(
+    const jobsData = ref(
     [
         {
             company: "Techhahaha Inc.",
@@ -25,36 +25,122 @@
             postTime: "3", 
             description: "Our company is so good!!! Please apply this job I'm begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something-- Please apply this job I'm begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something ahhhhhhhhhhhhhhhh...",
             jobType: "Full-time",
-            skills: ["React", "CSS", "TypeScript", "Python"]
+            skills: ["React", "CSS", "TypeScript", "Python", "JavaScript", "HTML", "Tailwind", "Vue.js"]
         },
-
         {
             company: "Techhahaha Inc.",
-            role: "Frontend Developer",
-            location: "Nontaburi, Thailand",
-            postTime: "3", 
-            description: "Our company is so good!!! Please apply this job I'm begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something-- Please apply this job I'm begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something ahhhhhhhhhhhhhhhh...",
+            role: "Backend Developer",
+            location: "Bangkok, Thailand",
+            postTime: "5", 
+            description: "Join our amazing backend team! We're looking for passionate developers to help build scalable systems. Great benefits and flexible working hours available.",
             jobType: "Full-time",
-            skills: ["React", "CSS", "TypeScript", "Python"]
+            skills: ["Node.js", "MongoDB", "Express", "Docker", "PostgreSQL", "Redis"]
         },
-
         {
             company: "Techhahaha Inc.",
-            role: "Frontend Developer",
-            location: "Nontaburi, Thailand",
-            postTime: "3", 
-            description: "Our company is so good!!! Please apply this job I'm begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something-- Please apply this job I'm begging WE HAVE FREE FOOD ahhhhhhh bla bla bla yada yada something something ahhhhhhhhhhhhhhhh...",
-            jobType: "Full-time",
-            skills: ["React", "CSS", "TypeScript", "Python"]
+            role: "UI/UX Designer",
+            location: "Bangkok, Thailand",
+            postTime: "7", 
+            description: "Creative designer needed to craft beautiful user experiences. Work with cross-functional teams to deliver innovative design solutions.",
+            jobType: "Part-time",
+            skills: ["Figma", "Adobe XD", "Prototyping", "User Research", "Sketch", "InVision", "Principle"]
         },
+        {
+            company: "Techhahaha Inc.",
+            role: "DevOps Engineer",
+            location: "Remote, Thailand",
+            postTime: "10", 
+            description: "Seeking experienced DevOps engineer to manage our cloud infrastructure and deployment pipelines. Remote work available.",
+            jobType: "Full-time",
+            skills: ["AWS", "Kubernetes", "CI/CD", "Terraform", "Docker", "Jenkins", "Ansible", "Monitoring"]
+        },
+        {
+            company: "Techhahaha Inc.",
+            role: "Data Scientist",
+            location: "Bangkok, Thailand",
+            postTime: "12", 
+            description: "Analyze complex datasets and build machine learning models to drive business insights and decision making.",
+            jobType: "Full-time",
+            skills: ["Python", "Machine Learning", "SQL", "TensorFlow", "Pandas", "Scikit-learn"]
+        },
+        {
+            company: "Techhahaha Inc.",
+            role: "Product Manager",
+            location: "Bangkok, Thailand",
+            postTime: "15", 
+            description: "Lead product strategy and roadmap development. Work closely with engineering and design teams to deliver exceptional products.",
+            jobType: "Full-time",
+            skills: ["Product Strategy", "Agile", "Analytics", "Leadership", "Roadmapping"]
+        }
     ])
 
     const activeTab = ref('overview')
-
+    const showAllJobs = ref(false)
+    const expandedSkills = ref(new Set())
+    const skillsContainerRefs = ref({})
 
     const switchTab = (tab) => {
         activeTab.value = tab
+        if (tab === 'overview') {
+            showAllJobs.value = false
+        }
     }
+
+    const toggleJobsView = () => {
+        showAllJobs.value = !showAllJobs.value
+    }
+
+    const displayedJobs = computed(() => {
+        if (showAllJobs.value) {
+            return jobsData.value
+        }
+        return jobsData.value.slice(0, 3)
+    })
+
+    const jobRows = computed(() => {
+        const jobs = displayedJobs.value
+        const rows = []
+        for (let i = 0; i < jobs.length; i += 3) {
+            rows.push(jobs.slice(i, i + 3))
+        }
+        return rows
+    })
+
+    const toggleSkillsExpansion = (jobIndex) => {
+        const jobKey = `job-${jobIndex}`
+        if (expandedSkills.value.has(jobKey)) {
+            expandedSkills.value.delete(jobKey)
+        } else {
+            expandedSkills.value.add(jobKey)
+        }
+    }
+
+    const getSkillsToShow = (skills, jobIndex) => {
+        const jobKey = `job-${jobIndex}`
+        const isExpanded = expandedSkills.value.has(jobKey)
+        
+        if (isExpanded || skills.length <= 3) {
+            return {
+                skills: skills,
+                hasMore: false,
+                remainingCount: 0
+            }
+        }
+        
+        return {
+            skills: skills.slice(0, 3),
+            hasMore: true,
+            remainingCount: skills.length - 3
+        }
+    }
+
+
+    const getJobIndex = (job, rowIndex, jobIndexInRow) => {
+        return rowIndex * 3 + jobIndexInRow
+    }
+
+    const badgeColor = ["#5C56F6", "#FB2B20", "#FF8800", "#FF4EA4", "#3BC7DD", "#9C3BDD", "#42C600"]
+    
 </script>
 
 <template>
@@ -163,8 +249,100 @@
                     </div>
 
                     <!-- Jobs Tab Content -->
-                    <div v-else-if="activeTab === 'jobs'" class="space-y-6">
-                        YES JOB
+                    <div v-else-if="activeTab === 'job'" class="relative">
+                        
+                        <div class="space-y-4">
+                            <div v-for="(row, rowIndex) in jobRows" :key="rowIndex" class="grid grid-cols-3 gap-4">
+                                <div v-for="(job, jobIndexInRow) in row" :key="job.role + job.postTime" class="flex flex-col gap-y-2 bg-white ring-1 ring-[#B1B1B1] ring-inset py-8 px-6 rounded-[20px] shadow-[0_4px_6px_rgba(0,0,0,0.25)]">
+                                    <h3 class="text-[#636363] text-sm">{{ job.company }}</h3>
+                                    <h2 class="text-xl font-bold">{{ job.role }}</h2>
+
+                                    <div class="flex gap-x-1 text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            width="16" height="16" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-map-pin-icon lucide-map-pin">
+                                            <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
+                                            <circle cx="12" cy="10" r="3"/>
+                                        </svg>
+
+                                        <span>{{ job.location }}</span>
+                                    </div>
+
+                                    <div class="flex gap-x-1 text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-clock-icon lucide-clock">
+                                            <path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/>
+                                        </svg>
+                                        
+                                        <span>{{ job.postTime }} days ago</span>
+                                    </div>
+
+                                    <p class="text-sm text-gray-600 line-clamp-3">{{ job.description }}</p>
+                                    
+                                    <p class="text-[#5696F6] text-sm">{{ job.jobType }}</p>
+
+                                    <!-- Skills -->
+                                    <div class="flex gap-1 flex-wrap">
+                                        <template v-for="(skill, index) in getSkillsToShow(job.skills, getJobIndex(job, rowIndex, jobIndexInRow)).skills" :key="skill">
+                                            <div class="rounded-full bg-[#5C56F6] text-white py-1 px-3 text-xs whitespace-nowrap"                 
+                                            :style="{ backgroundColor: badgeColor[index % badgeColor.length] }"
+                                            >
+                                                {{ skill }}
+                                            </div>
+                                        </template>
+                                        
+
+                                        <button 
+                                            v-if="getSkillsToShow(job.skills, getJobIndex(job, rowIndex, jobIndexInRow)).hasMore"
+                                            @click="toggleSkillsExpansion(getJobIndex(job, rowIndex, jobIndexInRow))"
+                                            class="rounded-full bg-gray-200 text-gray-600 py-1 px-3 text-xs hover:bg-gray-300 transition-colors duration-200 whitespace-nowrap"
+                                        >
+                                            +{{ getSkillsToShow(job.skills, getJobIndex(job, rowIndex, jobIndexInRow)).remainingCount }} more
+                                        </button>
+                                        
+
+                                        <button 
+                                            v-if="expandedSkills.has(`job-${getJobIndex(job, rowIndex, jobIndexInRow)}`) && job.skills.length > 3"
+                                            @click="toggleSkillsExpansion(getJobIndex(job, rowIndex, jobIndexInRow))"
+                                            class="rounded-full bg-gray-200 text-gray-600 py-1 px-3 text-xs hover:bg-gray-300 transition-colors duration-200 whitespace-nowrap"
+                                        >
+                                            Show less
+                                        </button>
+                                    </div>
+
+                                    <button class="mt-4 bg-[#878787] text-white font-bold rounded-xl self-end py-2 px-6 text-sm">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- View More Button -->
+                        <div v-if="!showAllJobs && jobsData.length > 3" class="flex justify-end mt-6">
+                            <button 
+                                @click="toggleJobsView"
+                                class="text-[#686868] font-medium hover:text-[#8e8e8e] transition-colors duration-200 flex items-center gap-1"
+                            >
+                                View More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
+                                    <path d="M5 12h14"/>
+                                    <path d="M12 5v14"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- View Less Button -->
+                        <div v-if="showAllJobs" class="flex justify-end mt-6">
+                            <button 
+                                @click="toggleJobsView"
+                                class="text-[#686868] font-medium hover:text-[#8e8e8e] transition-colors duration-200 flex items-center gap-1"
+                            >
+                                View Less
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus">
+                                    <path d="M5 12h14"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

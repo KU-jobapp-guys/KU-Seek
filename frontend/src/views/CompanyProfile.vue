@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
     import {ref, computed, onMounted, nextTick} from 'vue'
 
     const companyData = ref({
@@ -83,7 +83,7 @@
     const containerRef = ref(null)
     const dynamicMarginTop = ref('96px') 
 
-    const switchTab = (tab) => {
+    const switchTab = (tab: string) => {
         activeTab.value = tab
         if (tab === 'overview') {
             showAllJobs.value = false
@@ -110,7 +110,7 @@
         return rows
     })
 
-    const toggleSkillsExpansion = (jobIndex) => {
+    const toggleSkillsExpansion = (jobIndex: number) => {
         const jobKey = `job-${jobIndex}`
         if (expandedSkills.value.has(jobKey)) {
             expandedSkills.value.delete(jobKey)
@@ -119,7 +119,7 @@
         }
     }
 
-    const getSkillsToShow = (skills, jobIndex) => {
+    const getSkillsToShow = (skills: string[], jobIndex: number) => {
         const jobKey = `job-${jobIndex}`
         const isExpanded = expandedSkills.value.has(jobKey)
         
@@ -138,15 +138,18 @@
         }
     }
 
-    const getJobIndex = (job, rowIndex, jobIndexInRow) => {
+    const getJobIndex = (job: any, rowIndex: number, jobIndexInRow: number) => {
         return rowIndex * 3 + jobIndexInRow
     }
 
     // Calculate dynamic margin for thing below profile photo
     const calculateDynamicMargin = () => {
         if (profileImageRef.value && containerRef.value) {
-            const profileImageRect = profileImageRef.value.getBoundingClientRect()
-            const containerRect = containerRef.value.getBoundingClientRect()
+            const profileImageElement = profileImageRef.value as HTMLImageElement
+            const containerElement = containerRef.value as HTMLDivElement
+            
+            const profileImageRect = profileImageElement.getBoundingClientRect()
+            const containerRect = containerElement.getBoundingClientRect()
             
             const profileImageBottom = profileImageRect.bottom - containerRect.top
             

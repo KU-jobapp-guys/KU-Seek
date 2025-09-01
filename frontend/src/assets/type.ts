@@ -1,4 +1,5 @@
 export interface Job {
+  jobId: string;
   company: string;
   role: string;
   location: string;
@@ -7,7 +8,7 @@ export interface Job {
   highlights: string[];
   jobType: string;
   skills: string[];
-  salary: string;
+  salary?: string;
 }
 
 

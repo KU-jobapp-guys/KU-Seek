@@ -6,8 +6,11 @@ import JobBox from '@/components/jobBoard/JobBox.vue';
 import type { Job, FilterKeys } from '@/assets/type';
 import { mockJobs } from '@/data/mockJobs';
 import search from '@/assets/icons/search.svg'
+import { ArrowLeftCircle } from 'lucide-vue-next';
+import JobFull from '@/components/jobBoard/JobFull.vue';
 
 const jobs = ref<Job[]>([]);
+const selectedJobId = ref<String>("");
 
 type Filters = Record<FilterKeys, string>;
 const filters = ref<Partial<Filters>>({});
@@ -25,6 +28,11 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
   });
 }
 
+function handleSelect(id: string) {
+  selectedJobId.value = id;
+  console.log('Selected job ID:', selectedJobId.value);
+}
+
 onMounted(() => {
   fetchJobs();
 });
@@ -38,18 +46,31 @@ onMounted(() => {
     <FilterBox @applyFilter="fetchJobs" />
 
     <div class="mt-12">
-      <div v-if="jobs.length > 0" class="w-full h-full flex gap-x-4">
-        <div class="w-full pr-4 h-[800px] gap-y-4 overflow-y-auto">
-          <div v-for="job in jobs" :key="job.company + job.role">
-            <JobBox :job="job" />
+      <div v-if="jobs.length > 0" class="w-full h-[800px] flex gap-x-4">
+        <div class="w-full pr-4 h-full gap-y-4 overflow-y-auto">
+          <div v-for="job in jobs" :key="job.jobId">
+            <JobBox :job="job" @select="handleSelect"/>
           </div>
         </div>
-        <div class="w-full bg-[#F9F9F9] p-2 rounded-md shadow-md hidden md:block">
-          
+        <div class="w-full h-full bg-[#F9F9F9] p-2 rounded-md shadow-md hidden md:block">
+          <JobFull v-if="selectedJobId" :jobId="selectedJobId as string" />
+
+          <div v-if="!selectedJobId" class="h-full px-8 py-12">
+            <div class="flex items-center gap-x-4 ">
+              <ArrowLeftCircle class="w-12 h-12 text-gray-600" />
+              <div>
+                <p class="font-bold text-2xl">Select Job</p>
+                <p>Show the detail here.</p>
+              </div>
+            </div>
+            <div class="w-full h-full flex items-center justify-center">
+              <img :src="search" class="h-44 w-44" />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-if="jobs.length === 0" class="mt-8 w-full flex flex-col items-center justify-center">
+      <div v-if="jobs.length === 0" class="mt-24 w-full flex flex-col items-center justify-center">
         <img :src="search" class="h-32 w-32" />
         <p class="text-xl font-bold my-4">No matching results found</p>
         <p>We couldn't find any results that match your search.</p>

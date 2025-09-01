@@ -42,6 +42,7 @@ const clearFilters = () => {
   (Object.keys(filters) as FilterKeys[]).forEach((key) => {
     filters[key] = ''
   })
+  emit('applyFilter', filters)
 }
 </script>
 

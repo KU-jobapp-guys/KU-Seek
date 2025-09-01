@@ -1,45 +1,48 @@
-import type { Job } from "@/assets/type";
+import type { Job } from '@/assets/type';
 
 export const mockJobs: Job[] = [
   {
+    jobId: "techcorp-frontend-1a2b",
     company: "TechCorp Inc.",
     role: "Frontend Developer",
     location: "Bangkok, Thailand",
     postTime: new Date("2025-08-01T10:00:00"),
-    description: `Develop and maintain web applications using React and TypeScript. Collaborate with designers and backend developers. Ensure responsiveness and performance optimization across browsers and devices.`,
+    description: "Develop and maintain web applications using React and TypeScript. Collaborate with designers and backend developers.",
     highlights: [
-      "Develop web applications with React & TypeScript",
-      "Collaborate with designers & backend developers",
-      "Ensure responsive & high-performance UI"
+      "React & TypeScript development",
+      "Collaborate with design & backend",
+      "Responsive UI implementation"
     ],
     jobType: "Full-time",
     skills: ["React", "TypeScript", "HTML", "CSS", "TailwindCSS"],
     salary: "50,000 THB/month"
   },
   {
+    jobId: "datasolutions-analyst-3c4d",
     company: "DataSolutions Co.",
     role: "Data Analyst",
     location: "Chiang Mai, Thailand",
     postTime: new Date("2025-08-03T15:30:00"),
-    description: `Analyze large datasets, generate reports and insights, collaborate with business teams, and ensure data accuracy. Build dashboards for stakeholders and support data-driven decisions.`,
+    description: "Analyze large datasets, generate reports and dashboards, and support data-driven business decisions.",
     highlights: [
       "Analyze large datasets",
       "Generate actionable insights",
-      "Build dashboards for stakeholders"
+      "Build dashboards"
     ],
     jobType: "Contract",
     skills: ["SQL", "Python", "Excel", "Tableau"],
     salary: "40,000 THB/month"
   },
   {
+    jobId: "fintech-backend-5e6f",
     company: "FinTech Global",
     role: "Backend Developer",
     location: "Bangkok, Thailand",
     postTime: new Date("2025-08-05T09:00:00"),
-    description: `Build scalable backend services and REST APIs using Node.js and Express. Implement database models, authentication, and caching strategies. Work closely with frontend developers for seamless integration.`,
+    description: "Build scalable backend services and REST APIs using Node.js and Express. Implement database models and authentication.",
     highlights: [
-      "Build backend services & REST APIs",
-      "Implement database & authentication",
+      "Node.js & Express backend",
+      "Database & authentication",
       "Collaborate with frontend team"
     ],
     jobType: "Full-time",
@@ -47,18 +50,114 @@ export const mockJobs: Job[] = [
     salary: "60,000 THB/month"
   },
   {
+    jobId: "creative-uiux-7g8h",
     company: "Creative Studios",
     role: "UI/UX Designer",
     location: "Phuket, Thailand",
-    postTime: new Date("2025-08-07T11:45:00"),
-    description: `Design user interfaces and experiences for web and mobile applications. Conduct user research, create wireframes, prototypes, and ensure design consistency across platforms.`,
+    postTime: new Date("2025-08-07T11:00:00"),
+    description: "Design user interfaces and experiences for mobile and web apps. Conduct user research and create wireframes/prototypes.",
     highlights: [
-      "Design UI/UX for web & mobile apps",
-      "Conduct user research & create prototypes",
-      "Ensure consistent design across platforms"
+      "Design UI/UX for web & mobile",
+      "Conduct user research",
+      "Create wireframes & prototypes"
     ],
-    jobType: "Part-time",
+    jobType: "Full-time",
     skills: ["Figma", "Adobe XD", "Sketch", "User Research"],
-    salary: "30,000 THB/month"
+    salary: "45,000 THB/month"
+  },
+  {
+    jobId: "greenenergy-devops-9i0j",
+    company: "Green Energy Ltd.",
+    role: "DevOps Engineer",
+    location: "Bangkok, Thailand",
+    postTime: new Date("2025-08-08T13:00:00"),
+    description: "Maintain CI/CD pipelines, cloud infrastructure, and automate deployments. Monitor systems and improve reliability.",
+    highlights: [
+      "Manage CI/CD pipelines",
+      "Cloud infrastructure",
+      "Automation & monitoring"
+    ],
+    jobType: "Full-time",
+    skills: ["AWS", "Docker", "Kubernetes", "Jenkins"],
+    salary: "70,000 THB/month"
+  },
+  {
+    jobId: "meditech-data-1k2l",
+    company: "MediTech Solutions",
+    role: "Machine Learning Engineer",
+    location: "Chiang Mai, Thailand",
+    postTime: new Date("2025-08-09T09:30:00"),
+    description: "Develop ML models for healthcare applications, preprocess data, and evaluate model performance.",
+    highlights: [
+      "Develop ML models",
+      "Data preprocessing",
+      "Model evaluation & deployment"
+    ],
+    jobType: "Full-time",
+    skills: ["Python", "TensorFlow", "PyTorch", "Data Science"],
+  },
+  {
+    jobId: "logistics-qa-3m4n",
+    company: "Logistics Pro",
+    role: "QA Engineer",
+    location: "Bangkok, Thailand",
+    postTime: new Date("2025-08-10T10:00:00"),
+    description: "Test software products, write test cases, report bugs, and collaborate with development teams.",
+    highlights: [
+      "Write test cases",
+      "Perform manual & automated testing",
+      "Bug reporting & tracking"
+    ],
+    jobType: "Contract",
+    skills: ["Selenium", "Postman", "Jira", "Manual Testing"],
+    salary: "35,000 THB/month"
+  },
+  {
+    jobId: "fintech-qa-5o6p",
+    company: "FinTech Global",
+    role: "QA Analyst",
+    location: "Bangkok, Thailand",
+    postTime: new Date("2025-08-12T14:00:00"),
+    description: "Ensure software quality through testing, automation scripts, and bug tracking.",
+    highlights: [
+      "Automation & manual testing",
+      "Bug tracking",
+      "Quality assurance"
+    ],
+    jobType: "Full-time",
+    skills: ["Selenium", "Cypress", "Jira"],
+    salary: "40,000 THB/month"
+  },
+  {
+    jobId: "edutech-frontend-7q8r",
+    company: "EduTech Co.",
+    role: "Frontend Developer",
+    location: "Bangkok, Thailand",
+    postTime: new Date("2025-08-14T09:00:00"),
+    description: "Create web frontends for e-learning platforms, ensure responsiveness and accessibility.",
+    highlights: [
+      "React development",
+      "Responsive UI",
+      "Accessibility compliance"
+    ],
+    jobType: "Full-time",
+    skills: ["React", "TypeScript", "CSS", "HTML", "TailwindCSS"],
+    salary: "50,000 THB/month"
+  },
+  {
+    jobId: "marketing-creative-9s0t",
+    company: "Creative Agency",
+    role: "Marketing Specialist",
+    location: "Phuket, Thailand",
+    postTime: new Date("2025-08-15T11:30:00"),
+    description: "Plan and execute marketing campaigns, create content, and analyze performance metrics.",
+    highlights: [
+      "Marketing campaign planning",
+      "Content creation",
+      "Performance analysis"
+    ],
+    jobType: "Full-time",
+    skills: ["SEO", "Google Ads", "Social Media", "Content Marketing"],
+    salary: "45,000 THB/month"
   },
 ];

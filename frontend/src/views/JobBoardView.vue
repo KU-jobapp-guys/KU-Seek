@@ -6,7 +6,7 @@ import FilterBox from '@/components/jobBoard/FilterBox.vue';
 <template>
   <Header page="jobBoard" />
 
-  <div class="relative -mt-[8vw] max-mt-[-12px] px-[8vw] md:px-[12vw]">
+  <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw]">
 
     <FilterBox />
 

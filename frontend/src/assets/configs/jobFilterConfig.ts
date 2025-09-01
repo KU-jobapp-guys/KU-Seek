@@ -1,29 +1,29 @@
 export interface DropdownOption {
   value: string
   label: string
-  }
+}
 
 export interface DropdownConfig {
-key: string
-label: string
-placeholder?: string
-options: DropdownOption[]
-colSpan?: string
+  key: string
+  label: string
+  placeholder?: string
+  options: DropdownOption[]
+  colSpan?: string
 }
 
 export interface TextConfig {
-key: string
-label: string
-placeholder: string
-colSpan?: string
+  key: string
+  label: string
+  placeholder: string
+  colSpan?: string
 }
 
 export const dropdownConfig: DropdownConfig[] = [
 {
-    key: 'jobLevel',
-    label: 'Job Level',
-    placeholder: 'All Levels',
-    options: [
+  key: 'jobLevel',
+  label: 'Job Level',
+  placeholder: 'All Levels',
+  options: [
     { value: 'entry', label: 'Entry Level' },
     { value: 'junior', label: 'Junior (1-2 years)' },
     { value: 'mid', label: 'Mid Level (3-5 years)' },
@@ -32,13 +32,13 @@ export const dropdownConfig: DropdownConfig[] = [
     { value: 'manager', label: 'Manager' },
     { value: 'director', label: 'Director' },
     { value: 'executive', label: 'Executive' }
-    ]
+  ]
 },
 {
-    key: 'location',
-    label: 'Location',
-    placeholder: 'Anywhere',
-    options: [
+  key: 'location',
+  label: 'Location',
+  placeholder: 'Anywhere',
+  options: [
     { value: 'bangkok', label: 'Bangkok' },
     { value: 'chiangmai', label: 'Chiang Mai' },
     { value: 'phuket', label: 'Phuket' },
@@ -47,66 +47,45 @@ export const dropdownConfig: DropdownConfig[] = [
     { value: 'remote', label: 'Remote' },
     { value: 'hybrid', label: 'Hybrid' },
     { value: 'international', label: 'International' }
-    ]
+  ]
 },
 {
-    key: 'jobType',
-    label: 'Job Type',
-    placeholder: 'All Types',
-    options: [
+  key: 'jobType',
+  label: 'Job Type',
+  placeholder: 'All Types',
+  options: [
     { value: 'full-time', label: 'Full-time' },
     { value: 'part-time', label: 'Part-time' },
     { value: 'contract', label: 'Contract' },
     { value: 'internship', label: 'Internship' },
     { value: 'freelance', label: 'Freelance' },
     { value: 'temporary', label: 'Temporary' },
-    { value: 'volunteer', label: 'Volunteer' }
-    ]
+  ]
 }
 ]
 
 export const textConfig: TextConfig[] = [
 {
-    key: 'role',
-    label: 'Role',
-    placeholder: 'Software Developer, QA, ...',
+  key: 'role',
+  label: 'Role',
+  placeholder: 'Software Developer, QA, ...',
 },
 {
-    key: 'tags',
-    label: 'Skills & Tags',
-    placeholder: 'React, Python, ...',
+  key: 'tags',
+  label: 'Skills & Tags',
+  placeholder: 'React, Python, ...',
 },
 {
-    key: 'company',
-    label: 'Company',
-    placeholder: 'Google, Apple, Microsoft, ...'
+  key: 'company',
+  label: 'Company',
+  placeholder: 'Google, Apple, Microsoft, ...'
 }
 ]
 
-// Export all possible filter keys as a union type
 export type FilterKeys = 
-| 'field' 
-| 'jobLevel' 
-| 'location' 
-| 'jobType' 
-| 'tags' 
+| 'role'
+| 'tags'
 | 'company'
-
-// Helper function to get all filter keys
-export const getAllFilterKeys = (): FilterKeys[] => {
-return [
-    ...dropdownConfig.map(item => item.key as FilterKeys),
-    ...textConfig.map(item => item.key as FilterKeys)
-]
-}
-
-// Helper function to get dropdown options by key
-export const getDropdownOptions = (key: FilterKeys): DropdownOption[] => {
-const dropdown = dropdownConfig.find(item => item.key === key)
-return dropdown?.options || []
-}
-
-// Helper function to get field configuration by key
-export const getFieldConfig = (key: FilterKeys): DropdownConfig | TextConfig | undefined => {
-return [...dropdownConfig, ...textConfig].find(item => item.key === key)
-}
+| 'jobLevel'
+| 'location'
+| 'jobType'

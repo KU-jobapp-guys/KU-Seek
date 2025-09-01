@@ -46,29 +46,27 @@ const jobPost = ref<JobPost>({
 const handleSubmit = (): void => {
   const payload = {
     ...jobPost.value,
-    salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`, // Combine salary
+    salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
   }
   console.log('Submitting Job Post:', payload)
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 pb-10">
     <!-- Header -->
-    <div class="text-center py-10 bg-gradient-to-b from-green-200 to-white">
-      <h1 class="text-4xl font-bold text-gray-800">Create Your Job Post</h1>
-      <p class="text-gray-600">Post your job opportunity and connect with talented professionals</p>
-    </div>
+    <header class="text-center py-14 bg-gradient-to-r from-green-500 to-indigo-600">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Create Your Job Post</h1>
+      <p class="text-lg text-indigo-100">
+        Post your opportunity and connect with talented professionals
+      </p>
+    </header>
 
-    <!-- Form -->
-    <form
-      @submit.prevent="handleSubmit"
-      class="max-w-4xl mx-auto space-y-6 p-6 bg-white shadow rounded-2xl"
-    >
+    <div class="max-w-5xl mx-auto -mt-10 space-y-6">
       <!-- Basic Information -->
-      <section>
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Basic Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section class="bg-white shadow-lg rounded-2xl p-8">
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BaseInput
             v-model="jobPost.company"
             label="Company Name"
@@ -88,8 +86,8 @@ const handleSubmit = (): void => {
       </section>
 
       <!-- Job Description -->
-      <section>
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Job Description</h2>
+      <section class="bg-white shadow-lg rounded-2xl p-8">
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Job Description</h2>
         <BaseTextarea
           v-model="jobPost.description"
           placeholder="Describe the role, responsibilities, requirements, and benefits..."
@@ -97,8 +95,8 @@ const handleSubmit = (): void => {
       </section>
 
       <!-- Work Fields -->
-      <section>
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Work Fields</h2>
+      <section class="bg-white shadow-lg rounded-2xl p-8">
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Work Fields</h2>
         <TagInput
           v-model="jobPost.workFields"
           placeholder="e.g. React, Node.js, Machine Learning"
@@ -106,14 +104,14 @@ const handleSubmit = (): void => {
       </section>
 
       <!-- Images -->
-      <section>
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Images</h2>
+      <section class="bg-white shadow-lg rounded-2xl p-8">
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Images</h2>
         <FileUpload v-model="jobPost.images" />
       </section>
 
       <!-- Contacts -->
-      <section>
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Contacts</h2>
+      <section class="bg-white shadow-lg rounded-2xl p-8">
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Contacts</h2>
         <ContactField v-model="jobPost.contacts" />
       </section>
 
@@ -121,11 +119,12 @@ const handleSubmit = (): void => {
       <div class="flex justify-end">
         <button
           type="submit"
-          class="px-6 py-2 bg-blue-600 text-white font-medium rounded-xl shadow hover:bg-blue-700"
+          @click.prevent="handleSubmit"
+          class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transition"
         >
           Post Job
         </button>
       </div>
-    </form>
+    </div>
   </div>
 </template>

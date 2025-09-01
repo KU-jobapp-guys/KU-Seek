@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, ref, watch } from 'vue'
 
 const props = defineProps<{
   modelValue: File[]
@@ -20,29 +20,47 @@ const removeFile = (index: number): void => {
   updated.splice(index, 1)
   emit('update:modelValue', updated)
 }
+
+// For image previews
+const previews = ref<string[]>([])
+
+watch(
+  () => props.modelValue,
+  (files) => {
+    previews.value = files.map((file) => URL.createObjectURL(file))
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
+  <!-- Upload Box -->
   <div class="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer hover:bg-gray-50">
     <input
       type="file"
       multiple
+      accept="image/*"
       class="hidden"
       id="fileInput"
       @change="handleFiles(($event.target as HTMLInputElement).files)"
     />
-    <label for="fileInput" class="cursor-pointer text-gray-500">
-      Click to upload images or drag and drop
-    </label>
+    <label for="fileInput" class="cursor-pointer text-gray-500">Click to upload images</label>
+  </div>
 
-    <div class="mt-4 flex flex-wrap gap-2">
-      <div
-        v-for="(file, index) in modelValue"
-        :key="index"
-        class="text-black flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg"
-      >
-        <span class="text-sm">{{ file.name }}</span>
-        <button type="button" class="text-red-500" @click="removeFile(index)">✕</button>
+  <!-- Image Previews Outside -->
+  <div class="mt-4 flex flex-wrap gap-4">
+    <div v-for="(file, index) in modelValue" :key="index" class="relative">
+      <!-- Thumbnail -->
+      <img
+        v-if="file.type.startsWith('image/')"
+        :src="previews[index]"
+        alt="Preview"
+        class="w-24 h-24 object-cover rounded-lg border"
+      />
+      <!-- Filename with remove button -->
+      <div class="mt-1 text-center text-sm flex justify-between items-center gap-1">
+        <span class="text-black">{{ file.name }}</span>
+        <button type="button" class="text-red-500 font-bold" @click="removeFile(index)">✕</button>
       </div>
     </div>
   </div>

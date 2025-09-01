@@ -44,18 +44,18 @@ watch(() => props.jobId, (newId) => {
       <router-link :to="`/job/${job.jobId}`" class="text-2xl font-bold underline cursor-pointer">{{ job.role }}</router-link>
       <p class="text-gray-600">{{ job.company }}</p>
 
-      <div class="flex flex-col gap-y-2 mt-4">
-        <div class="flex gap-x-2 items-center text-sm text-gray-600">
+      <div class="flex flex-col mt-4">
+        <div class="flex gap-x-2 items-center text-gray-600">
           <MapPin class="w-4 h-4" />
           <p>{{ job.location  }}</p>
         </div>
 
-        <div class="flex gap-x-2 items-center text-sm text-gray-600">
+        <div class="flex gap-x-2 items-center text-gray-600">
           <Clock class="w-4 h-4" />
           <p>{{ job.jobType  }}</p>
         </div>
 
-        <div v-if="job.salary" class="flex gap-x-2 items-center text-sm text-gray-600">
+        <div v-if="job.salary" class="flex gap-x-2 items-center text-gray-600">
           <Banknote class="w-4 h-4" />
           <p>{{ job.salary  }}</p>
         </div>
@@ -63,7 +63,7 @@ watch(() => props.jobId, (newId) => {
 
       <div class="mt-4 flex gap-x-2">
         <button class="bg-pink-600 hover:bg-pink-500 text-white px-8 py-1 rounded-md">Apply</button>
-        <button class="hover:bg-gray-200 border border-4 border-gray-700 px-8 py-1 rounded-md">Save</button>
+        <button class="hover:bg-gray-200 border border-2 border-gray-600 px-8 py-1 rounded-md">Save</button>
       </div>
 
       <p class="mt-12">{{ job.description }}</p>
@@ -78,7 +78,7 @@ watch(() => props.jobId, (newId) => {
           <p
             v-for="(skill, i) in job.skills"
             :key="i"
-            class="text-white px-4 py-1 rounded-xl text-sm"
+            class="text-white px-4 py-1 rounded-3xl"
             :class="`${techStackColors[skill] || techStackColors.Default}`"
           >
             {{ skill }}

@@ -16,7 +16,7 @@ const filters = reactive<Filters>({
 })
 
 const emit = defineEmits<{
-  (e: 'filtersChanged', filters: Partial<Filters>): void
+  (e: 'applyFilter', filters: Partial<Filters>): void
 }>()
 
 const allFields = [...dropdownConfig, ...textConfig]
@@ -35,8 +35,7 @@ onMounted(() => {
 })
 
 const applyFilters = () => {
-  console.log('options:', { ...filters })
-  emit('filtersChanged', filters)
+  emit('applyFilter', filters)
 }
 
 const clearFilters = () => {

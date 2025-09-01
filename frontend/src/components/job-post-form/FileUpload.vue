@@ -39,7 +39,7 @@ const removeFile = (index: number): void => {
       <div
         v-for="(file, index) in modelValue"
         :key="index"
-        class="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg"
+        class="text-black flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg"
       >
         <span class="text-sm">{{ file.name }}</span>
         <button type="button" class="text-red-500" @click="removeFile(index)">✕</button>

@@ -26,7 +26,7 @@ const handleInput = (event: Event): void => {
       :value="modelValue"
       :placeholder="placeholder"
       @input="handleInput"
-      class="px-3 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
     />
   </div>
 </template>

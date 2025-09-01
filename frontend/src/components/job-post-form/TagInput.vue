@@ -41,7 +41,7 @@ const removeTag = (index: number): void => {
       v-model="newTag"
       :placeholder="placeholder"
       @keyup.enter.prevent="addTag"
-      class="flex-1 px-2 py-1 outline-none"
+      class="flex-1 px-2 py-1 outline-none text-black"
     />
     <button type="button" class="text-blue-600 font-bold" @click="addTag">+</button>
   </div>

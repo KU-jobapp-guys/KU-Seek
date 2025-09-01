@@ -20,6 +20,6 @@ const handleInput = (event: Event): void => {
     :value="modelValue"
     :placeholder="placeholder"
     @input="handleInput"
-    class="w-full min-h-[150px] px-3 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+    class="w-full text-black min-h-[150px] px-3 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
   />
 </template>

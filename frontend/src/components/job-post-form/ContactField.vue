@@ -33,7 +33,11 @@ const removeContact = (index: number): void => {
 <template>
   <div class="space-y-3">
     <!-- Existing Contacts -->
-    <div v-for="(contact, index) in modelValue" :key="index" class="flex items-center gap-2">
+    <div
+      v-for="(contact, index) in modelValue"
+      :key="index"
+      class="flex items-center gap-2 text-black"
+    >
       <span class="px-3 py-1 bg-gray-200 rounded-lg text-sm">
         {{ contact.type }}: {{ contact.link }}
       </span>
@@ -45,12 +49,12 @@ const removeContact = (index: number): void => {
       <input
         v-model="newContact.type"
         placeholder="Contact Type (e.g., Email, Facebook)"
-        class="flex-1 px-3 py-2 border rounded-xl"
+        class="flex-1 px-3 py-2 border rounded-xl text-black"
       />
       <input
         v-model="newContact.link"
         placeholder="Contact Link"
-        class="flex-1 px-3 py-2 border rounded-xl"
+        class="flex-1 px-3 py-2 border rounded-xl text-black"
       />
       <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-xl" @click="addContact">
         +

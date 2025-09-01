@@ -4,4 +4,5 @@ import Header from '@/components/layouts/Header.vue'
 
 <template>
   <Header page="companyBoard" />
+  
 </template>

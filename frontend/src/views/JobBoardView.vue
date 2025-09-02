@@ -52,7 +52,7 @@ onMounted(() => {
             <JobBox :job="job" @select="handleSelect"/>
           </div>
         </div>
-        <div class="w-full h-full bg-[#F9F9F9] p-2 rounded-md shadow-md hidden md:block">
+        <div class="w-full h-full bg-[#F9F9F9] rounded-md shadow-2xl hidden md:block">
           <JobFull v-if="selectedJobId" :jobId="selectedJobId as string" />
 
           <div v-if="!selectedJobId" class="h-full px-8 py-12">

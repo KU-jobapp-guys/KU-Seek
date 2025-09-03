@@ -2,6 +2,7 @@
 import type { Job } from '@/assets/type';
 import { Bookmark } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
+import { getPostTime } from '@/libs/getPostTime';
 
 const props = defineProps<{ job: Job }>();
 const { job } = props;
@@ -38,7 +39,7 @@ function handleJobSelected() {
     </ul>
 
     <div class="w-full flex justify-between mt-4 text-gray-500">
-      <p>3 days ago</p>
+      <p>{{ getPostTime(job.postTime)}}</p>
       <Bookmark class="h-6 w-6 cursor-pointer" />
     </div>
   </div>

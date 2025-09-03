@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import Header from '@/components/layouts/Header.vue'
+import Header from '@/components/layouts/AppHeader.vue'
 import FilterBox from '@/components/jobBoard/FilterBox.vue'
 import JobBox from '@/components/jobBoard/JobBox.vue'
 import type { Job, FilterKeys } from '@/assets/type'
@@ -10,7 +10,7 @@ import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 
 const jobs = ref<Job[]>([])
-const selectedJobId = ref<String>('')
+const selectedJobId = ref<string>('')
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
@@ -23,10 +23,11 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
   jobs.value = mockJobs.filter((job) => {
     return Object.entries(filters.value).every(([key, value]) => {
       if (!value) return true
-      return (job as any)[key].toString().toLowerCase().includes(value.toLowerCase())
+      return (job as Job)[key as FilterKeys].toString().toLowerCase().includes(value.toLowerCase())
     })
   })
 }
+
 
 function handleSelect(id: string) {
   selectedJobId.value = id

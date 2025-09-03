@@ -3,7 +3,7 @@ import { ref, watch, onMounted } from 'vue'
 import type { Job } from '@/assets/type'
 import { mockJobs } from '@/data/mockJobs'
 import { useRouter } from 'vue-router'
-import { MapPin, Clock, Banknote } from 'lucide-vue-next'
+import { MapPin, Clock, Banknote, BriefcaseBusiness } from 'lucide-vue-next'
 import { techStackColors } from '@/assets/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
 
@@ -65,6 +65,11 @@ watch(
           <p>{{ job.jobType }}</p>
         </div>
 
+        <div class="flex gap-x-2 items-center text-gray-600">
+          <BriefcaseBusiness class="w-4 h-4" />
+          <p>{{ job.jobLevel }}</p>
+        </div>
+
         <div v-if="job.salary" class="flex gap-x-2 items-center text-gray-600">
           <Banknote class="w-4 h-4" />
           <p>{{ job.salary }}</p>
@@ -103,7 +108,7 @@ watch(
         </div>
       </div>
 
-      <p class="w-full text-gray-600 text-right py-8">{{ getPostTime(job.postTime) }}</p>
+      <p class="w-full text-sm text-gray-500 text-right py-8">{{ getPostTime(job.postTime) }}</p>
     </div>
   </div>
 </template>

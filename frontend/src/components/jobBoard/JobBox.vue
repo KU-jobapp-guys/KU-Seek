@@ -40,7 +40,7 @@ function handleJobSelected() {
       </li>
     </ul>
 
-    <div class="w-full flex justify-between mt-4 text-gray-500">
+    <div class="w-full flex justify-between mt-4 text-sm text-gray-500">
       <p>{{ getPostTime(job.postTime) }}</p>
       <Bookmark class="h-6 w-6 cursor-pointer" />
     </div>

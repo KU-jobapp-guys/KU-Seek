@@ -5,6 +5,7 @@ export const mockJobs: Job[] = [
     jobId: 'techcorp-frontend-1a2b',
     company: 'TechCorp Inc.',
     role: 'Frontend Developer',
+    jobLevel: 'Mid-level',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-01T10:00:00'),
     description:
@@ -22,6 +23,7 @@ export const mockJobs: Job[] = [
     jobId: 'datasolutions-analyst-3c4d',
     company: 'DataSolutions Co.',
     role: 'Data Analyst',
+    jobLevel: 'Junior',
     location: 'Chiang Mai, Thailand',
     postTime: new Date('2025-08-03T15:30:00'),
     description:
@@ -35,6 +37,7 @@ export const mockJobs: Job[] = [
     jobId: 'fintech-backend-5e6f',
     company: 'FinTech Global',
     role: 'Backend Developer',
+    jobLevel: 'Mid-level',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-05T09:00:00'),
     description:
@@ -52,6 +55,7 @@ export const mockJobs: Job[] = [
     jobId: 'creative-uiux-7g8h',
     company: 'Creative Studios',
     role: 'UI/UX Designer',
+    jobLevel: 'Senior',
     location: 'Phuket, Thailand',
     postTime: new Date('2025-08-07T11:00:00'),
     description:
@@ -69,6 +73,7 @@ export const mockJobs: Job[] = [
     jobId: 'greenenergy-devops-9i0j',
     company: 'Green Energy Ltd.',
     role: 'DevOps Engineer',
+    jobLevel: 'Senior',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-08T13:00:00'),
     description:
@@ -82,6 +87,7 @@ export const mockJobs: Job[] = [
     jobId: 'meditech-data-1k2l',
     company: 'MediTech Solutions',
     role: 'Machine Learning Engineer',
+    jobLevel: 'Mid-level',
     location: 'Chiang Mai, Thailand',
     postTime: new Date('2025-08-09T09:30:00'),
     description:
@@ -94,6 +100,7 @@ export const mockJobs: Job[] = [
     jobId: 'logistics-qa-3m4n',
     company: 'Logistics Pro',
     role: 'QA Engineer',
+    jobLevel: 'Junior',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-10T10:00:00'),
     description:
@@ -111,6 +118,7 @@ export const mockJobs: Job[] = [
     jobId: 'fintech-qa-5o6p',
     company: 'FinTech Global',
     role: 'QA Analyst',
+    jobLevel: 'Mid-level',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-12T14:00:00'),
     description: 'Ensure software quality through testing, automation scripts, and bug tracking.',
@@ -123,6 +131,7 @@ export const mockJobs: Job[] = [
     jobId: 'edutech-frontend-7q8r',
     company: 'EduTech Co.',
     role: 'Frontend Developer',
+    jobLevel: 'Mid-level',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-14T09:00:00'),
     description:
@@ -136,6 +145,7 @@ export const mockJobs: Job[] = [
     jobId: 'marketing-creative-9s0t',
     company: 'Creative Agency',
     role: 'Marketing Specialist',
+    jobLevel: 'Mid-level',
     location: 'Phuket, Thailand',
     postTime: new Date('2025-08-15T11:30:00'),
     description:

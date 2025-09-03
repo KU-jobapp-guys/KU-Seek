@@ -7,8 +7,9 @@ export interface Job {
   description: string
   highlights: string[]
   jobType: string
+  jobLevel: string
   skills: string[]
   salary?: string
 }
 
-export type FilterKeys = 'role' | 'tags' | 'company' | 'jobLevel' | 'location' | 'jobType'
+export type FilterKeys = 'role' | 'skills' | 'company' | 'jobLevel' | 'location' | 'jobType'

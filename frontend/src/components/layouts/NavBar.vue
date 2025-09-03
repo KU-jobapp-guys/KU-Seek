@@ -16,7 +16,7 @@ const pageList = computed(() => {
   return []
 })
 
-const makeLink = (page: String) => {
+const makeLink = (page: string) => {
   return props.role ? `/${props.role}/${page.toLowerCase().replace(/\s+/g, '-')}` : ''
 }
 </script>

@@ -1,28 +1,30 @@
 <script setup lang="ts">
-import type { Job } from '@/assets/type';
-import { Bookmark } from 'lucide-vue-next';
-import { useRouter } from 'vue-router';
-import { getPostTime } from '@/libs/getPostTime';
+import type { Job } from '@/assets/type'
+import { Bookmark } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+import { getPostTime } from '@/libs/getPostTime'
 
-const props = defineProps<{ job: Job }>();
-const { job } = props;
+const props = defineProps<{ job: Job }>()
+const { job } = props
 
-const emit = defineEmits<{ (e: 'select', id: string): void }>();
+const emit = defineEmits<{ (e: 'select', id: string): void }>()
 
-const router = useRouter();
+const router = useRouter()
 
 function handleJobSelected() {
   if (window.innerWidth < 768) {
-    router.push(`/job/${props.job.jobId}`);
+    router.push(`/job/${props.job.jobId}`)
   } else {
-    emit('select', props.job.jobId);
+    emit('select', props.job.jobId)
   }
 }
-
 </script>
 
 <template>
-  <div class="h-full bg-[#F9F9F9] px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer" @click="handleJobSelected">
+  <div
+    class="h-full bg-[#F9F9F9] px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
+    @click="handleJobSelected"
+  >
     <div class="flex justify-between items-center mb-4">
       <div>
         <p class="text-xl font-bold">{{ job.role }}</p>
@@ -39,7 +41,7 @@ function handleJobSelected() {
     </ul>
 
     <div class="w-full flex justify-between mt-4 text-gray-500">
-      <p>{{ getPostTime(job.postTime)}}</p>
+      <p>{{ getPostTime(job.postTime) }}</p>
       <Bookmark class="h-6 w-6 cursor-pointer" />
     </div>
   </div>

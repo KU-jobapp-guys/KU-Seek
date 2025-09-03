@@ -12,7 +12,7 @@ const filters = reactive<Filters>({
   company: '',
   jobLevel: '',
   location: '',
-  jobType: ''
+  jobType: '',
 })
 
 const emit = defineEmits<{
@@ -39,7 +39,7 @@ const applyFilters = () => {
 }
 
 const clearFilters = () => {
-  (Object.keys(filters) as FilterKeys[]).forEach((key) => {
+  ;(Object.keys(filters) as FilterKeys[]).forEach((key) => {
     filters[key] = ''
   })
   emit('applyFilter', filters)
@@ -47,12 +47,13 @@ const clearFilters = () => {
 </script>
 
 <template>
-  <div class="bg-gradient-to-br from-white via-gray-50 to-blue-50/70 backdrop-blur-sm shadow-2xl overflow-hidden">
+  <div
+    class="bg-gradient-to-br from-white via-gray-50 to-blue-50/70 backdrop-blur-sm shadow-2xl overflow-hidden"
+  >
     <div class="h-4 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
 
     <div class="p-8 flex flex-col gap-y-8">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-
         <!-- Dynamic Text Inputs -->
         <div v-for="textField in textConfig" :key="textField.key" class="group">
           <label class="block text-sm font-semibold text-gray-700 mb-1 ml-2">
@@ -80,11 +81,7 @@ const clearFilters = () => {
               class="w-full px-4 py-2 bg-white/90 backdrop-blur-sm border-2 border-gray-200 rounded-2xl shadow-sm hover:shadow-lg focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 appearance-none cursor-pointer text-gray-700"
             >
               <option value="">{{ dropdown.placeholder }}</option>
-              <option
-                v-for="option in dropdown.options"
-                :key="option.value"
-                :value="option.value"
-              >
+              <option v-for="option in dropdown.options" :key="option.value" :value="option.value">
                 {{ option.label }}
               </option>
             </select>

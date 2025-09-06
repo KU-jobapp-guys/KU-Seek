@@ -5,6 +5,7 @@ import Footer from './components/layouts/Footer.vue'
 </script>
 
 <template>
+
   <NavBar role="student" />
 
   <div class="min-h-screen mt-16">
@@ -13,3 +14,4 @@ import Footer from './components/layouts/Footer.vue'
 
   <Footer />
 </template>
+

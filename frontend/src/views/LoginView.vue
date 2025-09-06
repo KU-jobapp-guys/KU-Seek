@@ -4,7 +4,6 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
   role: String,

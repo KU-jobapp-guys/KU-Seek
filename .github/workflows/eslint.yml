@@ -28,4 +28,5 @@ jobs:
 
       - name: Run ESLint
         run: |
+          cd frontend
           npm run lint

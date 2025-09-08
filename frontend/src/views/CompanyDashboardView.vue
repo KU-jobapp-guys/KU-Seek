@@ -23,8 +23,8 @@ import searchIcon from '@/assets/search-icon.svg'
         alt="Dashboard Line"
         class="absolute left-0 top-16 w-full h-auto object-cover z-20"
       />
-      <h1 class="text-8xl font-bold mb-2 z-10 relative">My Dashboard</h1>
-      <p class="text-3xl mb-8 z-10 relative">Welcome back!</p>
+      <h1 class="text-8xl font-bold mb-2 z-30 relative">My Dashboard</h1>
+      <p class="text-3xl mb-8 z-30 relative">Welcome back!</p>
       <!-- 3 boxes: perfectly centered between black and white -->
       <div
         class="flex flex-row space-x-8 absolute left-1/2 -translate-x-1/2 bottom-[-90px] w-[80%] z-30"
@@ -37,7 +37,7 @@ import searchIcon from '@/assets/search-icon.svg'
           cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
         />
         <DashboardStatCard
-          title="Total Job Applying"
+          title="Total Job applications"
           :value="67"
           description="Applicants"
           :icon="appliedIcon"
@@ -133,11 +133,11 @@ import searchIcon from '@/assets/search-icon.svg'
       </div>
     </section>
 
-    <!-- Total Job Applying Section -->
+    <!-- Total Job Applications Section -->
     <section class="px-12 py-10 bg-white">
       <div class="flex items-center mb-4">
         <img :src="appliedIcon" alt="Applied" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Total Job Applying</h2>
+        <h2 class="text-black text-6xl font-bold">Total Job Applications</h2>
       </div>
       <input
         type="text"

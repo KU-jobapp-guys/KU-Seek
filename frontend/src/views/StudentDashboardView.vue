@@ -23,8 +23,8 @@ import searchIcon from '@/assets/search-icon.svg'
         alt="Dashboard Line"
         class="absolute left-0 top-16 w-full h-auto object-cover z-20"
       />
-      <h1 class="text-8xl font-bold mb-2 z-10 relative">My Dashboard</h1>
-      <p class="text-3xl mb-8 z-10 relative">Welcome back!</p>
+      <h1 class="text-8xl font-bold mb-2 z-30 relative">My Dashboard</h1>
+      <p class="text-3xl mb-8 z-30 relative">Welcome back!</p>
       <!-- 3 boxes: perfectly centered between black and white -->
       <div
         class="flex flex-row space-x-8 absolute left-1/2 -translate-x-1/2 bottom-[-90px] w-[80%] z-30"

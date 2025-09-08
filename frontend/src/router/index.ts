@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
+import CompanyProfile from '@/views/CompanyProfile.vue'
 import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import StudentDashboardView from '@/views/StudentDashboardView.vue'
 import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
+import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 
@@ -15,6 +17,13 @@ const router = createRouter({
       name: 'landing',
       component: LandingView,
     },
+
+    {
+      path: '/company/profile',
+      name: 'companyProfile',
+      component: CompanyProfile,
+    },
+    
     {
       path: '/student/explore-job',
       name: 'job board',
@@ -39,6 +48,11 @@ const router = createRouter({
       path: '/job/:id',
       name: 'job view',
       component: JobView,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
     },
     {
       path: '/:pathMatch(.*)*',

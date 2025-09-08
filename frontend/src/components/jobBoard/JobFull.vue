@@ -4,7 +4,7 @@ import type { Job } from '@/assets/type'
 import { mockJobs } from '@/data/mockJobs'
 import { useRouter } from 'vue-router'
 import { MapPin, Clock, Banknote, BriefcaseBusiness } from 'lucide-vue-next'
-import { techStackColors } from '@/assets/configs/techStackConfig'
+import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
 
 const props = defineProps<{ jobId: string }>()

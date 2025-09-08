@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, onMounted } from 'vue'
-import { dropdownConfig, textConfig } from '@/assets/configs/jobFilterConfig'
-import type { FilterKeys } from '@/assets/configs/jobFilterConfig'
+import { dropdownConfig, textConfig } from '@/configs/jobFilterConfig'
+import type { FilterKeys } from '@/configs/jobFilterConfig'
 import { ChevronDownIcon } from 'lucide-vue-next'
 
 type Filters = Record<FilterKeys, string>

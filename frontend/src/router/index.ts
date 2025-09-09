@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
+import JobPostFormView from '@/views/JobPostFormView.vue'
 import CompanyProfile from '@/views/CompanyProfile.vue'
 import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
@@ -23,6 +24,11 @@ const router = createRouter({
       component: CompanyProfile,
     },
     
+    {
+      path: '/company/job-post-form',
+      name: 'jobPostForm',
+      component: JobPostFormView,
+    },
     {
       path: '/student/explore-job',
       name: 'job board',

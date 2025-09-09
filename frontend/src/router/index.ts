@@ -5,6 +5,8 @@ import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
 import StaffDashboardView from '@/views/StaffDashboardView.vue'
 import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
+import CompanyProfile from '@/views/CompanyProfile.vue'
+import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
@@ -15,6 +17,13 @@ const router = createRouter({
       name: 'landing',
       component: LandingView,
     },
+
+    {
+      path: '/company/profile',
+      name: 'companyProfile',
+      component: CompanyProfile,
+    },
+    
     {
       path: '/student/dashboard',
       name: 'StudentDashboard',
@@ -49,6 +58,11 @@ const router = createRouter({
       path: '/company/dashboard',
       name: 'company dashboard',
       component: CompanyDashboardView,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
     },
     {
       path: '/:pathMatch(.*)*',

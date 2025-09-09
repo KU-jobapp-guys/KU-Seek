@@ -14,6 +14,8 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: Contact[]): void
 }>()
 
+const contactTypes = ['Email', 'Phone', 'Facebook', 'LinkedIn', 'Website']
+
 const newContact = ref<Contact>({ type: '', link: '' })
 
 const addContact = (): void => {
@@ -46,11 +48,10 @@ const removeContact = (index: number): void => {
 
     <!-- New Contact Input -->
     <div class="flex gap-2">
-      <input
-        v-model="newContact.type"
-        placeholder="Contact Type (e.g., Email, Facebook)"
-        class="flex-1 px-3 py-2 border rounded-xl text-black"
-      />
+      <select v-model="newContact.type" class="flex-1 px-3 py-2 border rounded-xl text-black">
+        <option value="">Select type</option>
+        <option v-for="type in contactTypes" :key="type" :value="type">{{ type }}</option>
+      </select>
       <input
         v-model="newContact.link"
         placeholder="Contact Link"

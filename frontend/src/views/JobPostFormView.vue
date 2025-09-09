@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 // Import components
 import BaseInput from '@/components/job-post-form/BaseInput.vue'
 import BaseTextarea from '@/components/job-post-form/BaseTextarea.vue'
-import FileUpload from '@/components/job-post-form/FileUpload.vue'
 import TagInput from '@/components/job-post-form/TagInput.vue'
 import ContactField from '@/components/job-post-form/ContactField.vue'
 import SalaryInput from '@/components/job-post-form/SalaryInput.vue'
@@ -23,9 +22,9 @@ interface JobPost {
   description: string
   jobType: string
   workFields: string[]
+  tags: string[]
   salaryMin: string
   salaryMax: string
-  images: File[]
   contacts: Contact[]
 }
 
@@ -37,13 +36,36 @@ const jobPost = ref<JobPost>({
   description: '',
   jobType: '',
   workFields: [],
+  tags: [],
   salaryMin: '',
   salaryMax: '',
-  images: [],
   contacts: [],
 })
 
+// Track validity from SalaryInput
+const isSalaryValid = ref(true)
+
+// Check if form is valid
+const isFormValid = computed(() => {
+  return (
+    jobPost.value.company.trim() !== '' &&
+    jobPost.value.role.trim() !== '' &&
+    jobPost.value.location.trim() !== '' &&
+    jobPost.value.description.trim() !== '' &&
+    jobPost.value.jobType.trim() !== '' &&
+    jobPost.value.workFields.length > 0 &&
+    jobPost.value.salaryMin.trim() !== '' &&
+    jobPost.value.salaryMax.trim() !== '' &&
+    isSalaryValid.value
+  )
+})
+
 const handleSubmit = (): void => {
+  if (!isFormValid.value) {
+    alert('Please complete all fields before submitting.')
+    return
+  }
+
   const payload = {
     ...jobPost.value,
     salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
@@ -78,9 +100,23 @@ const handleSubmit = (): void => {
             label="Location"
             placeholder="e.g. Bangkok, Thailand"
           />
+          <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-800 mb-1">Job Type</label>
+            <select
+              v-model="jobPost.jobType"
+              class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            >
+              <option disabled value="">Select job type</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Internship">Internship</option>
+              <option value="Contract">Contract</option>
+            </select>
+          </div>
           <SalaryInput
             v-model:salaryMin="jobPost.salaryMin"
             v-model:salaryMax="jobPost.salaryMax"
+            @validity="isSalaryValid = $event"
           />
         </div>
       </section>
@@ -103,10 +139,10 @@ const handleSubmit = (): void => {
         />
       </section>
 
-      <!-- Images -->
+      <!-- Tags -->
       <section class="bg-white shadow-lg rounded-2xl p-8">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Images</h2>
-        <FileUpload v-model="jobPost.images" />
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Tags</h2>
+        <TagInput v-model="jobPost.tags" placeholder="e.g. Urgent, Remote, Internship" />
       </section>
 
       <!-- Contacts -->
@@ -120,7 +156,8 @@ const handleSubmit = (): void => {
         <button
           type="submit"
           @click.prevent="handleSubmit"
-          class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transition"
+          :disabled="!isFormValid"
+          class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Post Job
         </button>

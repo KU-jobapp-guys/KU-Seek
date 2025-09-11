@@ -97,6 +97,16 @@ const jobsData = ref([
   },
 ])
 
+type Job = {
+  company: string
+  role: string
+  location: string
+  postTime: string
+  description: string
+  jobType: string
+  skills: string[]
+}
+
 const activeTab = ref('overview')
 const showAllJobs = ref(false)
 const expandedSkills = ref(new Set())
@@ -161,7 +171,7 @@ const getSkillsToShow = (skills: string[], jobIndex: number) => {
   }
 }
 
-const getJobIndex = (job: any, rowIndex: number, jobIndexInRow: number) => {
+const getJobIndex = (job: Job, rowIndex: number, jobIndexInRow: number) => {
   return rowIndex * 3 + jobIndexInRow
 }
 

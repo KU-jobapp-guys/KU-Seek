@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
-import CompanyProfile from '@/views/CompanyProfile.vue'
-import JobBoardView from '@/views/JobBoardView.vue'
-import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import StudentDashboardView from '@/views/StudentDashboardView.vue'
 import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
+import StaffDashboardView from '@/views/StaffDashboardView.vue'
+import JobBoardView from '@/views/JobBoardView.vue'
+import CompanyBoardView from '@/views/CompanyBoardView.vue'
+import CompanyProfile from '@/views/CompanyProfile.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
@@ -23,6 +24,21 @@ const router = createRouter({
       component: CompanyProfile,
     },
     
+    {
+      path: '/student/dashboard',
+      name: 'StudentDashboard',
+      component: StudentDashboardView,
+    },
+    {
+      path: '/company/dashboard',
+      name: 'CompanyDashboard',
+      component: CompanyDashboardView,
+    },
+    {
+      path: '/staff/dashboard',
+      name: 'StaffDashboard',
+      component: StaffDashboardView
+    },
     {
       path: '/student/explore-job',
       name: 'job board',

@@ -11,24 +11,10 @@ import searchIcon from '@/assets/search-icon.svg'
 <template>
   <div class="dashboard-bg min-h-screen pb-0">
     <!-- Main Dashboard Section -->
-    <section
-      class="bg-black text-white top-0 bottom-10 px-12 pt-10 pb-0 relative overflow-visible min-h-[500px]"
-    >
-      <img
-        src="@/assets/dashboard-pic.png"
-        alt="Dashboard Illustration"
-        class="absolute top-8 right-16 w-[600px] h-auto object-cover z-0"
-      />
-      <img
-        src="@/assets/dashboard-illustration.png"
-        alt="Dashboard Line"
-        class="absolute left-0 top-16 w-full h-auto object-cover z-20"
-      />
-      <h1 class="text-8xl font-bold mb-2 z-30 relative">My Dashboard</h1>
-      <p class="text-3xl mb-8 z-30 relative">Welcome back!</p>
+      <Header page="companyDashboard" />
       <!-- 3 boxes: perfectly centered between black and white -->
       <div
-        class="flex flex-row space-x-8 absolute left-1/2 -translate-x-1/2 bottom-[-90px] w-[80%] z-30"
+        class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16"
       >
         <DashboardStatCard
           title="Total Job Posts"
@@ -52,10 +38,9 @@ import searchIcon from '@/assets/search-icon.svg'
           cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
         />
       </div>
-    </section>
 
     <!-- Total Job Posts Section -->
-    <section class="px-12 pt-40 pb-10 bg-white">
+    <section class="px-[8vw] md:px-[12vw] pt-40 pb-10 bg-white">
       <div class="flex items-center mb-4">
         <img :src="jobPostIcon" alt="Job" class="w-12 h-12 mr-2" />
         <h2 class="text-black text-6xl font-bold">Total Job Posts</h2>
@@ -135,7 +120,7 @@ import searchIcon from '@/assets/search-icon.svg'
     </section>
 
     <!-- Total Job Applications Section -->
-    <section class="px-12 py-10 bg-white">
+    <section class="px-[8vw] md:px-[12vw] py-10 bg-white">
       <div class="flex items-center mb-4">
         <img :src="appliedIcon" alt="Applied" class="w-12 h-12 mr-2" />
         <h2 class="text-black text-6xl font-bold">Total Job Applications</h2>

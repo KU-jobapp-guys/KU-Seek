@@ -18,13 +18,11 @@ const router = createRouter({
       name: 'landing',
       component: LandingView,
     },
-
     {
-      path: '/company/profile',
+      path: '/company/profile/:id',
       name: 'companyProfile',
       component: CompanyProfile,
     },
-    
     {
       path: '/student/dashboard',
       name: 'StudentDashboard',

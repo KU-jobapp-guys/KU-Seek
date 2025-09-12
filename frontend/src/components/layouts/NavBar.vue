@@ -17,8 +17,13 @@ const pageList = computed(() => {
   return []
 })
 
-const makeLink = (page: string) => {
-  return props.role ? `/${props.role}/${page.toLowerCase().replace(/\s+/g, '-')}` : ''
+function makeLink(page: string) {
+  let role = props.role
+  let userId = '1'
+  if (page === 'Profile') {
+    return `/${role}/profile/${userId}`
+  }
+  return `/${role}/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 </script>
 

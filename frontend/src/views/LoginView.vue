@@ -22,6 +22,7 @@ async function handleURICallback() {
 
     const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
       method: "POST",
+      credentials: 'include',
       headers: { 
         "Content-Type": "application/json",
       },

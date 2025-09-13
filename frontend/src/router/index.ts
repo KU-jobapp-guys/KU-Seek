@@ -8,6 +8,8 @@ import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import CompanyProfile from '@/views/CompanyProfile.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import JobView from '@/views/JobView.vue'
+import StudentProfile from '@/views/StudentProfile.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,13 +19,16 @@ const router = createRouter({
       name: 'landing',
       component: LandingView,
     },
-
     {
-      path: '/company/profile',
+      path: '/student/profile/:id',
+      name: 'studentProfile',
+      component: StudentProfile,
+    },
+    {
+      path: '/company/profile/:id',
       name: 'companyProfile',
       component: CompanyProfile,
     },
-    
     {
       path: '/student/dashboard',
       name: 'StudentDashboard',
@@ -37,7 +42,7 @@ const router = createRouter({
     {
       path: '/staff/dashboard',
       name: 'StaffDashboard',
-      component: StaffDashboardView
+      component: StaffDashboardView,
     },
     {
       path: '/student/explore-job',
@@ -58,6 +63,11 @@ const router = createRouter({
       path: '/company/dashboard',
       name: 'company dashboard',
       component: CompanyDashboardView,
+    },
+    {
+      path: '/job/:id',
+      name: 'job view',
+      component: JobView,
     },
     {
       path: '/login',

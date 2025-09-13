@@ -11,33 +11,31 @@ import searchIcon from '@/assets/search-icon.svg'
 <template>
   <div class="dashboard-bg min-h-screen pb-0">
     <!-- Main Dashboard Section -->
-      <Header page="companyDashboard" />
-      <!-- 3 boxes: perfectly centered between black and white -->
-      <div
-        class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16"
-      >
-        <DashboardStatCard
-          title="Total Job Posts"
-          :value="6"
-          description="Approved Job Posts"
-          :icon="jobPostIcon"
-          cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-        />
-        <DashboardStatCard
-          title="Total Job applications"
-          :value="67"
-          description="Applicants"
-          :icon="appliedIcon"
-          cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-        />
-        <DashboardStatCard
-          title="Profile Views"
-          :value="237"
-          description="This month"
-          :icon="searchIcon"
-          cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-        />
-      </div>
+    <Header page="companyDashboard" />
+    <!-- 3 boxes: perfectly centered between black and white -->
+    <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16">
+      <DashboardStatCard
+        title="Total Job Posts"
+        :value="6"
+        description="Approved Job Posts"
+        :icon="jobPostIcon"
+        cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+      />
+      <DashboardStatCard
+        title="Total Job applications"
+        :value="67"
+        description="Applicants"
+        :icon="appliedIcon"
+        cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+      />
+      <DashboardStatCard
+        title="Profile Views"
+        :value="237"
+        description="This month"
+        :icon="searchIcon"
+        cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+      />
+    </div>
 
     <!-- Total Job Posts Section -->
     <section class="px-[8vw] md:px-[12vw] pt-40 pb-10 bg-white">

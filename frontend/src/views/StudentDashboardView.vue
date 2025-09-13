@@ -11,32 +11,31 @@ import searchIcon from '@/assets/search-icon.svg'
 <template>
   <div class="dashboard-bg min-h-screen pb-0">
     <!-- Main Dashboard Section -->
-    
     <Header page="studentDashboard" />
-      <!-- 3 boxes: perfectly centered between black and white -->
-      <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16">
-        <DashboardStatCard
-          title="Applied Jobs"
-          :value="6"
-          description="Jobs you've applied"
-          :icon="appliedIcon"
-          cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-        />
-        <DashboardStatCard
-          title="Bookmarked Jobs"
-          :value="6"
-          description="Jobs saved for later"
-          :icon="bigBookmarkIcon"
-          cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-        />
-        <DashboardStatCard
-          title="Recently Viewed Jobs"
-          :value="7"
-          description="Jobs you've explored today"
-          :icon="searchIcon"
-          cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-        />
-      </div>
+    <!-- 3 boxes: perfectly centered between black and white -->
+    <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16">
+      <DashboardStatCard
+        title="Applied Jobs"
+        :value="6"
+        description="Jobs you've applied"
+        :icon="appliedIcon"
+        cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+      />
+      <DashboardStatCard
+        title="Bookmarked Jobs"
+        :value="6"
+        description="Jobs saved for later"
+        :icon="bigBookmarkIcon"
+        cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+      />
+      <DashboardStatCard
+        title="Recently Viewed Jobs"
+        :value="7"
+        description="Jobs you've explored today"
+        :icon="searchIcon"
+        cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+      />
+    </div>
 
     <!-- Applied Jobs Section -->
     <section class="px-[8vw] md:px-[12vw] pt-40 pb-10 bg-white">

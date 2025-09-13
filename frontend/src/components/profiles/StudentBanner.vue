@@ -30,13 +30,16 @@ watch(isFullyLoaded, (newValue) => {
     </div>
 
     <div ref="containerRef" class="relative bg-gradient-to-b from-green-800/20 ring-1 ring-[#B1B1B1] ring-inset to-white px-12 py-8">
-      <img
-        ref="profileImageRef"
-        :src="studentData.profile_img"
-        @load="profileLoaded = true"
-        class="absolute z-20 -top-20 ring-8 w-[10vw] h-[10vw] min-w-[160px] min-h-[160px] ring-gray-400 ring-offset-0 bg-black rounded-full shadow-md"
-        alt="Company Profile"
-      />
+      <div class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full bg-gradient-to-b from-black/80 to-green-500 shadow-md">
+        <img
+          ref="profileImageRef"
+          :src="studentData.profile_img"
+          @load="profileLoaded = true"
+          class="rounded-full w-full h-full bg-black"
+          alt="Company Profile"
+        />
+      </div>
+
 
       <div class="w-full h-8 flex justify-end">
         <PenBoxIcon v-if="isOwner" class="h-8 w-8 hover:text-gray-700 hover:cursor-pointer" :stroke-width="1.5"/>

@@ -7,6 +7,8 @@ const router = useRouter()
 const props = defineProps<{ companyData: Company }>()
 const { companyData } = props
 
+const isOwner = companyData.id === '1'
+
 const goToJobBoard = () => {
   router.push({
     name: 'job board',
@@ -32,8 +34,8 @@ const goToJobBoard = () => {
         alt="Company Profile"
       />
 
-      <div class="w-full flex justify-end">
-        <PenBoxIcon class="h-8 w-8" :stroke-width="1.5"/>
+      <div class="w-full h-8 flex justify-end">
+        <PenBoxIcon v-if="isOwner" class="h-8 w-8" :stroke-width="1.5"/>
       </div>
 
       <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full mt-12 xl:mt-20">

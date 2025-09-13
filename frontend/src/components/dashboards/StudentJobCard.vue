@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Tag from '@/components/dashboards/Tag.vue'
+import Tag from '@/components/dashboards/JobTag.vue'
 import BookmarkBlackIcon from '@/assets/bookmark-black.svg'
 import BookmarkWhiteIcon from '@/assets/bookmark-white.svg'
 

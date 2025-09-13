@@ -8,12 +8,16 @@ import { mockJobs } from '@/data/mockJobs'
 import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
+const companyFilter = ref<string | undefined>((route.query.company as string)) // optional query from url
 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
@@ -27,7 +31,6 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
     })
   })
 }
-
 
 function handleSelect(id: string) {
   selectedJobId.value = id
@@ -43,7 +46,7 @@ onMounted(() => {
   <Header page="jobBoard" />
 
   <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw]">
-    <FilterBox @applyFilter="fetchJobs" />
+    <FilterBox :initialFilters="{ company: companyFilter }" @applyFilter="fetchJobs" />
 
     <div class="mt-12">
       <div v-if="jobs.length > 0" class="w-full h-[800px] flex gap-x-4">

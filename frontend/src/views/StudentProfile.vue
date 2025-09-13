@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import StudentBanner from '@/components/profiles/StudentBanner.vue'
+import StudentBanner from '@/components/profiles/banners/StudentBanner.vue'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { mockStudents } from '@/data/mockStudent'
 import { useRoute, useRouter } from 'vue-router'
@@ -20,7 +20,7 @@ const loadStudent = (id?: string) => {
     return
   }
 
-  studentData.value = mockStudents.find((s) => s.user_id === id) || null
+  studentData.value = mockStudents.find((s) => s.id === id) || null
 
   if (!studentData.value) {
     router.replace({ name: 'not found' })

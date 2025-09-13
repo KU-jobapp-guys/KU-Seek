@@ -1,5 +1,5 @@
 export interface StudentProfile {
-  user_id: string
+  id: string
   first_name: string
   last_name: string
   about: string
@@ -8,8 +8,8 @@ export interface StudentProfile {
   gender: string
   age: number
   user_type: 'student'
-  profile_img: string
-  banner_img: string
+  profilePhoto: string
+  bannerPhoto: string
   phone_number: string
   is_verified: boolean
   nisit_id: string

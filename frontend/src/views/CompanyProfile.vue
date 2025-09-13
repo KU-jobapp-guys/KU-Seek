@@ -3,15 +3,17 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Company } from '@/types/companyType'
 import { mockCompany } from '@/data/mockCompany'
-import ProfileBanner from '@/components/profiles/CompanyBanner.vue'
+import ProfileBanner from '@/components/profiles/banners/CompanyBanner.vue'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import { mockJobs } from '@/data/mockJobs'
 import type { Job } from '@/types/jobType'
 import { Building2Icon } from 'lucide-vue-next'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 
 const route = useRoute()
 const router = useRouter()
 
+const isLoading = ref(true)
 const companyData = ref<Company | null>(null)
 const companyJobs = ref<Job[]>([])
 
@@ -28,6 +30,10 @@ const loadCompany = (id?: string) => {
   }
 
   companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
+}
+
+const renderReady = () => {
+  isLoading.value = false
 }
 
 onMounted(() => {
@@ -58,8 +64,10 @@ const displayedJobs = computed(() => {
 </script>
 
 <template>
+  <LoadingScreen v-if="isLoading" />
+
   <div v-if="companyData" class="px-[8vw] md:px-[12vw] py-16">
-    <ProfileBanner :companyData="companyData" />
+    <ProfileBanner :companyData="companyData" @loaded="renderReady" />
 
     <!-- Content Part -->
     <section class="data mt-8">

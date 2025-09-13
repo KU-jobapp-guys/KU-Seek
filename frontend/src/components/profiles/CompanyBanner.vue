@@ -38,7 +38,7 @@ const goToJobBoard = () => {
 
       <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full mt-12 xl:mt-20">
         <div>
-          <h1 class="font-semibold text-3xl">{{ companyData.name }}</h1>
+          <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>
           <p class="font-medium">{{ companyData.type }}</p>
           <p>{{ companyData.location }}</p>
         </div>

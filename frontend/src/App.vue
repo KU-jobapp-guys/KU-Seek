@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref } from 'vue'
-const userRole = ref('company')
+const userRole = ref('student')
 </script>
 
 <template>

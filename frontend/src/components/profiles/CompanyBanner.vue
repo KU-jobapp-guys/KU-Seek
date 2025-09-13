@@ -20,7 +20,7 @@ const goToJobBoard = () => {
   <section class="profile rounded-xl overflow-hidden shadow-xl">
     
     <div class="h-[32vh] relative bg-gray-500 w-full object-cover overflow-hidden">
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/20 to-black/0 z-10"></div>
+      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-black/0 z-10"></div>
       <img :src="companyData.bannerPhoto" class="absolute z-0 w-full h-full object-cover" alt="Company Banner" />
     </div>
 

@@ -1,26 +1,39 @@
 <script setup lang="ts">
 import { PenBoxIcon, CircleCheck } from 'lucide-vue-next';
 import type { StudentProfile } from '@/types/studentType';
+import { ref, computed, watch } from 'vue';
 
 const props = defineProps<{ studentData: StudentProfile }>()
 const { studentData } = props
+const emits = defineEmits<{ (e: 'loaded'): void }>()
 
 const isOwner = studentData.user_id === '2'
 
+const bannerLoaded = ref(false)
+const profileLoaded = ref(false)
+const isFullyLoaded = computed(() => bannerLoaded.value && profileLoaded.value)
+
+watch(isFullyLoaded, (newValue) => {
+  console.log("status: ", isFullyLoaded)
+  if (newValue) {
+    emits('loaded')
+  }
+})
 </script>
 
 <template>
   <section class="profile rounded-xl overflow-hidden shadow-xl">
     
     <div class="h-[32vh] relative bg-gray-500 w-full object-cover overflow-hidden">
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/20 to-black/0 z-10"></div>
-      <img :src="studentData.banner_img" class="absolute z-0 w-full h-full object-cover" alt="Company Banner" />
+      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-black/0 z-10"></div>
+      <img :src="studentData.banner_img" class="absolute z-0 w-full h-full object-cover" alt="Company Banner" @load="bannerLoaded = true"/>
     </div>
 
     <div ref="containerRef" class="relative bg-gradient-to-b from-green-800/20 ring-1 ring-[#B1B1B1] ring-inset to-white px-12 py-8">
       <img
         ref="profileImageRef"
         :src="studentData.profile_img"
+        @load="profileLoaded = true"
         class="absolute z-20 -top-20 ring-8 w-[10vw] h-[10vw] min-w-[160px] min-h-[160px] ring-gray-400 ring-offset-0 bg-black rounded-full shadow-md"
         alt="Company Profile"
       />

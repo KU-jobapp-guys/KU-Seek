@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import StudentBanner from '@/components/profiles/StudentBanner.vue';
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue';
 import { mockStudents } from '@/data/mockStudent';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
@@ -11,6 +12,7 @@ import { techStackColors } from '@/configs/techStackConfig';
 const route = useRoute()
 const router = useRouter()
 
+const isLoading = ref(true)
 const studentData = ref<StudentProfile | null>(null)
 
 const loadStudent = (id?: string) => {
@@ -25,11 +27,16 @@ const loadStudent = (id?: string) => {
     router.replace({ name: 'not found' })
   }
 }
+  
 
 const profileStyle = {
   "sectionBox": "bg-gradient-to-b from-green-800/10 to-white py-8 px-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md",
   "sectionIcon": "w-12 h-12 p-2 flex items-center justify-center rounded-full text-white",
   "contentBox": "bg-white mt-4 px-4 py-6 w-full border border-gray-400 rounded-md shadow-md"
+}
+
+const renderReady = () => {
+  isLoading.value = false
 }
 
 onMounted(() => {
@@ -38,9 +45,11 @@ onMounted(() => {
 </script>
 
 <template>
+  <LoadingScreen v-if="isLoading" />
+
   <div v-if="studentData" class="px-[8vw] md:px-[12vw] py-16">
 
-    <StudentBanner :studentData="studentData" />
+    <StudentBanner :studentData="studentData" @loaded="renderReady"/>
 
     <section :class="profileStyle.sectionBox" class="mt-8 mb-6">
       <div class="flex items-center gap-x-4">
@@ -54,7 +63,6 @@ onMounted(() => {
         <p>{{ studentData.about }}</p>
       </div>
     </section>
-
 
     <div class="flex flex-col md:flex-row gap-x-6 gap-y-6">
       <!-- Interest Section -->

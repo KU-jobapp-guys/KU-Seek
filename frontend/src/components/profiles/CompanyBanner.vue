@@ -26,13 +26,15 @@ const goToJobBoard = () => {
       <img :src="companyData.bannerPhoto" class="absolute z-0 w-full h-full object-cover" alt="Company Banner" />
     </div>
 
-    <div ref="containerRef" class="relative bg-gradient-to-b from-green-800/20 ring-1 ring-[#B1B1B1] ring-inset to-white px-12 py-8">
-      <img
-        ref="profileImageRef"
-        :src="companyData.profilePhoto"
-        class="absolute z-20 -top-20 ring-8 w-[10vw] h-[10vw] min-w-[160px] min-h-[160px] ring-gray-400 ring-offset-0 bg-black rounded-full shadow-md"
-        alt="Company Profile"
-      />
+    <div ref="containerRef" class="relative bg-gradient-to-b from-blue-800/20 ring-1 ring-[#B1B1B1] ring-inset to-white px-12 py-8">
+      <div class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full bg-gradient-to-b from-blue-900 to-blue-500 shadow-md">
+        <img
+          ref="profileImageRef"
+          :src="companyData.profilePhoto"
+          class="rounded-full w-full h-full bg-black"
+          alt="Company Profile"
+        />
+      </div>
 
       <div class="w-full h-8 flex justify-end">
         <PenBoxIcon v-if="isOwner" class="h-8 w-8" :stroke-width="1.5"/>
@@ -54,6 +56,6 @@ const goToJobBoard = () => {
       </div>
     </div>
 
-    <div class="w-full h-4 bg-gradient-to-r from-green-600 to-green-800"></div>
+    <div class="w-full h-4 bg-gradient-to-r from-blue-600 via-blue-800 to-purple-500"></div>
   </section>
 </template>

@@ -66,7 +66,7 @@ const displayedJobs = computed(() => {
     <!-- Content Part -->
     <section class="data mt-8">
       <div
-        class="bg-gradient-to-b from-green-800/10 to-white rounded-[20px] ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
+        class="bg-gradient-to-b from-blue-800/10 to-white rounded-[20px] ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="flex">
@@ -75,8 +75,8 @@ const displayedJobs = computed(() => {
             :class="[
               'px-6 py-4 text-xl rounded-t-[20px] transition-colors duration-200',
               activeTab === tab
-                ? 'text-[#01432A] font-black'
-                : 'text-gray-600 hover:text-[#01432A]',
+                ? 'text-black font-black'
+                : 'text-gray-600 hover:text-gray-900',
             ]"
           >
             {{ tab }}
@@ -128,7 +128,11 @@ const displayedJobs = computed(() => {
               </div>
 
               <!-- Expand Job Toggle -->
-              <div v-if="companyJobs.length > 3" class="flex justify-end mt-6">
+              <div v-if="companyJobs.length > 3" class="flex justify-between items-center mt-6">
+                <div class="inline-flex overflow-hidden rounded-full text-white">
+                  <div class="px-6 py-2 bg-red-500">{{ companyJobs.length }} Jobs</div>
+                </div>
+
                 <button
                   @click="toggleJobsView"
                   class="text-[#686868] font-medium hover:text-[#8e8e8e] transition-colors duration-200 flex items-center gap-1"

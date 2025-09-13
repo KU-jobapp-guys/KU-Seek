@@ -110,7 +110,7 @@ onMounted(() => {
         <p class="text-2xl font-bold">Education</p>
       </div>
       
-      <div v-for="edu in studentData.education" :class="profileStyle.contentBox">
+      <div v-for="(edu, eduIndex) in studentData.education" :key="eduIndex" :class="profileStyle.contentBox">
         <p class="font-bold">{{ edu.type }} of {{ edu.major }} in {{ edu.curriculum_name }}</p>
         <p>{{ edu.university }}</p>
         <p class="text-sm">{{ edu.year_of_study.getFullYear() }} - {{ edu.graduate_year.getFullYear() }}</p>

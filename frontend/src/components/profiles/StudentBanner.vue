@@ -26,17 +26,17 @@ watch(isFullyLoaded, (newValue) => {
     
     <div class="h-[32vh] relative bg-gray-500 w-full object-cover overflow-hidden">
       <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-black/0 z-10"></div>
-      <img :src="studentData.banner_img" class="absolute z-0 w-full h-full object-cover" alt="Company Banner" @load="bannerLoaded = true"/>
+      <img :src="studentData.banner_img" class="absolute z-0 w-full h-full object-cover" alt="Student Banner" @load="bannerLoaded = true"/>
     </div>
 
     <div ref="containerRef" class="relative bg-gradient-to-b from-green-800/20 ring-1 ring-[#B1B1B1] ring-inset to-white px-12 py-8">
-      <div class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full bg-gradient-to-b from-black/80 to-green-500 shadow-md">
+      <div class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full bg-gradient-to-b from-green-900 to-green-500 shadow-md">
         <img
           ref="profileImageRef"
           :src="studentData.profile_img"
           @load="profileLoaded = true"
           class="rounded-full w-full h-full bg-black"
-          alt="Company Profile"
+          alt="Student Profile"
         />
       </div>
 

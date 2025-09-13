@@ -69,7 +69,7 @@ const toggleSkillsExpansion = () => {
 
       </div>
 
-      <router-link :to="`/job/${job.jobId}`" class="mt-8 bg-gradient-to-r from-blue-500 to-blue-600  text-white font-bold rounded-md self-end py-2 px-6 text-sm hover:bg-gray-500">
+      <router-link :to="`/job/${job.jobId}`" class="mt-8 bg-gray-400  text-white font-bold rounded-md self-end py-2 px-6 text-sm hover:bg-gray-500">
         View Details
       </router-link>
     </div>

@@ -18,8 +18,8 @@ const pageList = computed(() => {
 })
 
 function makeLink(page: string) {
-  let role = props.role
-  let userId = '1'
+  const role = props.role
+  const userId = '1'
   if (page === 'Profile') {
     return `/${role}/profile/${userId}`
   }

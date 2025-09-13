@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import StudentBanner from '@/components/profiles/StudentBanner.vue';
-import LoadingScreen from '@/components/layouts/LoadingScreen.vue';
-import { mockStudents } from '@/data/mockStudent';
-import { useRoute, useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
-import type { StudentProfile } from '@/types/studentType';
-import { CircleUserRound, Wrench, GraduationCap, Star } from 'lucide-vue-next';
-import { techStackColors } from '@/configs/techStackConfig';
-
+import StudentBanner from '@/components/profiles/StudentBanner.vue'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import { mockStudents } from '@/data/mockStudent'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import type { StudentProfile } from '@/types/studentType'
+import { CircleUserRound, Wrench, GraduationCap, Star } from 'lucide-vue-next'
+import { techStackColors } from '@/configs/techStackConfig'
 
 const route = useRoute()
 const router = useRouter()
@@ -27,12 +26,12 @@ const loadStudent = (id?: string) => {
     router.replace({ name: 'not found' })
   }
 }
-  
 
 const profileStyle = {
-  "sectionBox": "bg-gradient-to-b from-green-800/10 to-white py-8 px-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md",
-  "sectionIcon": "w-12 h-12 p-2 flex items-center justify-center rounded-full text-white",
-  "contentBox": "bg-white mt-4 px-4 py-6 w-full border border-gray-400 rounded-md shadow-md"
+  sectionBox:
+    'bg-gradient-to-b from-green-800/10 to-white py-8 px-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md',
+  sectionIcon: 'w-12 h-12 p-2 flex items-center justify-center rounded-full text-white',
+  contentBox: 'bg-white mt-4 px-4 py-6 w-full border border-gray-400 rounded-md shadow-md',
 }
 
 const renderReady = () => {
@@ -48,8 +47,7 @@ onMounted(() => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="studentData" class="px-[8vw] md:px-[12vw] py-16">
-
-    <StudentBanner :studentData="studentData" @loaded="renderReady"/>
+    <StudentBanner :studentData="studentData" @loaded="renderReady" />
 
     <section :class="profileStyle.sectionBox" class="mt-8 mb-6">
       <div class="flex items-center gap-x-4">
@@ -58,7 +56,7 @@ onMounted(() => {
         </div>
         <p class="text-2xl font-bold">About</p>
       </div>
-      
+
       <div :class="profileStyle.contentBox">
         <p>{{ studentData.about }}</p>
       </div>
@@ -73,7 +71,7 @@ onMounted(() => {
           </div>
           <p class="text-2xl font-bold">Interest</p>
         </div>
-        
+
         <div :class="profileStyle.contentBox">
           <p>{{ studentData.interests }}</p>
         </div>
@@ -87,7 +85,7 @@ onMounted(() => {
           </div>
           <p class="text-2xl font-bold">Skills</p>
         </div>
-        
+
         <div :class="profileStyle.contentBox" class="flex flex-wrap gap-2">
           <p
             v-for="skill in studentData.skills"
@@ -109,13 +107,18 @@ onMounted(() => {
         </div>
         <p class="text-2xl font-bold">Education</p>
       </div>
-      
-      <div v-for="(edu, eduIndex) in studentData.education" :key="eduIndex" :class="profileStyle.contentBox">
+
+      <div
+        v-for="(edu, eduIndex) in studentData.education"
+        :key="eduIndex"
+        :class="profileStyle.contentBox"
+      >
         <p class="font-bold">{{ edu.type }} of {{ edu.major }} in {{ edu.curriculum_name }}</p>
         <p>{{ edu.university }}</p>
-        <p class="text-sm">{{ edu.year_of_study.getFullYear() }} - {{ edu.graduate_year.getFullYear() }}</p>
+        <p class="text-sm">
+          {{ edu.year_of_study.getFullYear() }} - {{ edu.graduate_year.getFullYear() }}
+        </p>
       </div>
     </section>
-
   </div>
 </template>

@@ -2,7 +2,7 @@ export interface Company {
   id: string
   name: string
   type: string
-  website: { name: string, url: string }
+  website: { name: string; url: string }
   industry: string
   workFields: string[]
   location: string

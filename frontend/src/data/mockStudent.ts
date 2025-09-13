@@ -5,7 +5,8 @@ export const mockStudents: StudentProfile[] = [
     user_id: '1',
     first_name: 'Ananya',
     last_name: 'Suksa',
-    about: 'I am a passionate software developer with 3+ years of experience building scalable web and mobile applications. Skilled in modern frameworks, backend API design, and cloud integration. I enjoy solving complex problems, collaborating in agile teams, and continuously learning new technologies to deliver high-quality software.',
+    about:
+      'I am a passionate software developer with 3+ years of experience building scalable web and mobile applications. Skilled in modern frameworks, backend API design, and cloud integration. I enjoy solving complex problems, collaborating in agile teams, and continuously learning new technologies to deliver high-quality software.',
     location: 'Bangkok, Thailand',
     contact_email: 'ananya.suksa@example.com',
     gender: 'Female',
@@ -18,7 +19,8 @@ export const mockStudents: StudentProfile[] = [
     nisit_id: '6301234567',
     gpa: 3.75,
     skills: ['JavaScript', 'Python', 'Vue.js', 'React', 'SQL'],
-    interests: 'Artificial Intelligence, Machine Learning, Data Science, Natural Language Processing, Computer Vision, Algorithm Design, Competitive Programming, Robotics, Cybersecurity, Cloud Computing, Software Engineering, Open Source Contribution, Quantum Computing, Bioinformatics, Human-Computer Interaction',
+    interests:
+      'Artificial Intelligence, Machine Learning, Data Science, Natural Language Processing, Computer Vision, Algorithm Design, Competitive Programming, Robotics, Cybersecurity, Cloud Computing, Software Engineering, Open Source Contribution, Quantum Computing, Bioinformatics, Human-Computer Interaction',
     education: [
       {
         type: 'Bachelor',
@@ -55,10 +57,11 @@ export const mockStudents: StudentProfile[] = [
     nisit_id: '6209876543',
     gpa: 3.9,
     skills: ['Python', 'TensorFlow', 'Data Analysis', 'SQL', 'Machine Learning'],
-    interests: 'Artificial Intelligence, Machine Learning, Data Science, Natural Language Processing, Computer Vision, Algorithm Design, Competitive Programming, Robotics, Cybersecurity, Cloud Computing, Software Engineering, Open Source Contribution, Quantum Computing, Bioinformatics, Human-Computer Interaction',
+    interests:
+      'Artificial Intelligence, Machine Learning, Data Science, Natural Language Processing, Computer Vision, Algorithm Design, Competitive Programming, Robotics, Cybersecurity, Cloud Computing, Software Engineering, Open Source Contribution, Quantum Computing, Bioinformatics, Human-Computer Interaction',
     education: [
       {
-        type:'Bachelor',
+        type: 'Bachelor',
         curriculum_name: 'Information Technology',
         university: 'Chiang Mai University',
         major: 'Data Science',

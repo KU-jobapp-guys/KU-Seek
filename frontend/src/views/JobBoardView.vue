@@ -17,7 +17,7 @@ const selectedJobId = ref<string>('')
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
-const companyFilter = ref<string | undefined>((route.query.company as string)) // optional query from url
+const companyFilter = ref<string | undefined>(route.query.company as string) // optional query from url
 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }

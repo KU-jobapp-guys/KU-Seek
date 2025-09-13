@@ -1,4 +1,4 @@
-import type { Job } from "@/types/jobType";
+import type { Job } from '@/types/jobType'
 
 export const mockJobs: Job[] = [
   {
@@ -216,8 +216,7 @@ export const mockJobs: Job[] = [
     jobLevel: 'Senior',
     location: 'Remote, Thailand',
     postTime: new Date('2025-08-07T16:00:00'),
-    description:
-      'Manage cloud infrastructure, CI/CD pipelines, and ensure system reliability.',
+    description: 'Manage cloud infrastructure, CI/CD pipelines, and ensure system reliability.',
     highlights: [
       'Maintain AWS cloud infrastructure',
       'Setup & monitor CI/CD pipelines',
@@ -234,8 +233,7 @@ export const mockJobs: Job[] = [
     jobLevel: 'Mid-level',
     location: 'Bangkok, Thailand',
     postTime: new Date('2025-08-10T11:45:00'),
-    description:
-      'Analyze datasets and build machine learning models to generate insights.',
+    description: 'Analyze datasets and build machine learning models to generate insights.',
     highlights: [
       'Build ML models for prediction',
       'Analyze business data with Python',
@@ -262,5 +260,5 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Product Strategy', 'Agile', 'Leadership', 'Analytics'],
     salary: '75,000 THB/month',
-  },  
+  },
 ]

@@ -42,7 +42,7 @@ const router = createRouter({
     {
       path: '/staff/dashboard',
       name: 'StaffDashboard',
-      component: StaffDashboardView
+      component: StaffDashboardView,
     },
     {
       path: '/student/explore-job',

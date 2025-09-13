@@ -55,12 +55,10 @@ const displayedJobs = computed(() => {
   }
   return companyJobs.value.slice(0, 3)
 })
-
 </script>
 
 <template>
   <div v-if="companyData" class="px-[8vw] md:px-[12vw] py-16">
-    
     <ProfileBanner :companyData="companyData" />
 
     <!-- Content Part -->
@@ -70,13 +68,13 @@ const displayedJobs = computed(() => {
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="flex">
-          <button v-for="tab in tabList" :key="tab"
+          <button
+            v-for="tab in tabList"
+            :key="tab"
             @click="switchTab(tab)"
             :class="[
               'px-6 py-4 text-xl rounded-t-[20px] transition-colors duration-200',
-              activeTab === tab
-                ? 'text-black font-black'
-                : 'text-gray-600 hover:text-gray-900',
+              activeTab === tab ? 'text-black font-black' : 'text-gray-600 hover:text-gray-900',
             ]"
           >
             {{ tab }}
@@ -87,14 +85,17 @@ const displayedJobs = computed(() => {
 
         <!-- Tab Content -->
         <div class="py-8">
-
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
             <div
               class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-12 gap-y-4 rounded-xl shadow-md"
             >
               <div class="flex items-center gap-x-2">
-                <div class="w-12 h-12 flex items-center justify-center bg-orange-500 rounded-full text-white"><Building2Icon /></div>
+                <div
+                  class="w-12 h-12 flex items-center justify-center bg-orange-500 rounded-full text-white"
+                >
+                  <Building2Icon />
+                </div>
                 <h2 class="font-bold text-2xl">Company Overview</h2>
               </div>
 
@@ -105,14 +106,18 @@ const displayedJobs = computed(() => {
                     companyData.website.name
                   }}</a>
                 </p>
-                <p> <span class="font-medium">Industry: </span> {{ companyData.industry }}</p>
-                <p> <span class="font-medium">Specialities: </span> {{ companyData.workFields.join(", ") }} </p>
-                <p> <span class="font-medium">Company Size:</span> {{ companyData.size }} </p>
-                <p> <span class="font-medium">Primary Location:</span> {{ companyData.fullLocation }} </p>
+                <p><span class="font-medium">Industry: </span> {{ companyData.industry }}</p>
+                <p>
+                  <span class="font-medium">Specialities: </span>
+                  {{ companyData.workFields.join(', ') }}
+                </p>
+                <p><span class="font-medium">Company Size:</span> {{ companyData.size }}</p>
+                <p>
+                  <span class="font-medium">Primary Location:</span> {{ companyData.fullLocation }}
+                </p>
               </div>
 
               <p>{{ companyData.about }}</p>
-
             </div>
           </div>
 
@@ -120,11 +125,7 @@ const displayedJobs = computed(() => {
           <div v-else-if="activeTab === 'Job'" class="relative">
             <div v-if="displayedJobs.length > 0">
               <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                <CompanyJob
-                  v-for="(job) in displayedJobs"
-                  :key="job.jobId"
-                  :job="job"
-                />
+                <CompanyJob v-for="job in displayedJobs" :key="job.jobId" :job="job" />
               </div>
 
               <!-- Expand Job Toggle -->
@@ -142,15 +143,15 @@ const displayedJobs = computed(() => {
               </div>
             </div>
 
-            <div v-else class="flex flex-col w-full h-[320px] items-center justify-center bg-white ring-1 ring-[#B1B1B1] ring-inset p-12 rounded-xl shadow-md">
+            <div
+              v-else
+              class="flex flex-col w-full h-[320px] items-center justify-center bg-white ring-1 ring-[#B1B1B1] ring-inset p-12 rounded-xl shadow-md"
+            >
               <img src="@/assets/images/zeroJob.png" class="h-24 w-24" />
               <p class="font-bold mt-4">No positions are open at the moment.</p>
               <p>Stay tuned for future opportunities!</p>
             </div>
-
-            
           </div>
-
         </div>
       </div>
     </section>

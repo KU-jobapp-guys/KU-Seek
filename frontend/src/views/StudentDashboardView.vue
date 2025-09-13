@@ -11,7 +11,6 @@ import searchIcon from '@/assets/search-icon.svg'
 <template>
   <div class="dashboard-bg min-h-screen pb-0">
     <!-- Main Dashboard Section -->
-
     <Header page="studentDashboard" />
     <!-- 3 boxes: perfectly centered between black and white -->
     <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16">

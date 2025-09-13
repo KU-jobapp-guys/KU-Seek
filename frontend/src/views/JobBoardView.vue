@@ -41,6 +41,7 @@ onMounted(() => {
   fetchJobs()
   window.scrollTo({ top: 0 })
 })
+
 </script>
 
 <template>

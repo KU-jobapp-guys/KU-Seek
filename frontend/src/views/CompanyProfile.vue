@@ -118,23 +118,33 @@ const displayedJobs = computed(() => {
 
           <!-- Jobs Tab Content -->
           <div v-else-if="activeTab === 'Job'" class="relative">
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              <CompanyJob
-                v-for="(job) in displayedJobs"
-                :key="job.jobId"
-                :job="job"
-              />
+            <div v-if="displayedJobs.length > 0">
+              <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                <CompanyJob
+                  v-for="(job) in displayedJobs"
+                  :key="job.jobId"
+                  :job="job"
+                />
+              </div>
+
+              <!-- Expand Job Toggle -->
+              <div v-if="companyJobs.length > 3" class="flex justify-end mt-6">
+                <button
+                  @click="toggleJobsView"
+                  class="text-[#686868] font-medium hover:text-[#8e8e8e] transition-colors duration-200 flex items-center gap-1"
+                >
+                  {{ showAllJobs ? 'View Less -' : `View More +` }}
+                </button>
+              </div>
             </div>
 
-            <!-- Expand Job Toggle -->
-            <div v-if="companyJobs.length > 3" class="flex justify-end mt-6">
-              <button
-                @click="toggleJobsView"
-                class="text-[#686868] font-medium hover:text-[#8e8e8e] transition-colors duration-200 flex items-center gap-1"
-              >
-                {{ showAllJobs ? 'View Less -' : `View More +` }}
-              </button>
+            <div v-else class="flex flex-col w-full h-[320px] items-center justify-center bg-white ring-1 ring-[#B1B1B1] ring-inset p-12 rounded-xl shadow-md">
+              <img src="@/assets/images/zeroJob.png" class="h-24 w-24" />
+              <p class="font-bold mt-4">No positions are open at the moment.</p>
+              <p>Stay tuned for future opportunities!</p>
             </div>
+
+            
           </div>
 
         </div>

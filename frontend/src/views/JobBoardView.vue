@@ -39,6 +39,7 @@ function handleSelect(id: string) {
 
 onMounted(() => {
   fetchJobs()
+  window.scrollTo({ top: 0 })
 })
 </script>
 

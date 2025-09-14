@@ -17,7 +17,6 @@ export interface StudentProfile {
   skills: string[]
   interests: string
   education: {
-    type: string
     curriculum_name: string
     university: string
     major: string

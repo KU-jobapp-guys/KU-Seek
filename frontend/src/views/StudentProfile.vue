@@ -113,7 +113,7 @@ onMounted(() => {
         :key="eduIndex"
         :class="profileStyle.contentBox"
       >
-        <p class="font-bold">{{ edu.type }} of {{ edu.major }} in {{ edu.curriculum_name }}</p>
+        <p class="font-bold">{{ edu.curriculum_name }}, {{ edu.major }}</p>
         <p>{{ edu.university }}</p>
         <p class="text-sm">
           {{ edu.year_of_study.getFullYear() }} - {{ edu.graduate_year.getFullYear() }}

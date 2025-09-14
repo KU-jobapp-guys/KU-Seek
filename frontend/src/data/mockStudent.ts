@@ -23,17 +23,15 @@ export const mockStudents: StudentProfile[] = [
       'Artificial Intelligence, Machine Learning, Data Science, Natural Language Processing, Computer Vision, Algorithm Design, Competitive Programming, Robotics, Cybersecurity, Cloud Computing, Software Engineering, Open Source Contribution, Quantum Computing, Bioinformatics, Human-Computer Interaction',
     education: [
       {
-        type: 'Bachelor',
-        curriculum_name: 'Computer Science',
+        curriculum_name: 'Bachelor of Software and Knowledge Engineering',
         university: 'Bangkok University',
-        major: 'Software Engineering',
+        major: 'Computer Engineering',
         year_of_study: new Date('2022-08-01'),
         graduate_year: new Date('2026-05-31'),
       },
       {
-        type: 'Master',
-        curriculum_name: 'Exchange Program',
-        university: 'University of Tokyo',
+        curriculum_name: 'Exchange Program in Computer Science',
+        university: 'University of Tokyo, Japan',
         major: 'Computer Science',
         year_of_study: new Date('2023-01-01'),
         graduate_year: new Date('2023-07-31'),
@@ -61,8 +59,7 @@ export const mockStudents: StudentProfile[] = [
       'Artificial Intelligence, Machine Learning, Data Science, Natural Language Processing, Computer Vision, Algorithm Design, Competitive Programming, Robotics, Cybersecurity, Cloud Computing, Software Engineering, Open Source Contribution, Quantum Computing, Bioinformatics, Human-Computer Interaction',
     education: [
       {
-        type: 'Bachelor',
-        curriculum_name: 'Information Technology',
+        curriculum_name: 'Master of Science in Information Technology',
         university: 'Chiang Mai University',
         major: 'Data Science',
         year_of_study: new Date('2021-08-01'),
@@ -92,8 +89,7 @@ export const mockStudents: StudentProfile[] = [
       'Internet of Things, Embedded Systems, Robotics, Smart Agriculture, Wearable Devices, Wireless Communication, Software Engineering, Cloud Integration, Edge Computing, Artificial Intelligence',
     education: [
       {
-        type: 'Bachelor',
-        curriculum_name: 'Computer Engineering',
+        curriculum_name: 'Bachelor of Engineering in Computer Engineering',
         university: 'Khon Kaen University',
         major: 'IoT and Embedded Systems',
         year_of_study: new Date('2020-08-01'),

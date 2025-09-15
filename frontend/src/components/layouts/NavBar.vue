@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { computed } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
@@ -17,8 +16,13 @@ const pageList = computed(() => {
   return []
 })
 
-const makeLink = (page: string) => {
-  return props.role ? `/${props.role}/${page.toLowerCase().replace(/\s+/g, '-')}` : ''
+function makeLink(page: string) {
+  const role = props.role
+  const userId = '1'
+  if (page === 'Profile') {
+    return `/${role}/profile/${userId}`
+  }
+  return `/${role}/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 </script>
 

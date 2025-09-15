@@ -6,10 +6,11 @@ import { ChevronDownIcon } from 'lucide-vue-next'
 
 type Filters = Record<FilterKeys, string>
 
+const props = defineProps<{ initialFilters?: Partial<Record<FilterKeys, string>> }>()
 const filters = reactive<Filters>({
   role: '',
   tags: '',
-  company: '',
+  company: props.initialFilters?.company || '',
   jobLevel: '',
   location: '',
   jobType: '',
@@ -32,6 +33,7 @@ const initializeFilters = () => {
 
 onMounted(() => {
   initializeFilters()
+  emit('applyFilter', filters)
 })
 
 const applyFilters = () => {

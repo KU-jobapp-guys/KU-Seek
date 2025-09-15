@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import type { Job } from '@/assets/type'
+import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
 import { useRouter } from 'vue-router'
 import { MapPin, Clock, Banknote, BriefcaseBusiness } from 'lucide-vue-next'

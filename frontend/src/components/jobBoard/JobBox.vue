@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Job } from '@/assets/type'
+import type { Job } from '@/types/jobType'
 import { Bookmark } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 

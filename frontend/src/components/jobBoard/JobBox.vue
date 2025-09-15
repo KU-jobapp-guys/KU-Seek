@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Job } from '@/types/jobType'
 import { Bookmark } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
 import { getPostTime } from '@/libs/getPostTime'
 
 const props = defineProps<{ job: Job }>()
@@ -9,14 +8,8 @@ const { job } = props
 
 const emit = defineEmits<{ (e: 'select', id: string): void }>()
 
-const router = useRouter()
-
 function handleJobSelected() {
-  if (window.innerWidth < 768) {
-    router.push(`/job/${props.job.jobId}`)
-  } else {
-    emit('select', props.job.jobId)
-  }
+  emit('select', props.job.jobId)
 }
 </script>
 

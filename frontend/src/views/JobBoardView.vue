@@ -9,8 +9,10 @@ import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
@@ -34,7 +36,9 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
 
 function handleSelect(id: string) {
   selectedJobId.value = id
-  console.log('Selected job ID:', selectedJobId.value)
+  if (window.innerWidth < 768) {
+    router.push(`/job/${id}`)
+  } 
 }
 
 onMounted(() => {

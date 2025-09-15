@@ -11,9 +11,9 @@ import JobFull from '@/components/jobBoard/JobFull.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 const jobs = ref<Job[]>([])
-const router = useRouter()
 const selectedJobId = ref<string>('')
 
 type Filters = Record<FilterKeys, string>

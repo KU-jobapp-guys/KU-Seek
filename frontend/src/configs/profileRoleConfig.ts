@@ -4,7 +4,7 @@ export interface ProfileColorSet {
   bar: string
 }
 
-export const profileConfig: Record<'student' | 'company', ProfileColorSet> = {
+export const profileConfig: Record<'student' | 'company' | 'professor', ProfileColorSet> = {
   student: {
     base: 'bg-gradient-to-b from-green-800/20 to-white',
     border: 'bg-gradient-to-b from-green-900 to-green-500',
@@ -14,5 +14,10 @@ export const profileConfig: Record<'student' | 'company', ProfileColorSet> = {
     base: 'bg-gradient-to-b from-blue-800/20 to-white',
     border: 'bg-gradient-to-b from-blue-900 to-blue-500',
     bar: 'bg-gradient-to-r from-blue-400 via-blue-800 to-purple-500',
+  },
+  professor: {
+    base: 'bg-gradient-to-b from-orange-800/20 to-white',
+    border: 'bg-gradient-to-b from-orange-900 to-orange-500',
+    bar: 'bg-gradient-to-r from-orange-400 via-orange-300 to-yellow-500',
   },
 }

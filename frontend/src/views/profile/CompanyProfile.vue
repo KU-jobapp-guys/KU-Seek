@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Company } from '@/types/companyType'
 import { mockCompany } from '@/data/mockCompany'
-import ProfileBanner from '@/components/profiles/banners/CompanyBanner.vue'
+import CompanyBanner from '@/components/profiles/banners/CompanyBanner.vue'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import { mockJobs } from '@/data/mockJobs'
 import type { Job } from '@/types/jobType'
@@ -68,7 +68,7 @@ const displayedJobs = computed(() => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="companyData" class="px-[8vw] md:px-[12vw] py-16">
-    <ProfileBanner :companyData="companyData" @loaded="renderReady" />
+    <CompanyBanner :companyData="companyData" @loaded="renderReady" />
 
     <!-- Content Part -->
     <section class="data mt-8">

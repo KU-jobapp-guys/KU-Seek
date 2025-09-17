@@ -3,7 +3,7 @@ defineProps<{
   title: string
   value: number | string
   description: string
-  icon: any
+  icon: string | URL | undefined
   cardClass?: string
 }>()
 </script>

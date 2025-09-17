@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <span :class="`px-3 my-1 py-2 rounded-full text-lg font-semibold mr-2 ${bg} ${color}`">
+  <span :class="`px-3 my-1 py-2 rounded-full text-xs font-semibold mr-2 ${bg} ${color}`">
     {{ label }}
   </span>
 </template>

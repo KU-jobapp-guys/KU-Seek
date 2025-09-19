@@ -104,9 +104,9 @@ const handleSubmit = (): void => {
             <label class="text-sm font-medium text-gray-800 mb-1">Job Type</label>
             <select
               v-model="jobPost.jobType"
-              class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             >
-              <option disabled value="">Select job type</option>
+              <option disabled value="" class="text-gray-400">Select job type</option>
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Internship">Internship</option>

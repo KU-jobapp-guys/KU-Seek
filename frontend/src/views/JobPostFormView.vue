@@ -94,14 +94,18 @@ const handleSubmit = (): void => {
             label="Company Name"
             placeholder="e.g. Techhahaha Inc."
           />
-          <BaseInput v-model="jobPost.role" label="Role" placeholder="e.g. Frontend Developer" />
+          <BaseInput
+            v-model="jobPost.role"
+            label="Job Title"
+            placeholder="e.g. Frontend Developer"
+          />
           <BaseInput
             v-model="jobPost.location"
             label="Location"
             placeholder="e.g. Bangkok, Thailand"
           />
           <div class="flex flex-col">
-            <label class="text-sm font-medium text-gray-800 mb-1">Job Type</label>
+            <label class="text-sm font-medium text-gray-700 mb-1">Job Type</label>
             <select
               v-model="jobPost.jobType"
               class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -132,7 +136,7 @@ const handleSubmit = (): void => {
 
       <!-- Work Fields -->
       <section class="bg-white shadow-lg rounded-2xl p-8">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Work Fields</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Required Skills</h2>
         <TagInput
           v-model="jobPost.workFields"
           placeholder="e.g. React, Node.js, Machine Learning"

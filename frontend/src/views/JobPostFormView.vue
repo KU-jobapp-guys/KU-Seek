@@ -7,6 +7,7 @@ import BaseTextarea from '@/components/job-post-form/BaseTextarea.vue'
 import TagInput from '@/components/job-post-form/TagInput.vue'
 import ContactField from '@/components/job-post-form/ContactField.vue'
 import SalaryInput from '@/components/job-post-form/SalaryInput.vue'
+import SearchableTagInput from '@/components/job-post-form/SearchableTagInput.vue'
 
 // Types
 interface Contact {
@@ -75,7 +76,7 @@ const handleSubmit = (): void => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 pb-10">
+  <div class="min-h-screen pb-10">
     <!-- Header -->
     <header class="text-center py-14 bg-gradient-to-r from-green-500 to-indigo-600">
       <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Create Your Job Post</h1>
@@ -86,7 +87,7 @@ const handleSubmit = (): void => {
 
     <div class="max-w-5xl mx-auto -mt-10 space-y-6">
       <!-- Basic Information -->
-      <section class="bg-white shadow-lg rounded-2xl p-8">
+      <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BaseInput
@@ -126,7 +127,7 @@ const handleSubmit = (): void => {
       </section>
 
       <!-- Job Description -->
-      <section class="bg-white shadow-lg rounded-2xl p-8">
+      <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Job Description</h2>
         <BaseTextarea
           v-model="jobPost.description"
@@ -135,28 +136,39 @@ const handleSubmit = (): void => {
       </section>
 
       <!-- Work Fields -->
-      <section class="bg-white shadow-lg rounded-2xl p-8">
+      <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Required Skills</h2>
-        <TagInput
+        <SearchableTagInput
           v-model="jobPost.workFields"
-          placeholder="e.g. React, Node.js, Machine Learning"
+          :suggestions="[
+            'React',
+            'Vue',
+            'Angular',
+            'Node.js',
+            'Python',
+            'Django',
+            'Machine Learning',
+            'AWS',
+            'SQL',
+          ]"
+          placeholder="Search or add a skill..."
         />
       </section>
 
       <!-- Tags -->
-      <section class="bg-white shadow-lg rounded-2xl p-8">
+      <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Tags</h2>
         <TagInput v-model="jobPost.tags" placeholder="e.g. Urgent, Remote, Internship" />
       </section>
 
       <!-- Contacts -->
-      <section class="bg-white shadow-lg rounded-2xl p-8">
+      <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Contacts</h2>
         <ContactField v-model="jobPost.contacts" />
       </section>
 
       <!-- Submit -->
-      <div class="flex justify-end">
+      <div class="flex justify-end mx-4 md:mx-0">
         <button
           type="submit"
           @click.prevent="handleSubmit"

@@ -8,7 +8,6 @@ import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import { mockCompany } from '@/data/mockCompany'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
 import { Building2Icon } from 'lucide-vue-next'
-import ProfessorAnnouncement from '@/components/profiles/ProfessorAnnouncement.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,7 +36,7 @@ onMounted(() => {
   loadProfessor(route.params.id as string)
 })
 
-const tabList = ['Overview', 'Connection', 'Personal Announcement']
+const tabList = ['Overview', 'Connection']
 const activeTab = ref('Overview')
 
 const switchTab = (tab: string) => {
@@ -109,18 +108,12 @@ const switchTab = (tab: string) => {
           </div>
 
           <!-- Connection Tab -->
-          <div v-if="activeTab === 'Connection'" class="space-y-4">
+          <div v-if="activeTab === 'Connection'" class="space-y-4 max-h-[410px] overflow-y-auto">
             <div v-for="c in mockCompany" v-bind:key="c.id">
               <ConnectCompany :company="c" />
             </div>
           </div>
 
-          <!-- Announcement Tab -->
-          <div v-if="activeTab === 'Personal Announcement'" class="space-y-4">
-            <div v-for="(a, index) in professorData.announcements" v-bind:key="index">
-              <ProfessorAnnouncement :announcement="a" />
-            </div>
-          </div>
         </div>
       </div>
     </section>

@@ -39,6 +39,7 @@ const renderReady = () => {
 
 onMounted(() => {
   loadCompany(route.params.id as string)
+  window.scrollTo({ top: 0 })
 })
 
 const tabList = ['Overview', 'Job']
@@ -73,7 +74,7 @@ const displayedJobs = computed(() => {
     <!-- Content Part -->
     <section class="data mt-8">
       <div
-        class="bg-gradient-to-b from-blue-800/10 to-white rounded-[20px] ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
+        class="bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="flex">

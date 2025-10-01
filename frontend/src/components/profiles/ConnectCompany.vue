@@ -13,7 +13,7 @@ const { company } = props
       <!-- Background -->
       <div class="absolute inset-0">
         <div
-          class="absolute right-0 top-0 h-full w-[80%]"
+          class="absolute right-0 top-0 h-full w-[60%] md:w-[80%]"
           style="clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%)"
         >
           <img
@@ -26,11 +26,11 @@ const { company } = props
       </div>
 
       <!-- Content -->
-      <div class="relative px-12 h-full w-full flex justify-between items-center">
+      <div class="relative px-8 md:px-12 h-full w-full flex justify-between items-center">
         <div class="flex flex-col">
-          <span class="flex gap-x-4 items-center">
+          <span class="flex gap-x-4 items-start md:items-center">
             <h1 class="font-bold text-2xl mb-2">{{ company.name }}</h1>
-            <div class="text-white px-2 bg-blue-500 rounded-full">14 Jobs</div>
+            <p class="text-white px-2 bg-blue-500 rounded-full">14 <span class="hidden md:block">Jobs</span></p>
           </span>
           <p>{{ company.type }}</p>
           <p class="text-gray-500">{{ company.location }}</p>

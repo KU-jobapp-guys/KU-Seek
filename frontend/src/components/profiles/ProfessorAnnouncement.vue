@@ -21,12 +21,12 @@ const getBgClass = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-6 w-full px-12 py-8 bg-white border border-[#B1B1B1] rounded-xl">
+  <div class="flex flex-col gap-y-6 w-full px-4 md:px-12 py-8 bg-white border border-[#B1B1B1] rounded-xl">
     <span class="w-full flex justify-between">
       <h1 class="font-bold text-xl rounded-full px-4 py-1" :class="getBgClass()">
         {{ announcement.title }}
       </h1>
-      <p class="text-gray-500 text-sm">{{ getPostTime(announcement.created_at) }}</p>
+      <p class="text-gray-500 text-sm hidden md:block">{{ getPostTime(announcement.created_at) }}</p>
     </span>
     <p class="px-4">{{ announcement.content }}</p>
   </div>

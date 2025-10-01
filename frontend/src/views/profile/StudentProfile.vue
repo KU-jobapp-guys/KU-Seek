@@ -46,7 +46,7 @@ onMounted(() => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <div v-if="studentData" class="px-[8vw] md:px-[12vw] py-16">
+  <div v-if="studentData" class="px-[6vw] md:px-[12vw] py-16">
     <StudentBanner :studentData="studentData" @loaded="renderReady" />
 
     <section :class="profileStyle.sectionBox" class="mt-8 mb-6">

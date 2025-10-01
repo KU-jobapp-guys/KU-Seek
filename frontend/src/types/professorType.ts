@@ -11,16 +11,17 @@ export interface ProfessorProfile {
   bannerPhoto: string
   phone_number: string
   is_verified: boolean
-  nisit_id: string
-  gpa: number
   skills: string[]
-  interests: string
-  education: {
-    curriculum_name: string
-    university: string
-    major: string
-    year_of_study: Date
-    graduate_year: Date
-  }[]
+  department: string
+  position: string
+  office_location: string
+  research_interest: string
+  description: string
+  announcements: Announcement[]
 }
   
+export interface Announcement {
+  title: string
+  content: string
+  created_at: Date
+}

@@ -32,7 +32,6 @@ const loadCompany = (id?: string) => {
   companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
 }
 
-
 const renderReady = () => {
   isLoading.value = false
 }

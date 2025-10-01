@@ -27,7 +27,6 @@ const loadProfessor = (id?: string) => {
   if (!professorData.value) {
     router.replace({ name: 'not found' })
   }
-
 }
 
 const renderReady = () => {
@@ -54,7 +53,9 @@ const switchTab = (tab: string) => {
 
     <!-- Content Part -->
     <section class="data mt-8">
-      <div class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8">
+      <div
+        class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
+      >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="flex">
           <button
@@ -87,16 +88,22 @@ const switchTab = (tab: string) => {
                 </div>
                 <h2 class="font-bold text-2xl">Overview</h2>
               </div>
-              
+
               <div class="pl-4">
                 <p><span class="font-medium">Department: </span> {{ professorData.department }}</p>
-                <p><span class="font-medium">Academic Position: </span> {{ professorData.position }}</p>
-                <p><span class="font-medium">Office Location:</span> {{ professorData.office_location }}</p>
                 <p>
-                  <span class="font-medium">Research Interest:</span> {{ professorData.research_interest }}
+                  <span class="font-medium">Academic Position: </span> {{ professorData.position }}
+                </p>
+                <p>
+                  <span class="font-medium">Office Location:</span>
+                  {{ professorData.office_location }}
+                </p>
+                <p>
+                  <span class="font-medium">Research Interest:</span>
+                  {{ professorData.research_interest }}
                 </p>
               </div>
-                
+
               <p>{{ professorData.about }}</p>
             </div>
           </div>
@@ -114,7 +121,6 @@ const switchTab = (tab: string) => {
               <ProfessorAnnouncement :announcement="a" />
             </div>
           </div>
-
         </div>
       </div>
     </section>

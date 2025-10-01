@@ -19,7 +19,7 @@ export interface ProfessorProfile {
   description: string
   announcements: Announcement[]
 }
-  
+
 export interface Announcement {
   title: string
   content: string

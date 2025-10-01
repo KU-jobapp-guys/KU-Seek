@@ -7,7 +7,10 @@ import { ref, computed, watch } from 'vue'
 import { profileConfig } from '@/configs/profileRoleConfig'
 
 const emits = defineEmits<{ (e: 'loaded'): void }>()
-const props = defineProps<{ data: Company | StudentProfile | ProfessorProfile; role: 'company' | 'student' | 'professor' }>()
+const props = defineProps<{
+  data: Company | StudentProfile | ProfessorProfile
+  role: 'company' | 'student' | 'professor'
+}>()
 const { data, role } = props
 
 const isOwner = data.id === '1'

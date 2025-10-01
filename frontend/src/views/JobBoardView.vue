@@ -37,14 +37,13 @@ function handleSelect(id: string) {
   selectedJobId.value = id
   if (window.innerWidth < 768) {
     router.push(`/job/${id}`)
-  } 
+  }
 }
 
 onMounted(() => {
   fetchJobs()
   window.scrollTo({ top: 0 })
 })
-
 </script>
 
 <template>

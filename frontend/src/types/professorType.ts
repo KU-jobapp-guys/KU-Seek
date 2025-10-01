@@ -17,11 +17,4 @@ export interface ProfessorProfile {
   office_location: string
   research_interest: string
   description: string
-  announcements: Announcement[]
-}
-
-export interface Announcement {
-  title: string
-  content: string
-  created_at: Date
 }

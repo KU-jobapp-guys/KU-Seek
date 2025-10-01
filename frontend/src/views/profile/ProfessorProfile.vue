@@ -113,7 +113,6 @@ const switchTab = (tab: string) => {
               <ConnectCompany :company="c" />
             </div>
           </div>
-
         </div>
       </div>
     </section>

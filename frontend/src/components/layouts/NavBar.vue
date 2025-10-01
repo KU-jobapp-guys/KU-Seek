@@ -11,9 +11,9 @@ const companyList = ['Dashboard', 'Profile']
 const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Profile']
 
 const pageList = computed(() => {
-  if (!props.role) return []
   if (props.role === 'company') return companyList
-  if (['student', 'professor'].includes(props.role)) return kuList
+  if (props.role && ['student', 'professor'].includes(props.role)) return kuList
+  return []
 })
 
 function makeLink(page: string) {

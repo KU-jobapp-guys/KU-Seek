@@ -10,17 +10,33 @@ const router = useRouter()
 const route = useRoute()
 
 async function handleURICallback() {
+  let csrf_token:string
+
   try {
     const code = route.query.code
     if (!code) {
       throw new Error('No code found in callback URL')
     }
 
+    const csrf_res = await fetch("http://localhost:8000/api/v1/csrf-token", {
+      method: "GET",
+      credentials: 'include',
+    })
+    if (csrf_res.ok) {
+      const csrf_json = await csrf_res.json()
+      csrf_token = csrf_json.csrf_token
+      localStorage.setItem('csrf_token', csrf_token)
+    } else {
+      throw new Error('Login request failed, please try again.')
+    }
+    
+
     const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
       method: "POST",
       credentials: 'include',
       headers: { 
         "Content-Type": "application/json",
+        "X-CSRFToken": csrf_token
       },
       body: JSON.stringify({ code }),
     })
@@ -31,7 +47,7 @@ async function handleURICallback() {
       emit('update:role', 'company')
       router.replace({ name: 'company dashboard' })
     } else {
-      throw new Error('Login request failed, please try again.')
+      throw new Error(`Login request failed, please try again.`)
     }
   } catch (error) {
     console.error('Authentication error:', error)

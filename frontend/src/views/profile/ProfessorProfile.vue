@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ProfessorProfile } from '@/types/professorType'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -103,14 +103,14 @@ const switchTab = (tab: string) => {
 
           <!-- Connection Tab -->
           <div v-if="activeTab === 'Connection'" class="space-y-4">
-            <div v-for="c in mockCompany">
+            <div v-for="c in mockCompany" v-bind:key="c.id">
               <ConnectCompany :company="c" />
             </div>
           </div>
 
           <!-- Announcement Tab -->
           <div v-if="activeTab === 'Personal Announcement'" class="space-y-4">
-            <div v-for="a in professorData.announcements">
+            <div v-for="(a, index) in professorData.announcements" v-bind:key="index">
               <ProfessorAnnouncement :announcement="a" />
             </div>
           </div>

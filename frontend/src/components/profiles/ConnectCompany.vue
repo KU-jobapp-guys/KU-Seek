@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CompanyBanner from './banners/CompanyBanner.vue';
 import type { Company } from '@/types/companyType';
 
 const props = defineProps<{ company: Company }>()

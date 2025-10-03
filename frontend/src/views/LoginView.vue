@@ -3,6 +3,7 @@
 </template>
 
 <script setup lang="ts">
+import { couldStartTrivia } from 'typescript'
 import { useRouter, useRoute } from 'vue-router'
 
 const emit = defineEmits(['update:role'])
@@ -43,7 +44,7 @@ async function handleURICallback() {
 
     if (res.ok) {
       const user_jwt = await res.json()
-      localStorage.setItem('user_jwt', user_jwt.user_token)
+      localStorage.setItem('user_jwt', user_jwt.access_token)
       emit('update:role', 'company')
       router.replace({ name: 'company dashboard' })
     } else {

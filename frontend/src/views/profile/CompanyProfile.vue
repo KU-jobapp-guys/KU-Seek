@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Company } from '@/types/companyType'
 import { mockCompany } from '@/data/mockCompany'
-import ProfileBanner from '@/components/profiles/banners/CompanyBanner.vue'
+import CompanyBanner from '@/components/profiles/banners/CompanyBanner.vue'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import { mockJobs } from '@/data/mockJobs'
 import type { Job } from '@/types/jobType'
@@ -32,13 +32,13 @@ const loadCompany = (id?: string) => {
   companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
 }
 
-
 const renderReady = () => {
   isLoading.value = false
 }
 
 onMounted(() => {
   loadCompany(route.params.id as string)
+  window.scrollTo({ top: 0 })
 })
 
 const tabList = ['Overview', 'Job']
@@ -68,12 +68,12 @@ const displayedJobs = computed(() => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="companyData" class="px-[8vw] md:px-[12vw] py-16">
-    <ProfileBanner :companyData="companyData" @loaded="renderReady" />
+    <CompanyBanner :companyData="companyData" @loaded="renderReady" />
 
     <!-- Content Part -->
     <section class="data mt-8">
       <div
-        class="bg-gradient-to-b from-blue-800/10 to-white rounded-[20px] ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
+        class="bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="flex">

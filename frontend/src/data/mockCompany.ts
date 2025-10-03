@@ -30,7 +30,7 @@ export const mockCompany: Company[] = [
     contacts: 'contact@agrinext.io',
     about:
       'AgriNext Solutions is building smart farming platforms with IoT-enabled sensors, drone monitoring, and data analytics to help farmers increase yield and sustainability.',
-    bannerPhoto: '/images/companies/mockUp/agri_banner.png',
+    bannerPhoto: '/images/companies/mockUp/image.png',
     profilePhoto: '/images/companies/mockUp/agri_logo.png',
   },
   {

@@ -8,8 +8,7 @@ import { mockJobs } from '@/data/mockJobs'
 import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
@@ -38,14 +37,13 @@ function handleSelect(id: string) {
   selectedJobId.value = id
   if (window.innerWidth < 768) {
     router.push(`/job/${id}`)
-  } 
+  }
 }
 
 onMounted(() => {
   fetchJobs()
   window.scrollTo({ top: 0 })
 })
-
 </script>
 
 <template>

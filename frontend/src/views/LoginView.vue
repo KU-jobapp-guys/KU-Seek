@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { couldStartTrivia } from 'typescript'
 import { useRouter, useRoute } from 'vue-router'
 
 const emit = defineEmits(['update:role'])

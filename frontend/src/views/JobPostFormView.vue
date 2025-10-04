@@ -9,44 +9,23 @@ import ContactField from '@/components/job-post-form/ContactField.vue'
 import SalaryInput from '@/components/job-post-form/SalaryInput.vue'
 import SearchableTagInput from '@/components/job-post-form/SearchableTagInput.vue'
 
-// Types
-interface Contact {
-  type: string
-  link: string
-}
-
-interface JobPost {
-  company: string
-  role: string
-  location: string
-  postTime: string
-  description: string
-  jobType: string
-  workFields: string[]
-  tags: string[]
-  salaryMin: string
-  salaryMax: string
-  contacts: Contact[]
-}
-
-const jobPost = ref<JobPost>({
+// Form state
+const jobPost = ref({
   company: '',
   role: '',
   location: '',
   postTime: '',
   description: '',
   jobType: '',
-  workFields: [],
-  tags: [],
+  workFields: [] as string[],
+  tags: [] as string[],
   salaryMin: '',
   salaryMax: '',
-  contacts: [],
+  contacts: [] as { type: string; link: string }[],
 })
 
-// Track validity from SalaryInput
 const isSalaryValid = ref(true)
 
-// Check if form is valid
 const isFormValid = computed(() => {
   return (
     jobPost.value.company.trim() !== '' &&
@@ -71,7 +50,21 @@ const handleSubmit = (): void => {
     ...jobPost.value,
     salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
   }
-  console.log('Submitting Job Post:', payload)
+
+  fetch('http://localhost:5000/api/jobposts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log('Job Post submitted:', data)
+      alert('Job Post submitted successfully!')
+    })
+    .catch((err) => {
+      console.error('Error submitting job post:', err)
+      alert('Failed to submit job post.')
+    })
 }
 </script>
 
@@ -85,7 +78,8 @@ const handleSubmit = (): void => {
       </p>
     </header>
 
-    <div class="max-w-5xl mx-auto -mt-10 space-y-6">
+    <!-- Form wrapper -->
+    <form @submit.prevent="handleSubmit" class="max-w-5xl mx-auto -mt-10 space-y-6">
       <!-- Basic Information -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
@@ -171,13 +165,12 @@ const handleSubmit = (): void => {
       <div class="flex justify-end mx-4 md:mx-0">
         <button
           type="submit"
-          @click.prevent="handleSubmit"
           :disabled="!isFormValid"
           class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Post Job
         </button>
       </div>
-    </div>
+    </form>
   </div>
 </template>

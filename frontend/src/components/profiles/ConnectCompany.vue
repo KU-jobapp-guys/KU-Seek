@@ -13,13 +13,13 @@ const { company } = props
       <!-- Background -->
       <div class="absolute inset-0">
         <div
-          class="absolute right-0 top-0 h-full w-[60%] md:w-[80%]"
+          class="absolute right-0 top-0 h-full w-[40%] md:w-[80%]"
           style="clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%)"
         >
           <img
             :src="company.bannerPhoto"
-            class="w-full h-full object-cover"
-            alt="Banner"
+            class="w-full h-full object-cover text-white"
+            alt="banner"
             loading="lazy"
           />
         </div>

@@ -8,7 +8,6 @@ import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import { mockCompany } from '@/data/mockCompany'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
 import { Building2Icon } from 'lucide-vue-next'
-import ProfessorAnnouncement from '@/components/profiles/ProfessorAnnouncement.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,7 +36,7 @@ onMounted(() => {
   loadProfessor(route.params.id as string)
 })
 
-const tabList = ['Overview', 'Connection', 'Announcement']
+const tabList = ['Overview', 'Connection']
 const activeTab = ref('Overview')
 
 const switchTab = (tab: string) => {
@@ -57,7 +56,7 @@ const switchTab = (tab: string) => {
         class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
-        <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center justify-between">
+        <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
           <button
             v-for="tab in tabList"
             :key="tab"
@@ -115,12 +114,6 @@ const switchTab = (tab: string) => {
             </div>
           </div>
 
-          <!-- Announcement Tab -->
-          <div v-if="activeTab === 'Announcement'" class="space-y-4">
-            <div v-for="(a, index) in professorData.announcements" v-bind:key="index">
-              <ProfessorAnnouncement :announcement="a" />
-            </div>
-          </div>
         </div>
       </div>
     </section>

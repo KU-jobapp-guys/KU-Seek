@@ -30,7 +30,9 @@ const { company } = props
         <div class="flex flex-col">
           <span class="flex gap-x-4 items-start md:items-center">
             <h1 class="font-bold text-2xl mb-2">{{ company.name }}</h1>
-            <p class="text-white px-2 bg-blue-500 rounded-full">14 <span class="hidden md:block">Jobs</span></p>
+            <p class="text-white px-2 bg-blue-500 rounded-full">
+              14 <span class="hidden md:block">Jobs</span>
+            </p>
           </span>
           <p>{{ company.type }}</p>
           <p class="text-gray-500">{{ company.location }}</p>

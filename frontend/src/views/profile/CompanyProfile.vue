@@ -115,14 +115,18 @@ const displayedJobs = computed(() => {
                     companyData.website.name
                   }}</a>
                 </p>
-                <p><span class="font-medium block md:inline">Industry: </span> {{ companyData.industry }}</p>
+                <p>
+                  <span class="font-medium block md:inline">Industry: </span>
+                  {{ companyData.industry }}
+                </p>
                 <p>
                   <span class="font-medium block md:inline">Specialities: </span>
                   {{ companyData.workFields.join(', ') }}
                 </p>
                 <p><span class="font-medium">Company Size:</span> {{ companyData.size }}</p>
                 <p>
-                  <span class="font-medium block md:inline">Primary Location:</span> {{ companyData.fullLocation }}
+                  <span class="font-medium block md:inline">Primary Location:</span>
+                  {{ companyData.fullLocation }}
                 </p>
               </div>
 

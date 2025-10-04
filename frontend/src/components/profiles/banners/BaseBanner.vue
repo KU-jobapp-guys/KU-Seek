@@ -45,7 +45,10 @@ watch(isFullyLoaded, (newValue) => {
       />
     </div>
 
-    <div class="relative ring-1 ring-[#B1B1B1] ring-inset px-8 md:px-12 py-8" :class="profileClass.base">
+    <div
+      class="relative ring-1 ring-[#B1B1B1] ring-inset px-8 md:px-12 py-8"
+      :class="profileClass.base"
+    >
       <!-- Profile Image -->
       <div
         class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full shadow-md"

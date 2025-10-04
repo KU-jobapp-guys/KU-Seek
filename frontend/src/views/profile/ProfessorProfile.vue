@@ -77,7 +77,7 @@ const switchTab = (tab: string) => {
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
             <div
-              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12  gap-y-4 rounded-xl shadow-md"
+              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12 gap-y-4 rounded-xl shadow-md"
             >
               <div class="flex items-center gap-x-2">
                 <div
@@ -89,9 +89,13 @@ const switchTab = (tab: string) => {
               </div>
 
               <div class="flex flex-col md:pl-4 gap-y-1">
-                <p><span class="font-medium block md:inline">Department: </span> {{ professorData.department }}</p>
                 <p>
-                  <span class="font-medium block md:inline">Academic Position: </span> {{ professorData.position }}
+                  <span class="font-medium block md:inline">Department: </span>
+                  {{ professorData.department }}
+                </p>
+                <p>
+                  <span class="font-medium block md:inline">Academic Position: </span>
+                  {{ professorData.position }}
                 </p>
                 <p>
                   <span class="font-medium block md:inline">Office Location:</span>
@@ -113,7 +117,6 @@ const switchTab = (tab: string) => {
               <ConnectCompany :company="c" />
             </div>
           </div>
-
         </div>
       </div>
     </section>

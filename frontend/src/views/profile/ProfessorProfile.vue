@@ -47,22 +47,22 @@ const switchTab = (tab: string) => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <div v-if="professorData" class="px-[8vw] md:px-[12vw] py-16">
+  <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
     <ProfessorBanner :professorData="professorData" @loaded="renderReady" />
 
     <!-- Content Part -->
     <section class="data mt-8">
       <div
-        class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
+        class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
-        <div class="flex">
+        <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
           <button
             v-for="tab in tabList"
             :key="tab"
             @click="switchTab(tab)"
             :class="[
-              'px-6 py-4 text-xl rounded-t-[20px] transition-colors duration-200',
+              'text-base md:text-lg max-sm:block sm:inline-block transition-colors duration-200',
               activeTab === tab ? 'text-black font-black' : 'text-gray-600 hover:text-gray-900',
             ]"
           >
@@ -77,7 +77,7 @@ const switchTab = (tab: string) => {
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
             <div
-              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-12 gap-y-4 rounded-xl shadow-md"
+              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12 gap-y-4 rounded-xl shadow-md"
             >
               <div class="flex items-center gap-x-2">
                 <div
@@ -88,17 +88,21 @@ const switchTab = (tab: string) => {
                 <h2 class="font-bold text-2xl">Overview</h2>
               </div>
 
-              <div class="pl-4">
-                <p><span class="font-medium">Department: </span> {{ professorData.department }}</p>
+              <div class="flex flex-col md:pl-4 gap-y-1">
                 <p>
-                  <span class="font-medium">Academic Position: </span> {{ professorData.position }}
+                  <span class="font-medium block md:inline">Department: </span>
+                  {{ professorData.department }}
                 </p>
                 <p>
-                  <span class="font-medium">Office Location:</span>
+                  <span class="font-medium block md:inline">Academic Position: </span>
+                  {{ professorData.position }}
+                </p>
+                <p>
+                  <span class="font-medium block md:inline">Office Location:</span>
                   {{ professorData.office_location }}
                 </p>
                 <p>
-                  <span class="font-medium">Research Interest:</span>
+                  <span class="font-medium block md:inline">Research Interest:</span>
                   {{ professorData.research_interest }}
                 </p>
               </div>

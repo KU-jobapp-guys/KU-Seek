@@ -33,7 +33,7 @@ const isOwner = studentData.id === '1'
 
         <button
           v-if="isOwner && !studentData.is_verified"
-          class="bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
+          class="text-base bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
         >
           Verify Account
         </button>

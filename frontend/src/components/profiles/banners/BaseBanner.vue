@@ -6,7 +6,11 @@ import type { ProfessorProfile } from '@/types/professorType'
 import { ref, computed, watch } from 'vue'
 import { profileConfig } from '@/configs/profileRoleConfig'
 
-const emits = defineEmits<{ (e: 'loaded'): void }>()
+const emits = defineEmits<{ 
+  (e: 'loaded'): void,
+  (e: 'edit'): void
+}>()
+
 const props = defineProps<{
   data: Company | StudentProfile | ProfessorProfile
   role: 'company' | 'student' | 'professor'
@@ -21,7 +25,6 @@ const isFullyLoaded = computed(() => bannerLoaded.value && profileLoaded.value)
 const profileClass = computed(() => profileConfig[role])
 
 watch(isFullyLoaded, (newValue) => {
-  console.log('status: ', isFullyLoaded)
   if (newValue) {
     emits('loaded')
   }
@@ -69,6 +72,7 @@ watch(isFullyLoaded, (newValue) => {
           v-if="isOwner"
           class="h-8 w-8 hover:text-gray-500 hover:cursor-pointer"
           :stroke-width="1.5"
+          @click="emits('edit')"
         />
       </div>
 

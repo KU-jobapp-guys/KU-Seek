@@ -6,37 +6,42 @@ import BaseBanner from './BaseBanner.vue'
 const props = defineProps<{ studentData: StudentProfile }>()
 const { studentData } = props
 
+const emit = defineEmits<{
+  (e: 'edit'): void
+}>()
+
 const isOwner = studentData.id === '1'
 </script>
 
 <template>
-  <BaseBanner :data="studentData" role="student">
-    <div class="flex w-full justify-between items-end">
-      <div class="flex flex-col w-full">
-        <h1 class="flex flex-col md:flex-row md:items-end">
-          <span class="font-bold text-4xl mr-2">{{
-            studentData.first_name + ' ' + studentData.last_name
-          }}</span>
+  <BaseBanner :data="studentData" role="student" @edit="emit('edit')">
+    <div class="flex flex-col w-full">
+      <h1 class="font-bold text-4xl mr-2">{{
+        studentData.first_name + ' ' + studentData.last_name
+      }}</h1>
+      <div class="flex w-full justify-between items-end">
+        <div class="flex flex-col w-full">
           <p class="font-semibold">({{ studentData.gender }}, {{ studentData.age }})</p>
-        </h1>
-        <p>{{ studentData.location }}</p>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <div
-          v-if="studentData.is_verified"
-          class="flex items-center gap-x-2 bg-green-600 text-white px-2 md:px-4 py-2 rounded-full"
-        >
-          <p class="hidden md:block">Verified</p>
-          <CircleCheck />
+          <p>{{ studentData.location }}</p>
         </div>
 
-        <button
-          v-if="isOwner && !studentData.is_verified"
-          class="text-base bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
-        >
-          Verify Account
-        </button>
+        <div class="flex items-center gap-2">
+          <div
+            v-if="studentData.is_verified"
+            class="flex items-center gap-x-2 bg-green-600 text-white px-2 md:px-4 py-2 rounded-full"
+          >
+            <p class="hidden md:block">Verified</p>
+            <CircleCheck />
+          </div>
+
+          <button
+            v-if="isOwner && !studentData.is_verified"
+            class="text-base bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
+          >
+            <span class="hidden md:block">Verify Account</span>
+            <span class="block md:hidden">Verify</span>
+          </button>
+        </div>
       </div>
     </div>
   </BaseBanner>

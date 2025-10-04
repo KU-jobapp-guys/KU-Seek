@@ -20,7 +20,7 @@ export interface StudentProfile {
     curriculum_name: string
     university: string
     major: string
-    year_of_study: Date
-    graduate_year: Date
+    year_of_study: number
+    graduate_year: number
   }[]
 }

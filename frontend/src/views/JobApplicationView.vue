@@ -15,7 +15,7 @@
 
     <!-- Form -->
     <form
-      action="/api/job-applications"
+      action="student/job-application/submit"
       method="POST"
       enctype="multipart/form-data"
       @submit.prevent="handleSubmit"
@@ -61,6 +61,9 @@
               v-model="form.phone"
               type="tel"
               name="phone"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              @input="onPhoneInput"
               class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
             />
           </div>
@@ -83,7 +86,6 @@
         <div class="p-6 border rounded-lg shadow-sm bg-white">
           <h2 class="font-semibold text-lg mb-4">Your Resume</h2>
 
-          <!-- Select option -->
           <div class="space-y-2 mb-4">
             <label class="flex items-center space-x-2">
               <input
@@ -105,7 +107,7 @@
             </label>
           </div>
 
-          <!-- Drag & Drop Upload -->
+          <!-- Resume Upload -->
           <div
             v-show="resumeOption === 'upload'"
             class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
@@ -204,50 +206,18 @@
             <div>
               <p class="font-medium text-gray-700 mb-3">Years of experience in (X) role</p>
               <div class="space-y-2">
-                <label class="flex items-center space-x-2">
+                <label
+                  class="flex items-center space-x-2"
+                  v-for="option in experienceOptions"
+                  :key="option.value"
+                >
                   <input
                     type="radio"
                     v-model="form.experience"
-                    value="no experience"
+                    :value="option.value"
                     class="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>no experience</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.experience"
-                    value="<1 year"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>&lt;1 year</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.experience"
-                    value="1-2 years"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>1–2 years</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.experience"
-                    value="3-5 years"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>3–5 years</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.experience"
-                    value=">5 years"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>&gt;5 years</span>
+                  <span>{{ option.label }}</span>
                 </label>
               </div>
             </div>
@@ -256,50 +226,18 @@
             <div>
               <p class="font-medium text-gray-700 mb-3">Expected Salary</p>
               <div class="space-y-2">
-                <label class="flex items-center space-x-2">
+                <label
+                  class="flex items-center space-x-2"
+                  v-for="salary in salaryOptions"
+                  :key="salary.value"
+                >
                   <input
                     type="radio"
                     v-model="form.expected_salary"
-                    value="<20000"
+                    :value="salary.value"
                     class="text-blue-600 focus:ring-blue-500"
                   />
-                  <span>&lt;20,000 ฿</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.expected_salary"
-                    value="20000-40000"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>20,000–40,000 ฿</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.expected_salary"
-                    value="40000-60000"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>40,000–60,000 ฿</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.expected_salary"
-                    value="60000-80000"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>60,000–80,000 ฿</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    v-model="form.expected_salary"
-                    value=">80000"
-                    class="text-blue-600 focus:ring-blue-500"
-                  />
-                  <span>&gt;80,000 ฿</span>
+                  <span>{{ salary.label }}</span>
                 </label>
               </div>
             </div>
@@ -340,7 +278,8 @@
         <button
           type="submit"
           v-if="step === 3"
-          class="ml-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          :disabled="!isFormValid"
+          class="ml-auto px-4 py-2 rounded-lg text-white transition bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Submit
         </button>
@@ -350,7 +289,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const step = ref(1)
 const resumeOption = ref('upload')
@@ -361,13 +300,34 @@ const form = ref({
   email: '',
   phone: '',
   address: '',
-  graduation_year: '',
+  experience: '',
   expected_salary: '',
-  linkedin: '',
-  website: '',
+  confirm: false,
   resumeName: '',
   letterName: '',
 })
+
+const experienceOptions = [
+  { label: 'no experience', value: 'no experience' },
+  { label: '<1 year', value: '<1 year' },
+  { label: '1–2 years', value: '1-2 years' },
+  { label: '3–5 years', value: '3-5 years' },
+  { label: '>5 years', value: '>5 years' },
+]
+
+const salaryOptions = [
+  { label: '<20,000 ฿', value: '<20000' },
+  { label: '20,000–40,000 ฿', value: '20000-40000' },
+  { label: '40,000–60,000 ฿', value: '40000-60000' },
+  { label: '60,000–80,000 ฿', value: '60000-80000' },
+  { label: '>80,000 ฿', value: '>80000' },
+]
+
+function onPhoneInput(event: Event) {
+  const input = event.target as HTMLInputElement
+  input.value = input.value.replace(/\D/g, '')
+  form.value.phone = input.value
+}
 
 const resumeInput = ref<HTMLInputElement | null>(null)
 const letterInput = ref<HTMLInputElement | null>(null)
@@ -388,8 +348,39 @@ function onDrop(event: DragEvent, field: string) {
   }
 }
 
+const isFormValid = computed(() => {
+  const hasPersonalInfo =
+    form.value.first_name.trim() &&
+    form.value.last_name.trim() &&
+    form.value.email.trim() &&
+    form.value.phone.trim() &&
+    form.value.address.trim()
+
+  const hasResume =
+    resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.value.resumeName)
+  const hasApplicationLetter = !!form.value.letterName
+
+  const hasExperience = !!form.value.experience
+  const hasExpectedSalary = !!form.value.expected_salary
+  const confirmed = form.value.confirm
+
+  return (
+    hasPersonalInfo &&
+    hasResume &&
+    hasApplicationLetter &&
+    hasExperience &&
+    hasExpectedSalary &&
+    confirmed
+  )
+})
+
 function handleSubmit(e: Event) {
+  if (!isFormValid.value) {
+    e.preventDefault()
+    alert('Please complete all required sections before submitting.')
+    return
+  }
   const target = e.target as HTMLFormElement
-  target.submit() // native form submit
+  target.submit()
 }
 </script>

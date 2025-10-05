@@ -8,6 +8,7 @@ import type { StudentProfile } from '@/types/studentType'
 import customizeProfile from '@/assets/images/customizeProfile.png'
 import StudentEdit from '@/components/profiles/edits/StudentEdit.vue'
 import StudentView from '@/components/profiles/views/StudentView.vue'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
 
 const route = useRoute()
 const router = useRouter()

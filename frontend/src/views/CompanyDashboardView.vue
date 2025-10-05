@@ -61,7 +61,7 @@ onMounted(() => {
 
     <!-- Dashboard Stat Cards -->
     <div
-      class="relative -mt-16 md:-mt-24 px-[6vw] md:px-[10vw] grid grid-cols-1 md:grid-cols-3 gap-y-6 md:gap-x-10"
+      class="relative -mt-16 md:-mt-24 px-[6vw] md:px-[10vw] grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-x-10"
     >
       <div class="cursor-pointer" @click="toggleSection('total')">
         <DashboardStatCard
@@ -88,16 +88,6 @@ onMounted(() => {
               ? 'bg-blue-600 rounded-md text-white shadow-md overflow-hidden'
               : 'bg-blue-400 rounded-md text-white shadow-md overflow-hidden'
           "
-        />
-      </div>
-
-      <div class="cursor-pointer">
-        <DashboardStatCard
-          title="Profile Views"
-          :value="profileView"
-          description="This Month"
-          :icon="searchIcon"
-          :cardClass="'bg-white rounded-md text-black shadow-md overflow-hidden'"
         />
       </div>
     </div>

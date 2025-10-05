@@ -3,20 +3,22 @@ import { ref, onMounted } from 'vue'
 import Header from '@/components/layouts/AppHeader.vue'
 import FilterBox from '@/components/jobBoard/FilterBox.vue'
 import JobBox from '@/components/jobBoard/JobBox.vue'
-import type { Job, FilterKeys } from '@/assets/type'
+import type { Job, FilterKeys } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
 import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+const route = useRoute()
+const router = useRouter()
 
 const jobs = ref<Job[]>([])
-const router = useRouter()
 const selectedJobId = ref<string>('')
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
+const companyFilter = ref<string | undefined>(route.query.company as string) // optional query from url
 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
@@ -31,16 +33,16 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
   })
 }
 
-
 function handleSelect(id: string) {
   selectedJobId.value = id
   if (window.innerWidth < 768) {
     router.push(`/job/${id}`)
-  } 
+  }
 }
 
 onMounted(() => {
   fetchJobs()
+  window.scrollTo({ top: 0 })
 })
 </script>
 
@@ -48,7 +50,7 @@ onMounted(() => {
   <Header page="jobBoard" />
 
   <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw]">
-    <FilterBox @applyFilter="fetchJobs" />
+    <FilterBox :initialFilters="{ company: companyFilter }" @applyFilter="fetchJobs" />
 
     <div class="mt-12">
       <div v-if="jobs.length > 0" class="w-full h-[800px] flex gap-x-4">

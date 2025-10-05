@@ -20,5 +20,4 @@ const forceLightMode = () => {
   document.body.style.colorScheme = 'light'
 }
 
-
 forceLightMode()

@@ -1,4 +1,4 @@
-import type { Job } from '@/assets/type'
+import type { Job } from '@/types/jobType'
 
 export const mockJobs: Job[] = [
   {
@@ -154,5 +154,111 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['SEO', 'Google Ads', 'Social Media', 'Content Marketing'],
     salary: '45,000 THB/month',
+  },
+  {
+    jobId: 'techcorp-frontend-1a2b',
+    company: 'Urban Mobility Tech',
+    role: 'Frontend Developer',
+    jobLevel: 'Mid-level',
+    location: 'Bangkok, Thailand',
+    postTime: new Date('2025-08-01T10:00:00'),
+    description:
+      'Develop and maintain web applications using React and TypeScript. Collaborate with designers and backend developers.',
+    highlights: [
+      'React & TypeScript development',
+      'Collaborate with design & backend teams',
+      'Responsive UI implementation',
+    ],
+    jobType: 'Full-time',
+    skills: ['React', 'TypeScript', 'HTML', 'CSS', 'TailwindCSS'],
+    salary: '50,000 THB/month',
+  },
+  {
+    jobId: 'techcorp-backend-2b3c',
+    company: 'Urban Mobility Tech',
+    role: 'Backend Developer',
+    jobLevel: 'Senior',
+    location: 'Bangkok, Thailand',
+    postTime: new Date('2025-08-03T14:30:00'),
+    description:
+      'Build and optimize backend services and APIs. Ensure system scalability and reliability.',
+    highlights: [
+      'Node.js & Express API development',
+      'Database optimization & scaling',
+      'Work with Docker & cloud infrastructure',
+    ],
+    jobType: 'Full-time',
+    skills: ['Node.js', 'MongoDB', 'Express', 'Docker', 'PostgreSQL', 'Redis'],
+    salary: '70,000 THB/month',
+  },
+  {
+    jobId: 'techcorp-uiux-3c4d',
+    company: 'Urban Mobility Tech',
+    role: 'UI/UX Designer',
+    jobLevel: 'Junior',
+    location: 'Bangkok, Thailand',
+    postTime: new Date('2025-08-05T09:00:00'),
+    description:
+      'Design intuitive user interfaces and conduct user research to improve product usability.',
+    highlights: [
+      'Create wireframes & prototypes',
+      'Conduct user research & testing',
+      'Collaborate with product & engineering',
+    ],
+    jobType: 'Part-time',
+    skills: ['Figma', 'Adobe XD', 'User Research', 'Prototyping', 'Sketch'],
+    salary: '30,000 THB/month',
+  },
+  {
+    jobId: 'techcorp-devops-4d5e',
+    company: 'Urban Mobility Tech',
+    role: 'DevOps Engineer',
+    jobLevel: 'Senior',
+    location: 'Remote, Thailand',
+    postTime: new Date('2025-08-07T16:00:00'),
+    description: 'Manage cloud infrastructure, CI/CD pipelines, and ensure system reliability.',
+    highlights: [
+      'Maintain AWS cloud infrastructure',
+      'Setup & monitor CI/CD pipelines',
+      'Automate deployments with Terraform',
+    ],
+    jobType: 'Full-time',
+    skills: ['AWS', 'Kubernetes', 'CI/CD', 'Terraform', 'Docker', 'Jenkins'],
+    salary: '80,000 THB/month',
+  },
+  {
+    jobId: 'techcorp-datasci-5e6f',
+    company: 'Urban Mobility Tech',
+    role: 'Data Scientist',
+    jobLevel: 'Mid-level',
+    location: 'Bangkok, Thailand',
+    postTime: new Date('2025-08-10T11:45:00'),
+    description: 'Analyze datasets and build machine learning models to generate insights.',
+    highlights: [
+      'Build ML models for prediction',
+      'Analyze business data with Python',
+      'Collaborate with data engineers',
+    ],
+    jobType: 'Full-time',
+    skills: ['Python', 'Machine Learning', 'SQL', 'TensorFlow', 'Pandas'],
+    salary: '65,000 THB/month',
+  },
+  {
+    jobId: 'techcorp-pm-6f7g',
+    company: 'Urban Mobility Tech',
+    role: 'Product Manager',
+    jobLevel: 'Mid-level',
+    location: 'Bangkok, Thailand',
+    postTime: new Date('2025-08-12T13:20:00'),
+    description:
+      'Define product strategy, prioritize features, and work with cross-functional teams.',
+    highlights: [
+      'Define product vision & roadmap',
+      'Lead cross-functional collaboration',
+      'Analyze product performance',
+    ],
+    jobType: 'Full-time',
+    skills: ['Product Strategy', 'Agile', 'Leadership', 'Analytics'],
+    salary: '75,000 THB/month',
   },
 ]

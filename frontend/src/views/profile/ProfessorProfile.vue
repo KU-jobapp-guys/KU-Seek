@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ProfessorProfile } from '@/types/professorType'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -7,7 +7,9 @@ import { mockProfessor } from '@/data/mockProfessor'
 import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import { mockCompany } from '@/data/mockCompany'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
-import { Building2Icon } from 'lucide-vue-next'
+import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
+import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
+import { Save, X } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,6 +17,7 @@ const router = useRouter()
 const isLoading = ref(true)
 const isEditing = ref(false)
 const professorData = ref<ProfessorProfile | null>(null)
+const editData = ref<ProfessorProfile | null>(null)
 
 const loadProfessor = (id?: string) => {
   if (!id) {
@@ -33,6 +36,52 @@ const renderReady = () => {
   isLoading.value = false
 }
 
+const hasValidationErrors = computed(() => {
+  if (!editData.value) return true
+  if (!editData.value.about?.trim()) return true
+  if (!editData.value.department?.trim()) return true
+  if (!editData.value.position?.trim()) return true
+  if (!editData.value.office_location?.trim()) return true
+  if (!editData.value.research_interest?.trim()) return true
+  return false
+})
+
+const editProfile = () => {
+  if (!professorData.value) return
+
+  editData.value = {
+    ...professorData.value
+  }
+
+  isEditing.value = true
+}
+
+const cancelEdit = () => {
+  isEditing.value = false
+  editData.value = null
+}
+
+const saveProfile = () => {
+  if (!editData) return
+
+  if (hasValidationErrors.value) {
+    // Scroll to first error
+    setTimeout(() => {
+      const firstError = document.querySelector('.error-form')
+      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
+    return
+  }
+
+  professorData.value = editData.value
+
+  // Send studentData.value to backend here
+  console.log("Saving profile:", professorData.value)
+
+  isEditing.value = false
+  editData.value = null
+}
+
 onMounted(() => {
   loadProfessor(route.params.id as string)
 })
@@ -49,7 +98,7 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner :professorData="professorData" @loaded="renderReady" :isEditing="isEditing" />
+    <ProfessorBanner :professorData="professorData" @loaded="renderReady" @edit="editProfile" :isEditing="isEditing" />
 
     <!-- Content Part -->
     <section class="data mt-8">
@@ -77,39 +126,8 @@ const switchTab = (tab: string) => {
         <div class="py-8">
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
-            <div
-              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12 gap-y-4 rounded-xl shadow-md"
-            >
-              <div class="flex items-center gap-x-2">
-                <div
-                  class="w-12 h-12 flex items-center justify-center bg-green-600 rounded-full text-white"
-                >
-                  <Building2Icon />
-                </div>
-                <h2 class="font-bold text-2xl">Overview</h2>
-              </div>
-
-              <div class="flex flex-col md:pl-4 gap-y-1">
-                <p>
-                  <span class="font-medium block md:inline">Department: </span>
-                  {{ professorData.department }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Academic Position: </span>
-                  {{ professorData.position }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Office Location:</span>
-                  {{ professorData.office_location }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Research Interest:</span>
-                  {{ professorData.research_interest }}
-                </p>
-              </div>
-
-              <p>{{ professorData.about }}</p>
-            </div>
+            <ProfessorView v-if="!isEditing" :professorData="professorData" />
+            <ProfessorEdit v-else-if="editData" v-model="editData" />
           </div>
 
           <!-- Connection Tab -->
@@ -121,5 +139,23 @@ const switchTab = (tab: string) => {
         </div>
       </div>
     </section>
+
+    <!-- Save/Cancel Buttons -->
+    <div v-if="isEditing" class="flex justify-end gap-3 my-8">
+      <button
+        @click="cancelEdit"
+        class="flex items-center gap-2 px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg transition-colors"
+      >
+        <X class="w-5 h-5" />
+        Cancel
+      </button>
+      <button
+        @click="saveProfile"
+        class="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+      >
+        <Save class="w-5 h-5" />
+        Save
+      </button>
+    </div>
   </div>
 </template>

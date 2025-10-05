@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { computed } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
@@ -9,16 +8,24 @@ const props = defineProps({
 })
 
 const companyList = ['Dashboard', 'Profile']
-const studentList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Profile']
+const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Profile']
 
 const pageList = computed(() => {
   if (props.role === 'company') return companyList
-  if (props.role === 'student') return studentList
+  if (props.role && ['student', 'professor'].includes(props.role)) return kuList
   return []
 })
 
-const makeLink = (page: string) => {
-  return props.role ? `/${props.role}/${page.toLowerCase().replace(/\s+/g, '-')}` : ''
+function makeLink(page: string) {
+  const role = props.role
+  const userId = '1'
+  if (page === 'Profile') {
+    return `/${role}/profile/${userId}`
+  }
+  if (page === 'Dashboard') {
+    return `/${role}/dashboard`
+  }
+  return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 </script>
 

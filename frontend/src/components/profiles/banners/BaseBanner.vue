@@ -5,6 +5,8 @@ import type { Company } from '@/types/companyType'
 import type { StudentProfile } from '@/types/studentType'
 import type { ProfessorProfile } from '@/types/professorType'
 import { profileConfig } from '@/configs/profileRoleConfig'
+import defaultProfile from '@/assets/images/defaultProfile.png'
+import defaultBanner from '@/assets/images/defaultBanner.png'
 
 const emits = defineEmits<{ 
   (e: 'loaded'): void,
@@ -57,7 +59,7 @@ const handleProfileChange = (e: Event) => {
     <div class="h-[32vh] relative bg-gray-500 w-full overflow-hidden group">
       <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-black/0 z-10"></div>
       <img
-        :src="bannerPreview || data.bannerPhoto"
+        :src="bannerPreview || data.bannerPhoto || defaultBanner"
         class="absolute z-0 w-full h-full object-cover"
         alt="Banner"
         loading="lazy"
@@ -85,7 +87,7 @@ const handleProfileChange = (e: Event) => {
         :class="isEditing ? 'bg-gradient-to-b from-gray-400 to-gray-300' : profileClass.border"
       >
         <img
-          :src="profilePreview || data.profilePhoto"
+          :src="profilePreview || data.profilePhoto || defaultProfile"
           class="rounded-full w-full h-full object-cover bg-black"
           alt="Profile"
           @load="profileLoaded = true"

@@ -1,14 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingView from '@/views/LandingView.vue'
-import StudentDashboardView from '@/views/StudentDashboardView.vue'
-import CompanyDashboardView from '@/views/CompanyDashboardView.vue'
-import StaffDashboardView from '@/views/StaffDashboardView.vue'
+import StudentDashboardView from '@/views/dashboard/StudentDashboardView.vue'
+import CompanyDashboardView from '@/views/dashboard/CompanyDashboardView.vue'
+import StaffDashboardView from '@/views/dashboard/StaffDashboardView.vue'
 import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import CompanyProfile from '@/views/CompanyProfile.vue'
 import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import JobView from '@/views/JobView.vue'
+import StudentProfile from '@/views/profile/StudentProfile.vue'
+import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,13 +21,21 @@ const router = createRouter({
       name: 'landing',
       component: LandingView,
     },
-
     {
-      path: '/company/profile',
+      path: '/student/profile/:id',
+      name: 'studentProfile',
+      component: StudentProfile,
+    },
+    {
+      path: '/company/profile/:id',
       name: 'companyProfile',
       component: CompanyProfile,
     },
-    
+    {
+      path: '/professor/profile/:id',
+      name: 'professorProfile',
+      component: ProfessorProfile,
+    },
     {
       path: '/student/dashboard',
       name: 'StudentDashboard',
@@ -38,27 +49,27 @@ const router = createRouter({
     {
       path: '/staff/dashboard',
       name: 'StaffDashboard',
-      component: StaffDashboardView
+      component: StaffDashboardView,
     },
     {
-      path: '/student/explore-job',
+      path: '/professor/dashboard',
+      name: 'Professor Dashboard',
+      component: StaffDashboardView,
+    },
+    {
+      path: '/explore-job',
       name: 'job board',
       component: JobBoardView,
     },
     {
-      path: '/student/explore-company',
+      path: '/explore-company',
       name: 'company board',
       component: CompanyBoardView,
     },
     {
-      path: '/student/dashboard',
-      name: 'student dashboard',
-      component: StudentDashboardView,
-    },
-    {
-      path: '/company/dashboard',
-      name: 'company dashboard',
-      component: CompanyDashboardView,
+      path: '/job/:id',
+      name: 'job view',
+      component: JobView,
     },
     {
       path: '/student/job-application',

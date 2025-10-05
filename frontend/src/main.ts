@@ -1,4 +1,5 @@
 import './assets/base.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -18,6 +19,5 @@ const forceLightMode = () => {
   document.body.style.color = 'black'
   document.body.style.colorScheme = 'light'
 }
-
 
 forceLightMode()

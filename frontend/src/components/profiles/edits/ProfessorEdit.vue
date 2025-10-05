@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import type { ProfessorProfile } from '@/types/professorType'
+import type { OverviewFieldKey } from '@/configs/EditProfileConfig';
+import { OverviewFields } from '@/configs/EditProfileConfig';
 import { Building2Icon } from 'lucide-vue-next'
+import { ProfileStyle } from '@/configs/profileStyleConfig';
 
 
 const props = defineProps<{ modelValue: ProfessorProfile }>()
@@ -9,31 +12,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', data: ProfessorProfile): void
 }>()
 
-
-// Configuration for overview fields
-const overviewFields = [
-  { key: 'department', label: 'Department', placeholder: 'e.g., Computer Science', required: true },
-  { key: 'position', label: 'Academic Position', placeholder: 'e.g., Associate Professor', required: true },
-  { key: 'office_location', label: 'Office Location', placeholder: 'e.g., Building A, Room 301', required: true },
-  { key: 'research_interest', label: 'Research Interest', placeholder: 'e.g., Machine Learning, AI', required: true }
-]
-
-type OverviewFieldKey = 'department' | 'position' | 'office_location' | 'research_interest'
-
-const editForm = ref<ProfessorProfile>({ ...props.modelValue })
-
-const updateData = <K extends keyof ProfessorProfile>(field: K, value: ProfessorProfile[K]) => {
-  editForm.value[field] = value
-  emit('update:modelValue', editForm.value)
-}
-
-// Create a dynamic computed model factory
-const createFieldModel = <K extends keyof ProfessorProfile>(field: K) => {
-  return computed({
-    get: () => editForm.value[field],
-    set: (value: ProfessorProfile[K]) => updateData(field, value)
-  })
-}
+const editForm = ref<ProfessorProfile>(props.modelValue)
 
 </script>
 
@@ -53,23 +32,23 @@ const createFieldModel = <K extends keyof ProfessorProfile>(field: K) => {
       <div class="bg-white mt-4 px-4 py-6 w-full">
         <div class="space-y-4">
           <!-- Overview Fields -->
-          <div v-for="field in overviewFields" :key="field.key">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
+          <div v-for="field in OverviewFields" :key="field.key">
+            <label :class="ProfileStyle.formLabel">
               {{ field.label }}
               <span 
-                v-if="field.required && editForm[field.key as OverviewFieldKey]?.trim() === ''" 
-                class="error-form text-sm text-red-500"
+                v-if="editForm[field.key as OverviewFieldKey]?.trim() === ''" 
+                :class="ProfileStyle.errorText"
               >
                 (This field is required)
               </span>
             </label>
             <input
-              v-model="createFieldModel(field.key as OverviewFieldKey).value"
+              v-model="editForm[field.key as OverviewFieldKey]"
               type="text"
               :class="[
-                'w-full p-3 border rounded-md focus:outline-none focus:ring-2',
-                field.required && editForm[field.key as OverviewFieldKey]?.trim() === ''
-                  ? 'focus:ring-red-500 focus:border-0 border-red-500' 
+                ProfileStyle.inputBox,
+                editForm[field.key as OverviewFieldKey]?.trim() === ''
+                  ? ProfileStyle.errorBox
                   : 'focus:ring-blue-600 border-gray-300'
               ]"
               :placeholder="field.placeholder"
@@ -77,22 +56,22 @@ const createFieldModel = <K extends keyof ProfessorProfile>(field: K) => {
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
+            <label :class="ProfileStyle.formLabel">
               About
               <span 
                 v-if="editForm['about']?.trim() === ''" 
-                class="error-form text-sm text-red-500"
+                :class="ProfileStyle.errorText"
               >
                 (This field is required)
               </span>
             </label>
             <textarea
-              v-model="createFieldModel('about').value"
+              v-model="editForm.about"
               rows="6"
               :class="[
                 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2',
                 editForm.about?.trim() === '' 
-                  ? 'focus:ring-red-500 focus:border-0 border-red-500' 
+                  ? ProfileStyle.errorBox 
                   : 'focus:ring-blue-500'
               ]"
               placeholder="Tell us about yourself, your background, and your expertise..."

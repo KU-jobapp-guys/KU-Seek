@@ -1,23 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { EducationBaseConfig } from '@/configs/studentProfileConfig'
-import type { EducationFieldKey } from '@/configs/studentProfileConfig'
+import { EducationBaseFields } from '@/configs/EditProfileConfig'
+import type { EducationFieldKey } from '@/configs/EditProfileConfig'
 import type { StudentProfile } from '@/types/studentType'
-import { CircleUserRound, Wrench, GraduationCap, Star, Save, X } from 'lucide-vue-next'
+import { CircleUserRound, Wrench, GraduationCap, Star, X } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 
-const props = defineProps<{ studentData: StudentProfile }>()
-const { studentData } = props
+const props = defineProps<{ modelValue: StudentProfile }>()
+const emit = defineEmits<{
+  (e: 'update:modelValue', data: StudentProfile): void
+}>()
 
-const editForm = ref<StudentProfile>(studentData)
+const editForm = ref<StudentProfile>(props.modelValue)
 const skillSearchQuery = ref('')
 const showSkillDropdown = ref(false)
-
-const emit = defineEmits<{
-  (e: 'save', data: StudentProfile): void
-  (e: 'cancel'): void
-}>()
 
 // Get all available skills from techStackColors
 const availableSkills = Object.keys(techStackColors).filter(skill => skill !== 'Default')
@@ -28,47 +25,6 @@ const filteredSkills = computed(() => {
     skill.toLowerCase().includes(skillSearchQuery.value.toLowerCase())
   )
 })
-
-const educationErrors = computed(() => {
-  let educations = editForm.value.education
-  for (let index = 0; index < educations.length; index++) {
-    let edu = educations[index];
-    if (
-      !edu.curriculum_name?.trim() ||
-      !edu.major?.trim() ||
-      !edu.university?.trim() ||
-      !edu.graduate_year ||
-      !edu.year_of_study ||
-      edu.graduate_year < edu.year_of_study
-    ) return true
-  }
-  return false
-})
-
-const hasValidationErrors = computed(() => {
-  if (!editForm.value.about?.trim()) return true
-  if (!editForm.value.interests?.trim()) return true
-  if (educationErrors.value) return true
-  return false
-})
-
-const cancelEdit = () => {
-  skillSearchQuery.value = ''
-  showSkillDropdown.value = false
-  emit('cancel')
-}
-
-const saveProfile = () => {
-  if (hasValidationErrors.value) {
-    // Scroll to first error
-    setTimeout(() => {
-      const firstError = document.querySelector('.error-form')
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
-    return
-  }
-  emit('save', editForm.value)
-}
 
 const addEducation = () => {
   editForm.value.education.push({
@@ -246,7 +202,7 @@ onMounted(() => {
         </button>
 
         <div class="space-y-3">
-          <div v-for="field in EducationBaseConfig" :key="field.key">
+          <div v-for="field in EducationBaseFields" :key="field.key">
             <label class="text-sm font-medium text-gray-700 mb-1">
               {{ field.label }}
               <span v-if="edu[field.key as EducationFieldKey].trim() === ''" :class="ProfileStyle.errorText">
@@ -294,20 +250,8 @@ onMounted(() => {
               />
             </div>
           </div>
-
         </div>
-
       </div>
     </section>
-
-    <!-- Save/Cancel Buttons -->
-    <div class="flex justify-end gap-3 my-8">
-      <button @click="cancelEdit" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
-        <X class="w-5 h-5" /> Cancel
-      </button>
-      <button @click="saveProfile" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
-        <Save class="w-5 h-5" /> Save
-      </button>
-    </div>
   </div>
 </template>

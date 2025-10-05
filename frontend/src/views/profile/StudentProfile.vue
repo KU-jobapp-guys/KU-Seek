@@ -8,6 +8,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
 import type { StudentProfile } from '@/types/studentType'
 import customizeProfile from '@/assets/images/customizeProfile.png'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
+import { Save, X } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -65,16 +67,43 @@ const cancelEdit = () => {
   editData.value = null
 }
 
-const saveProfile = (data: StudentProfile) => {
-  if (!data || !editData) return
-
-  studentData.value = {
-    ...data,
-    profilePhoto: editData.value?.profilePhoto || data.profilePhoto,
-    bannerPhoto: editData.value?.bannerPhoto || data.bannerPhoto,
-    education: data.education.map(edu => ({ ...edu })),
-    skills: [...data.skills],
+const educationErrors = computed(() => {
+  if (!editData.value) return true
+  let educations = editData.value.education
+  for (let index = 0; index < educations.length; index++) {
+    let edu = educations[index];
+    if (
+      !edu.curriculum_name?.trim() ||
+      !edu.major?.trim() ||
+      !edu.university?.trim() ||
+      !edu.graduate_year ||
+      !edu.year_of_study ||
+      edu.graduate_year < edu.year_of_study
+    ) return true
   }
+  return false
+})
+
+const hasValidationErrors = computed(() => {
+  if (!editData.value) return true
+  if (!editData.value.about?.trim()) return true
+  if (!editData.value.interests?.trim()) return true
+  if (educationErrors.value) return true
+  return false
+})
+
+const saveProfile = () => {
+  if (!editData) return
+
+  if (hasValidationErrors.value) {
+    setTimeout(() => {
+      const firstError = document.querySelector('.error-form')
+      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
+    return
+  }
+
+  studentData.value = editData.value
 
   // Send studentData.value to backend here
   console.log("Saving profile:", studentData.value)
@@ -83,12 +112,16 @@ const saveProfile = (data: StudentProfile) => {
   editData.value = null
 }
 
-const updateBanner = (newFile: File) => {
-  if (editData.value) editData.value.bannerPhoto = URL.createObjectURL(newFile)
-}
-
-const updateProfilePhoto = (newFile: File) => {
-  if (editData.value) editData.value.profilePhoto = URL.createObjectURL(newFile)
+const updateImage = (payload: { newFile: File, field: 'bannerPhoto' | 'profilePhoto' }) => {
+  if (!editData.value) return
+  
+  const { newFile, field } = payload
+  const previewUrl = URL.createObjectURL(newFile)
+  
+  editData.value = {
+    ...editData.value,
+    [field]: previewUrl
+  }
 }
 
 onMounted(() => {
@@ -115,8 +148,7 @@ onMounted(() => {
       :isEditing
       @loaded="renderReady"
       @edit="editProfile"
-      @updateBanner="updateBanner"
-      @updateProfilePhoto="updateProfilePhoto"
+      @updateImage="updateImage"
     />
 
     <!-- New profile setup -->
@@ -141,10 +173,20 @@ onMounted(() => {
       <StudentView v-if="studentData && !isEditing" :studentData="studentData"/>
       <StudentEdit
         v-if="editData && isEditing"
-        :studentData="editData"
+        v-model="editData"
         @cancel="cancelEdit"
         @save="saveProfile"
       />
     </section>
+
+    <!-- Save/Cancel Buttons -->
+    <div v-if="isEditing" class="flex justify-end gap-3 my-8">
+      <button @click="cancelEdit" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
+        <X class="w-5 h-5" /> Cancel
+      </button>
+      <button @click="saveProfile" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+        <Save class="w-5 h-5" /> Save
+      </button>
+    </div>
   </div>
 </template>

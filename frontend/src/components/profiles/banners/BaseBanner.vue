@@ -11,8 +11,7 @@ import defaultBanner from '@/assets/images/defaultBanner.png'
 const emits = defineEmits<{ 
   (e: 'loaded'): void,
   (e: 'edit'): void,
-  (e: 'updateBanner', file: File): void,
-  (e: 'updateProfilePhoto', file: File): void
+  (e: 'updateImage', payload: {newFile: File, field: 'bannerPhoto' | 'profilePhoto'}): void,
 }>()
 
 const props = defineProps<{
@@ -36,21 +35,16 @@ watch(isFullyLoaded, (newValue) => {
   if (newValue) emits('loaded')
 })
 
-// handle image changes
-const handleBannerChange = (e: Event) => {
+const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
+  console.log('im here', e, field)
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  bannerPreview.value = URL.createObjectURL(file)
-  emits('updateBanner', file)
-}
+  const previewUrl = URL.createObjectURL(file)
+  if (field === 'bannerPhoto') bannerPreview.value = previewUrl
+  else profilePreview.value = previewUrl
 
-const handleProfileChange = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  profilePreview.value = URL.createObjectURL(file)
-  emits('updateProfilePhoto', file)
+  emits('updateImage', { newFile: file, field })
 }
-
 </script>
 
 <template>
@@ -73,13 +67,13 @@ const handleProfileChange = (e: Event) => {
         class="absolute top-3 right-3 z-20 bg-black/50 text-white p-2 rounded-lg transition cursor-pointer flex items-center gap-1"
       >
         <Camera class="w-4 h-4" /> Change banner
-        <input type="file" accept="image/*" class="hidden" @change="handleBannerChange" />
+        <input type="file" accept="image/*" class="hidden" @change="(e) => handleImageChange(e, 'bannerPhoto')" />
       </label>
     </div>
 
     <div
       class="relative ring-1 ring-[#B1B1B1] ring-inset px-8 md:px-12 py-8"
-      :class="profileClass.base"
+      :class="isEditing ? 'bg-gradient-to-b from-gray-800/20 to-white' :profileClass.base"
     >
       <!-- Profile Image -->
       <div
@@ -100,7 +94,7 @@ const handleProfileChange = (e: Event) => {
           class="absolute inset-0 bg-black/40 text-white flex items-center justify-center rounded-full transition cursor-pointer"
         >
           <Camera class="w-6 h-6" />
-          <input type="file" accept="image/*" class="hidden" @change="handleProfileChange" />
+          <input type="file" accept="image/*" class="hidden" @change="(e) => handleImageChange(e, 'profilePhoto')" />
         </label>
       </div>
 

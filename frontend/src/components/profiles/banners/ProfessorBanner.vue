@@ -9,11 +9,16 @@ const props = defineProps<{
 }>()
 const { professorData, isEditing } = props
 
+const emit = defineEmits<{
+  (e: 'edit'): void
+}>()
+
+
 const isOwner = professorData.id === '1'
 </script>
 
 <template>
-  <BaseBanner :data="professorData" role="professor" :isEditing="isEditing">
+  <BaseBanner :data="professorData" role="professor" :isEditing @edit="emit('edit')">
     <div class="flex w-full justify-between items-end">
       <div class="flex flex-col w-full">
         <h1 class="flex flex-col md:flex-row md:items-end">

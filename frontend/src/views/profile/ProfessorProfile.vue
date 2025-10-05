@@ -10,6 +10,7 @@ import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
 import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
 import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
 import { Save, X } from 'lucide-vue-next'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
 
 const route = useRoute()
 const router = useRouter()
@@ -65,7 +66,6 @@ const saveProfile = () => {
   if (!editData) return
 
   if (hasValidationErrors.value) {
-    // Scroll to first error
     setTimeout(() => {
       const firstError = document.querySelector('.error-form')
       firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -80,6 +80,18 @@ const saveProfile = () => {
 
   isEditing.value = false
   editData.value = null
+}
+
+const updateImage = (payload: { newFile: File, field: 'bannerPhoto' | 'profilePhoto' }) => {
+  if (!editData.value) return
+  
+  const { newFile, field } = payload
+  const previewUrl = URL.createObjectURL(newFile)
+  
+  editData.value = {
+    ...editData.value,
+    [field]: previewUrl
+  }
 }
 
 onMounted(() => {
@@ -98,12 +110,16 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner :professorData="professorData" @loaded="renderReady" @edit="editProfile" :isEditing="isEditing" />
+    <ProfessorBanner v-if="!isEditing" :professorData="professorData" @loaded="renderReady" @edit="editProfile" :isEditing />
+    <ProfessorBanner v-else-if="editData" :professorData="editData" @loaded="renderReady" :isEditing @updateImage="updateImage"/>
 
     <!-- Content Part -->
     <section class="data mt-8">
       <div
-        class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12"
+        :class="[
+          'bg-gradient-to-b to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',
+          isEditing ? 'from-gray-800/10' : 'from-orange-800/10' 
+        ]"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
@@ -142,19 +158,11 @@ const switchTab = (tab: string) => {
 
     <!-- Save/Cancel Buttons -->
     <div v-if="isEditing" class="flex justify-end gap-3 my-8">
-      <button
-        @click="cancelEdit"
-        class="flex items-center gap-2 px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg transition-colors"
-      >
-        <X class="w-5 h-5" />
-        Cancel
+      <button @click="cancelEdit" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
+        <X class="w-5 h-5" /> Cancel
       </button>
-      <button
-        @click="saveProfile"
-        class="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-      >
-        <Save class="w-5 h-5" />
-        Save
+      <button @click="saveProfile" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+        <Save class="w-5 h-5" /> Save
       </button>
     </div>
   </div>

@@ -1,26 +1,30 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { PenBoxIcon, Camera } from 'lucide-vue-next'
-import type { Company } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/companyType'
 import type { StudentProfile } from '@/types/studentType'
 import type { ProfessorProfile } from '@/types/professorType'
 import { profileConfig } from '@/configs/profileRoleConfig'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 import defaultBanner from '@/assets/images/defaultBanner.png'
 
+type Profile =  CompanyProfile | StudentProfile | ProfessorProfile
+
 const emits = defineEmits<{ 
   (e: 'loaded'): void,
   (e: 'edit'): void,
-  (e: 'updateImage', payload: {newFile: File, field: 'bannerPhoto' | 'profilePhoto'}): void,
+  (e: 'update:modelValue', data: Profile): void
 }>()
 
 const props = defineProps<{
-  data: Company | StudentProfile | ProfessorProfile
+  modelValue: Profile
+  data: Profile
   role: 'company' | 'student' | 'professor'
   isEditing: boolean
 }>()
 
-const { data, role, isEditing } = props
+const { data, role } = props
+const editForm = ref<Profile>(props.modelValue || null)
 
 const isOwner = data.id === '1'
 const bannerLoaded = ref(false)
@@ -36,19 +40,30 @@ watch(isFullyLoaded, (newValue) => {
 })
 
 const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
-  console.log('im here', e, field)
+  console.log('up0')
+
+  if (!editForm.value) return
+  console.log('up1')
+  
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  const previewUrl = URL.createObjectURL(file)
-  if (field === 'bannerPhoto') bannerPreview.value = previewUrl
-  else profilePreview.value = previewUrl
 
-  emits('updateImage', { newFile: file, field })
+  const previewUrl = URL.createObjectURL(file)
+  if (field === 'bannerPhoto') {
+    bannerPreview.value = previewUrl
+    editForm.value.bannerPhoto = previewUrl
+  } else {
+    profilePreview.value = previewUrl
+    editForm.value.profilePhoto = previewUrl
+  }
+
+  emits('update:modelValue', { ...editForm.value })
 }
 </script>
 
 <template>
   <section class="profile rounded-xl overflow-hidden shadow-xl">
+
     <!-- Banner Image -->
     <div class="h-[32vh] relative bg-gray-500 w-full overflow-hidden group">
       <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-black/0 z-10"></div>
@@ -73,12 +88,12 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
 
     <div
       class="relative ring-1 ring-[#B1B1B1] ring-inset px-8 md:px-12 py-8"
-      :class="isEditing ? 'bg-gradient-to-b from-gray-800/20 to-white' :profileClass.base"
+      :class="props.isEditing ? 'bg-gradient-to-b from-gray-800/20 to-white' :profileClass.base"
     >
       <!-- Profile Image -->
       <div
         class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full shadow-md group"
-        :class="isEditing ? 'bg-gradient-to-b from-gray-400 to-gray-300' : profileClass.border"
+        :class="props.isEditing ? 'bg-gradient-to-b from-gray-400 to-gray-300' : profileClass.border"
       >
         <img
           :src="profilePreview || data.profilePhoto || defaultProfile"
@@ -114,6 +129,6 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
       </div>
     </div>
 
-    <div class="w-full h-4" :class="isEditing ? 'bg-gradient-to-r from-gray-400 via-gray-300 to-gray-500': profileClass.bar"></div>
+    <div class="w-full h-4" :class="props.isEditing ? 'bg-gradient-to-r from-gray-400 via-gray-300 to-gray-500': profileClass.bar"></div>
   </section>
 </template>

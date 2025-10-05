@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Company } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/companyType'
 import { useRouter } from 'vue-router'
 import BaseBanner from './BaseBanner.vue'
 
 const router = useRouter()
 const props = defineProps<{ 
-  companyData: Company
+  modelValue: CompanyProfile
+  companyData: CompanyProfile
   isEditing: boolean
 }>()
 const { companyData, isEditing } = props
@@ -19,7 +20,7 @@ const goToJobBoard = () => {
 </script>
 
 <template>
-  <BaseBanner :data="companyData" role="company" :isEditing="isEditing">
+  <BaseBanner :data="companyData" role="company" v-model="props.modelValue" :isEditing>
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>
         <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>

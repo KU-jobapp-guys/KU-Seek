@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { watch } from 'vue';
 import { CircleCheck } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/studentType'
 import BaseBanner from './BaseBanner.vue'
 
 const props = defineProps<{ 
+  modelValue: StudentProfile
   studentData: StudentProfile 
   isEditing: boolean
 }>()
@@ -17,7 +19,7 @@ const isOwner = studentData.id === '1'
 </script>
 
 <template>
-  <BaseBanner :data="studentData" role="student" :isEditing @edit="emit('edit')">
+  <BaseBanner :data="studentData" v-model="props.modelValue" role="student" :isEditing @edit="emit('edit')">
     <div class="flex flex-col w-full">
       <h1 class="font-bold text-4xl mr-2">{{
         studentData.first_name + ' ' + studentData.last_name

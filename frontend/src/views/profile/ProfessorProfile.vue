@@ -110,8 +110,8 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner v-if="!isEditing" :professorData="professorData" @loaded="renderReady" @edit="editProfile" :isEditing />
-    <ProfessorBanner v-else-if="editData" :professorData="editData" @loaded="renderReady" :isEditing @updateImage="updateImage"/>
+    <ProfessorBanner v-if="!isEditing" v-model="professorData" :professorData="professorData" @loaded="renderReady" @edit="editProfile" :isEditing />
+    <ProfessorBanner v-else-if="editData" v-model="editData" :professorData="editData" @loaded="renderReady" :isEditing @updateImage="updateImage"/>
 
     <!-- Content Part -->
     <section class="data mt-8">

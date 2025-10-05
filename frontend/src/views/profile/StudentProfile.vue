@@ -112,18 +112,6 @@ const saveProfile = () => {
   editData.value = null
 }
 
-const updateImage = (payload: { newFile: File, field: 'bannerPhoto' | 'profilePhoto' }) => {
-  if (!editData.value) return
-  
-  const { newFile, field } = payload
-  const previewUrl = URL.createObjectURL(newFile)
-  
-  editData.value = {
-    ...editData.value,
-    [field]: previewUrl
-  }
-}
-
 onMounted(() => {
   loadStudent(route.params.id as string)
 })
@@ -132,24 +120,12 @@ onMounted(() => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <div v-if="studentData" class="px-[6vw] md:px-[12vw] py-16">
-    <!-- Banner -->
-    <StudentBanner
-      v-if="!isEditing"
-      :studentData="studentData"
-      :isEditing
-      @loaded="renderReady"
-      @edit="editProfile"
-    />
 
-    <StudentBanner
-      v-else-if="editData"
-      :studentData="editData"
-      :isEditing
-      @loaded="renderReady"
-      @edit="editProfile"
-      @updateImage="updateImage"
-    />
+  <div v-if="studentData" class="px-[6vw] md:px-[12vw] py-16">
+
+    <!-- Banner -->
+    <StudentBanner v-if="!isEditing" v-model="studentData" :studentData="studentData" :isEditing="isEditing" @loaded="renderReady" @edit="editProfile" />
+    <StudentBanner v-else-if="editData" v-model="editData" :studentData="editData" :isEditing="isEditing" @loaded="renderReady" @edit="editProfile" />
 
     <!-- New profile setup -->
     <section v-if="isNewProfile && !isEditing" class="w-full mt-24">

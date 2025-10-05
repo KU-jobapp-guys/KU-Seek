@@ -83,7 +83,6 @@ const saveProfile = (data: StudentProfile) => {
   editData.value = null
 }
 
-
 const updateBanner = (newFile: File) => {
   if (editData.value) editData.value.bannerPhoto = URL.createObjectURL(newFile)
 }

@@ -4,8 +4,11 @@ import { useRouter } from 'vue-router'
 import BaseBanner from './BaseBanner.vue'
 
 const router = useRouter()
-const props = defineProps<{ companyData: Company }>()
-const { companyData } = props
+const props = defineProps<{ 
+  companyData: Company
+  isEditing: boolean
+}>()
+const { companyData, isEditing } = props
 
 const goToJobBoard = () => {
   router.push({
@@ -16,7 +19,7 @@ const goToJobBoard = () => {
 </script>
 
 <template>
-  <BaseBanner :data="companyData" role="company">
+  <BaseBanner :data="companyData" role="company" :isEditing="isEditing">
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>
         <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>

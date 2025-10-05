@@ -12,7 +12,8 @@ import { Building2Icon } from 'lucide-vue-next'
 const route = useRoute()
 const router = useRouter()
 
-const isLoading = ref(false)
+const isLoading = ref(true)
+const isEditing = ref(false)
 const professorData = ref<ProfessorProfile | null>(null)
 
 const loadProfessor = (id?: string) => {
@@ -48,7 +49,7 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner :professorData="professorData" @loaded="renderReady" />
+    <ProfessorBanner :professorData="professorData" @loaded="renderReady" :isEditing="isEditing" />
 
     <!-- Content Part -->
     <section class="data mt-8">

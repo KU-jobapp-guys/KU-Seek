@@ -14,6 +14,7 @@ const route = useRoute()
 const router = useRouter()
 
 const isLoading = ref(true)
+const isEditing = ref(false)
 const companyData = ref<Company | null>(null)
 const companyJobs = ref<Job[]>([])
 
@@ -68,7 +69,7 @@ const displayedJobs = computed(() => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="companyData" class="px-[6vw] md:px-[12vw] py-16">
-    <CompanyBanner :companyData="companyData" @loaded="renderReady" />
+    <CompanyBanner :companyData="companyData" @loaded="renderReady" :isEditing="isEditing"/>
 
     <!-- Content Part -->
     <section class="data mt-8">

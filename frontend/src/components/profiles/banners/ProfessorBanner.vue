@@ -3,14 +3,17 @@ import { CircleCheck } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/professorType'
 import BaseBanner from './BaseBanner.vue'
 
-const props = defineProps<{ professorData: ProfessorProfile }>()
-const { professorData } = props
+const props = defineProps<{ 
+  professorData: ProfessorProfile
+  isEditing: boolean
+}>()
+const { professorData, isEditing } = props
 
 const isOwner = professorData.id === '1'
 </script>
 
 <template>
-  <BaseBanner :data="professorData" role="professor">
+  <BaseBanner :data="professorData" role="professor" :isEditing="isEditing">
     <div class="flex w-full justify-between items-end">
       <div class="flex flex-col w-full">
         <h1 class="flex flex-col md:flex-row md:items-end">

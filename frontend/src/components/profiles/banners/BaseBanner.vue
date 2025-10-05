@@ -9,16 +9,17 @@ import { profileConfig } from '@/configs/profileRoleConfig'
 const emits = defineEmits<{ 
   (e: 'loaded'): void,
   (e: 'edit'): void,
-  (e: 'update-banner', file: File): void,
-  (e: 'update-profile', file: File): void
+  (e: 'updateBanner', file: File): void,
+  (e: 'updateProfilePhoto', file: File): void
 }>()
 
 const props = defineProps<{
   data: Company | StudentProfile | ProfessorProfile
   role: 'company' | 'student' | 'professor'
+  isEditing: boolean
 }>()
 
-const { data, role } = props
+const { data, role, isEditing } = props
 
 const isOwner = data.id === '1'
 const bannerLoaded = ref(false)
@@ -38,14 +39,14 @@ const handleBannerChange = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
   bannerPreview.value = URL.createObjectURL(file)
-  emits('update-banner', file)
+  emits('updateBanner', file)
 }
 
 const handleProfileChange = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
   profilePreview.value = URL.createObjectURL(file)
-  emits('update-profile', file)
+  emits('updateProfilePhoto', file)
 }
 
 </script>
@@ -66,8 +67,8 @@ const handleProfileChange = (e: Event) => {
 
       <!-- Upload banner overlay -->
       <label
-        v-if="isOwner"
-        class="absolute top-3 right-3 z-20 bg-black/50 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition cursor-pointer flex items-center gap-1"
+        v-if="isOwner && isEditing"
+        class="absolute top-3 right-3 z-20 bg-black/50 text-white p-2 rounded-lg transition cursor-pointer flex items-center gap-1"
       >
         <Camera class="w-4 h-4" /> Change banner
         <input type="file" accept="image/*" class="hidden" @change="handleBannerChange" />
@@ -81,7 +82,7 @@ const handleProfileChange = (e: Event) => {
       <!-- Profile Image -->
       <div
         class="absolute z-20 -top-20 w-[10vw] h-[10vw] p-3 min-w-[160px] min-h-[160px] rounded-full shadow-md group"
-        :class="profileClass.border"
+        :class="isEditing ? 'bg-gradient-to-b from-gray-400 to-gray-300' : profileClass.border"
       >
         <img
           :src="profilePreview || data.profilePhoto"
@@ -93,8 +94,8 @@ const handleProfileChange = (e: Event) => {
 
         <!-- Upload profile overlay -->
         <label
-          v-if="isOwner"
-          class="absolute inset-0 bg-black/40 text-white flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition cursor-pointer"
+          v-if="isOwner && isEditing"
+          class="absolute inset-0 bg-black/40 text-white flex items-center justify-center rounded-full transition cursor-pointer"
         >
           <Camera class="w-6 h-6" />
           <input type="file" accept="image/*" class="hidden" @change="handleProfileChange" />
@@ -117,6 +118,6 @@ const handleProfileChange = (e: Event) => {
       </div>
     </div>
 
-    <div class="w-full h-4" :class="profileClass.bar"></div>
+    <div class="w-full h-4" :class="isEditing ? 'bg-gradient-to-r from-gray-400 via-gray-300 to-gray-500': profileClass.bar"></div>
   </section>
 </template>

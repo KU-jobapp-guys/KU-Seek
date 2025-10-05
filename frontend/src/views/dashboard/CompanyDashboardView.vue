@@ -7,7 +7,6 @@ import JobCard from '@/components/jobBoard/JobBox.vue'
 
 import jobPostIcon from '@/assets/job-post-icon.svg'
 import appliedIcon from '@/assets/applied-icon.svg'
-import searchIcon from '@/assets/search-icon.svg'
 
 import type { Job } from '@/assets/type'
 // import your API function instead of mockJobs

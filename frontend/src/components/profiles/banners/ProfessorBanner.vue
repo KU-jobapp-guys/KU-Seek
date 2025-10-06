@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CircleCheck } from 'lucide-vue-next'
-import type { ProfessorProfile } from '@/types/professorType'
+import type { ProfessorProfile } from '@/types/profileType';
 import BaseBanner from './BaseBanner.vue'
 
 const props = defineProps<{ 

@@ -1,9 +1,5 @@
 import { ref, type Ref } from 'vue'
-import type { CompanyProfile } from '@/types/companyType'
-import type { StudentProfile } from '@/types/studentType'
-import type { ProfessorProfile } from '@/types/professorType'
-
-type Profile = CompanyProfile | StudentProfile | ProfessorProfile
+import type { Profile } from '@/types/profileType'
 
 export type EditableProfile<T> = {
   isEditing: Ref<boolean>

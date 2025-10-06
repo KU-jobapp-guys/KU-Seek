@@ -1,4 +1,4 @@
-import type { CompanyProfile } from '@/types/companyType'
+import type { CompanyProfile } from "@/types/profileType"
 
 export const mockCompany: CompanyProfile[] = [
   {

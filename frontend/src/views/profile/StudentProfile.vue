@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import StudentBanner from '@/components/profiles/banners/StudentBanner.vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { Save, X } from 'lucide-vue-next'
+import customizeProfile from '@/assets/images/customizeProfile.png'
+import type { StudentProfile } from '@/types/profileType'
+import { useEditableProfile } from '@/libs/profileEditing'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
+import { mockStudents } from '@/data/mockStudent'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import StudentBanner from '@/components/profiles/banners/StudentBanner.vue'
 import StudentEdit from '@/components/profiles/edits/StudentEdit.vue'
 import StudentView from '@/components/profiles/views/StudentView.vue'
-import { mockStudents } from '@/data/mockStudent'
-import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
-import type { StudentProfile } from '@/types/studentType'
-import customizeProfile from '@/assets/images/customizeProfile.png'
-import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { Save, X } from 'lucide-vue-next'
-import { useEditableProfile } from '@/libs/profileEditing'
 
 const route = useRoute()
 const router = useRouter()

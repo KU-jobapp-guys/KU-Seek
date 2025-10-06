@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { EducationBaseFields } from '@/configs/EditProfileConfig'
 import type { EducationFieldKey } from '@/configs/EditProfileConfig'
-import type { StudentProfile } from '@/types/studentType'
+import type { StudentProfile } from '@/types/profileType'
 import { CircleUserRound, Wrench, GraduationCap, Star, X } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { ProfileStyle } from '@/configs/profileStyleConfig'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CompanyProfile } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/profileType'
 import { useRouter } from 'vue-router'
 import BaseBanner from './BaseBanner.vue'
 

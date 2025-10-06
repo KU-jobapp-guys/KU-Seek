@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { PenBoxIcon, Camera } from 'lucide-vue-next'
-import type { CompanyProfile } from '@/types/companyType'
-import type { StudentProfile } from '@/types/studentType'
-import type { ProfessorProfile } from '@/types/professorType'
+import type { Profile } from '@/types/profileType'
 import { profileConfig } from '@/configs/profileRoleConfig'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 import defaultBanner from '@/assets/images/defaultBanner.png'
-
-type Profile =  CompanyProfile | StudentProfile | ProfessorProfile
 
 const emits = defineEmits<{ 
   (e: 'loaded'): void,

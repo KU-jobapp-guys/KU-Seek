@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ProfessorProfile } from '@/types/professorType'
+import type { ProfessorProfile } from '@/types/profileType';
 import type { OverviewFieldKey } from '@/configs/EditProfileConfig';
 import { OverviewFields } from '@/configs/EditProfileConfig';
 import { Building2Icon } from 'lucide-vue-next'

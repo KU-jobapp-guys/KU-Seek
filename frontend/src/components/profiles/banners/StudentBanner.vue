@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { watch } from 'vue';
 import { CircleCheck } from 'lucide-vue-next'
-import type { StudentProfile } from '@/types/studentType'
+import type { StudentProfile } from '@/types/profileType';
 import BaseBanner from './BaseBanner.vue'
 
 const props = defineProps<{ 

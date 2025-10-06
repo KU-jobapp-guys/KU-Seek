@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ProfessorProfile } from '@/types/professorType'
-import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import { Save, X } from 'lucide-vue-next'
+import type { ProfessorProfile } from '@/types/profileType'
+import { useEditableProfile } from '@/libs/profileEditing'
 import { mockProfessor } from '@/data/mockProfessor'
-import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import { mockCompany } from '@/data/mockCompany'
-import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
 import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
-import { Save, X } from 'lucide-vue-next'
+import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { useEditableProfile } from '@/libs/profileEditing'
 
 const route = useRoute()
 const router = useRouter()

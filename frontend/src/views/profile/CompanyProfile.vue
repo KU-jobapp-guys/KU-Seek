@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { CompanyProfile } from '@/types/companyType'
-import { mockCompany } from '@/data/mockCompany'
-import CompanyBanner from '@/components/profiles/banners/CompanyBanner.vue'
-import CompanyJob from '@/components/profiles/CompanyJob.vue'
-import { mockJobs } from '@/data/mockJobs'
+import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
-import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { Save, X } from 'lucide-vue-next'
+import { mockCompany } from '@/data/mockCompany'
+import { mockJobs } from '@/data/mockJobs'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import CompanyEdit from '@/components/profiles/edits/CompanyEdit.vue'
 import CompanyView from '@/components/profiles/views/CompanyView.vue'
+import CompanyBanner from '@/components/profiles/banners/CompanyBanner.vue'
+import CompanyJob from '@/components/profiles/CompanyJob.vue'
 
 const route = useRoute()
 const router = useRouter()

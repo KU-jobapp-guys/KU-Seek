@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { CompanyProfile } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/profileType';
 import { Building2Icon, X } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig';
 import { industryOptions, companySizeOptions } from '@/configs/EditProfileConfig';

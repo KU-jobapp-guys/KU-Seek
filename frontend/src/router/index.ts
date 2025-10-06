@@ -51,24 +51,19 @@ const router = createRouter({
       component: StaffDashboardView,
     },
     {
-      path: '/student/explore-job',
+      path: '/professor/dashboard',
+      name: 'Professor Dashboard',
+      component: StaffDashboardView,
+    },
+    {
+      path: '/explore-job',
       name: 'job board',
       component: JobBoardView,
     },
     {
-      path: '/student/explore-company',
+      path: '/explore-company',
       name: 'company board',
       component: CompanyBoardView,
-    },
-    {
-      path: '/student/dashboard',
-      name: 'student dashboard',
-      component: StudentDashboardView,
-    },
-    {
-      path: '/company/dashboard',
-      name: 'company dashboard',
-      component: CompanyDashboardView,
     },
     {
       path: '/job/:id',

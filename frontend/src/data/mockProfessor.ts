@@ -22,20 +22,7 @@ export const mockProfessor: ProfessorProfile[] = [
     research_interest: 'Artificial Intelligence, Natural Language Processing',
     description:
       'Professor Anan has over 20 years of experience in teaching and research in AI. He has published more than 50 papers in top-tier conferences.',
-    announcements: [
-      {
-        title: 'AI Research Seminar 2025',
-        content:
-          'Join our seminar on recent advancements in deep learning architectures, scheduled for October 15, 2025. This seminar will feature distinguished speakers from both academia and industry, covering topics such as generative AI, reinforcement learning, and the ethical implications of artificial intelligence. Participants will also have the opportunity to attend hands-on workshops and panel discussions aimed at bridging the gap between theory and real-world applications.',
-        created_at: new Date('2025-09-20'),
-      },
-      {
-        title: 'Call for Papers: NLP Conference',
-        content:
-          'We are inviting paper submissions for the International NLP Conference 2026, which will focus on the latest trends in natural language processing, including large language models, multilingual understanding, and AI-driven education technologies. Accepted papers will be published in the conference proceedings and selected works may be invited to submit extended versions to a special journal issue. The submission deadline is January 15, 2026, and we strongly encourage early career researchers and graduate students to participate.',
-        created_at: new Date('2025-08-10'),
-      },
-    ],
+    announcements: []
   },
   {
     id: '2',
@@ -57,7 +44,7 @@ export const mockProfessor: ProfessorProfile[] = [
     research_interest: 'Renewable Energy, Smart Grid, Internet of Things',
     description:
       'Dr. Sudarat focuses on applying IoT technologies in renewable energy systems to enhance efficiency and sustainability.',
-    announcements: [],
+    announcements: []
   },
   {
     id: '4',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { EducationBaseFields } from '@/configs/EditProfileConfig'
 import type { EducationFieldKey } from '@/configs/EditProfileConfig'
 import type { StudentProfile } from '@/types/profileType'
@@ -15,6 +15,7 @@ const emit = defineEmits<{
 const editForm = ref<StudentProfile>(JSON.parse(JSON.stringify(props.modelValue)))
 const skillSearchQuery = ref('')
 const showSkillDropdown = ref(false)
+const skillInputRef = ref<HTMLInputElement | null>(null)
 
 // Get all available skills from techStackColors
 const availableSkills = Object.keys(techStackColors).filter((skill) => skill !== 'Default')
@@ -48,17 +49,15 @@ const addSkill = (skill: string) => {
   }
   skillSearchQuery.value = ''
   showSkillDropdown.value = false
+
+  if (skillInputRef.value) {
+    skillInputRef.value.blur()
+  }
 }
 
 const removeSkill = (index: number) => {
   editForm.value.skills.splice(index, 1)
 }
-
-onMounted(() => {
-  if (!editForm.value.education || editForm.value.education.length === 0) {
-    addEducation()
-  }
-})
 
 watch(
   editForm,
@@ -138,9 +137,9 @@ watch(
           <!-- Skill Dropdown -->
           <div class="relative mb-3">
             <input
+              ref="skillInputRef"
               v-model="skillSearchQuery"
               @focus="showSkillDropdown = true"
-              @mousedown.prevent="showSkillDropdown = true"
               @blur="showSkillDropdown = false"
               type="text"
               :class="[ProfileStyle.inputBox, 'focus:ring-purple-500']"

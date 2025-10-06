@@ -17,15 +17,14 @@ const userId = '1'
 const userData = ref<Profile | null>(null)
 
 const companyList = ['Dashboard']
-const studentList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard']
+const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard']
 const profileList = ['Profile', 'Setting', 'Logout']
 
-// Track which menu is open
 const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
   if (props.role === 'company') return companyList
-  if (props.role === 'student') return studentList
+  if (props.role && ['student', 'professor'].includes(props.role)) return kuList
   return []
 })
 
@@ -40,7 +39,10 @@ function makeLink(page: string) {
   if (page === 'Profile') {
     return `/${role}/profile/${userId}`
   }
-  return `/${role}/${page.toLowerCase().replace(/\s+/g, '-')}`
+  if (page === 'Dashboard') {
+    return `/${role}/dashboard`
+  }
+  return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 
 onMounted(() => {

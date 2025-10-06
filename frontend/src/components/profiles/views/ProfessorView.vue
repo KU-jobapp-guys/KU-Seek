@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProfessorProfile } from '@/types/profileType'
+import type { ProfessorProfile } from '@/types/profileType';
 import { Building2Icon } from 'lucide-vue-next'
 
 const props = defineProps<{ professorData: ProfessorProfile }>()

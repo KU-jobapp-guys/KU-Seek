@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { CompanyProfile } from '@/types/profileType'
-import { Building2Icon, X } from 'lucide-vue-next'
+import { Building2Icon, X, ChevronDown } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { industryOptions, companySizeOptions } from '@/configs/EditProfileConfig'
 
@@ -12,6 +12,8 @@ const emit = defineEmits<{
 
 const editForm = ref<CompanyProfile>(JSON.parse(JSON.stringify(props.modelValue)))
 const workFieldInput = ref('')
+const showSizeDropdown = ref(false)
+const showIndustryDropdown = ref(false)
 
 // Work fields (specialties) handling
 const addWorkField = () => {
@@ -26,6 +28,29 @@ const addWorkField = () => {
 
 const removeWorkField = (index: number) => {
   editForm.value.workFields = editForm.value.workFields.filter((_, i) => i !== index)
+}
+
+const toggleDropdownField = (field: string) => {
+  let useToggle = showSizeDropdown
+  let notUseToggle = showIndustryDropdown
+
+  if (field === 'industry') {
+    useToggle = showIndustryDropdown
+    notUseToggle = showSizeDropdown
+  }
+
+  useToggle.value = !useToggle.value
+  notUseToggle.value = false
+}
+
+const selectSize = (size: string) => {
+  editForm.value.size = size
+  showSizeDropdown.value = false
+}
+
+const selectIndustry = (industry: string) => {
+  editForm.value.industry = industry
+  showIndustryDropdown.value = false
 }
 
 watch(
@@ -69,48 +94,67 @@ watch(
           </div>
 
           <!-- Industry -->
-          <div>
+          <div class="relative w-full">
             <label :class="ProfileStyle.formLabel">
               Industry
               <span v-if="!editForm.industry?.trim()" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
-            <select
-              v-model="editForm.industry"
-              :class="[
-                ProfileStyle.inputBox,
-                !editForm.industry?.trim() ? ProfileStyle.errorBox : 'focus:ring-blue-500',
-              ]"
+            <button
+              :class="['w-full flex justify-between items-center', ProfileStyle.inputBox]"
+              @click="toggleDropdownField('industry')"
             >
-              <option value="">Select an industry</option>
-              <option class="px-3" v-for="option in industryOptions" :key="option" :value="option">
+              <span>{{ editForm.industry || 'Select Industry' }}</span>
+              <ChevronDown class="w-5 h-5" />
+            </button>
+
+            <ul
+              v-if="showIndustryDropdown"
+              class="absolute w-full bg-gray-100 border rounded-md mt-1 shadow-md z-10 max-h-[30vh] overflow-y-auto"
+            >
+              <li
+                v-for="option in industryOptions"
+                :key="option"
+                @click="selectIndustry(option)"
+                class="px-3 py-2 hover:bg-gray-300 hover:cursor-pointer"
+              >
                 {{ option }}
-              </option>
-            </select>
+              </li>
+            </ul>
           </div>
 
           <!-- Company Size -->
-          <div>
+          <div class="relative w-full">
             <label :class="ProfileStyle.formLabel">
               Company Size
               <span v-if="!editForm.size?.trim()" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
-            <select
-              v-model="editForm.size"
-              :class="[
-                ProfileStyle.inputBox,
-                !editForm.size?.trim() ? ProfileStyle.errorBox : 'focus:ring-blue-500',
-              ]"
+            <button
+              :class="['w-full flex justify-between items-center', ProfileStyle.inputBox]"
+              @click="toggleDropdownField('size')"
             >
-              <option value="">Select company size</option>
-              <option v-for="option in companySizeOptions" :key="option" :value="option">
+              <span>{{ editForm.size || 'Select company size' }}</span>
+              <ChevronDown class="w-5 h-5" />
+            </button>
+
+            <ul
+              v-if="showSizeDropdown"
+              class="absolute w-full bg-gray-100 border rounded-md mt-1 shadow-md z-10"
+            >
+              <li
+                v-for="option in companySizeOptions"
+                :key="option"
+                @click="selectSize(option)"
+                class="px-3 py-2 hover:bg-gray-300 hover:cursor-pointer"
+              >
                 {{ option }}
-              </option>
-            </select>
+              </li>
+            </ul>
           </div>
+
 
           <!-- Primary Location -->
           <div>

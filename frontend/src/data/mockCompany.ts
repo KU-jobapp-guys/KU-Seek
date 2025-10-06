@@ -10,7 +10,7 @@ export const mockCompany: CompanyProfile[] = [
     workFields: ['Information and Internet', 'Technology'],
     location: 'Bangkok, Thailand',
     fullLocation: '127 Ratchadamri Road, Gaysorn Tower, Bangkok 10330 Thailand',
-    size: '101-1,000',
+    size: '101 - 1,000',
     contacts: '',
     about:
       'We are a tech company that focuses on mobility. Our solution is an on-demand shared service called MuvMi (muvmi.co)...',
@@ -26,7 +26,7 @@ export const mockCompany: CompanyProfile[] = [
     workFields: ['AgriTech', 'Sustainability'],
     location: 'Chiang Mai, Thailand',
     fullLocation: '88 Moo 5, Suthep Road, Chiang Mai 50200 Thailand',
-    size: '11 - 50',
+    size: '1,001 - 10,000',
     contacts: 'contact@agrinext.io',
     about:
       'AgriNext Solutions is building smart farming platforms with IoT-enabled sensors, drone monitoring, and data analytics to help farmers increase yield and sustainability.',
@@ -42,7 +42,7 @@ export const mockCompany: CompanyProfile[] = [
     workFields: ['HealthTech', 'Telemedicine'],
     location: 'Bangkok, Thailand',
     fullLocation: '12th Floor, Silom Complex, Silom Road, Bangkok 10500 Thailand',
-    size: '1,001 - 5,000',
+    size: '1,001 - 10,000',
     contacts: 'hr@healthplus.com',
     about:
       'HealthPlus Digital provides telemedicine solutions, wearable integrations, and AI-driven healthcare insights to improve patient outcomes and expand healthcare access.',
@@ -73,7 +73,7 @@ export const mockCompany: CompanyProfile[] = [
     workFields: ['FinTech', 'Data Science'],
     location: 'Bangkok, Thailand',
     fullLocation: 'Sathorn Square Building, North Sathorn Rd, Bangkok 10500 Thailand',
-    size: '51 - 200',
+    size: '101 - 1,000',
     contacts: 'support@finsphere.ai',
     about:
       'FinSphere Analytics develops AI-powered financial models for risk analysis, fraud detection, and smart investment. Our mission is to make finance smarter and safer.',

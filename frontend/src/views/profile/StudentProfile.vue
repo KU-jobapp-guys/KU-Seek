@@ -18,7 +18,8 @@ const router = useRouter()
 
 const isLoading = ref(true)
 const studentData = ref<StudentProfile | null>(null)
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } = useEditableProfile<StudentProfile>()
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+  useEditableProfile<StudentProfile>()
 
 // Load student from mock data (replace with API in production)
 const loadStudent = (id?: string) => {
@@ -40,9 +41,8 @@ const renderReady = () => {
 
 // Check if profile has not been set up yet
 const isNewProfile = computed(() => {
-  const hasNoBasicInfo = studentData.value &&
-                         !studentData.value.about?.trim() &&
-                         !studentData.value.interests?.trim()
+  const hasNoBasicInfo =
+    studentData.value && !studentData.value.about?.trim() && !studentData.value.interests?.trim()
   return hasNoBasicInfo
 })
 
@@ -50,7 +50,7 @@ const educationErrors = computed(() => {
   if (!editData.value) return true
   const educations = editData.value.education
   for (let index = 0; index < educations.length; index++) {
-    const edu = educations[index];
+    const edu = educations[index]
     if (
       !edu.curriculum_name?.trim() ||
       !edu.major?.trim() ||
@@ -58,7 +58,8 @@ const educationErrors = computed(() => {
       !edu.graduate_year ||
       !edu.year_of_study ||
       edu.graduate_year < edu.year_of_study
-    ) return true
+    )
+      return true
   }
   return false
 })
@@ -75,9 +76,12 @@ const edit = () => {
   if (studentData.value) editProfile(studentData.value)
 }
 
-const cancel = () => {cancelEdit()}
-const save = () => {saveProfile(studentData, hasValidationErrors.value)}
-
+const cancel = () => {
+  cancelEdit()
+}
+const save = () => {
+  saveProfile(studentData, hasValidationErrors.value)
+}
 
 onMounted(() => {
   loadStudent(route.params.id as string)
@@ -87,12 +91,23 @@ onMounted(() => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
-
   <div v-if="studentData" class="px-[6vw] md:px-[12vw] py-16">
-
     <!-- Banner -->
-    <StudentBanner v-if="!isEditing" v-model="studentData" :studentData="studentData" :isEditing="isEditing" @loaded="renderReady" @edit="edit" />
-    <StudentBanner v-else-if="editData" v-model="editData" :studentData="editData" :isEditing="isEditing" @loaded="renderReady" />
+    <StudentBanner
+      v-if="!isEditing"
+      v-model="studentData"
+      :studentData="studentData"
+      :isEditing="isEditing"
+      @loaded="renderReady"
+      @edit="edit"
+    />
+    <StudentBanner
+      v-else-if="editData"
+      v-model="editData"
+      :studentData="editData"
+      :isEditing="isEditing"
+      @loaded="renderReady"
+    />
 
     <!-- No Profile Data -->
     <NoProfile
@@ -104,7 +119,7 @@ onMounted(() => {
 
     <!-- Profile view/edit -->
     <section v-else>
-      <StudentView v-if="studentData && !isEditing" :studentData="studentData"/>
+      <StudentView v-if="studentData && !isEditing" :studentData="studentData" />
       <StudentEdit
         v-if="editData && isEditing"
         v-model="editData"

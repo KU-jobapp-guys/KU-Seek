@@ -1,4 +1,4 @@
-import type { ProfessorProfile } from "@/types/profileType"
+import type { ProfessorProfile } from '@/types/profileType'
 
 export const mockProfessor: ProfessorProfile[] = [
   {

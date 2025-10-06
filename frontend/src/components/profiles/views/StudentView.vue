@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StudentProfile } from '@/types/profileType';
+import type { StudentProfile } from '@/types/profileType'
 import { CircleUserRound, Wrench, GraduationCap, Star } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 
@@ -81,9 +81,7 @@ const profileStyle = {
     >
       <p class="font-bold">{{ edu.curriculum_name }}, {{ edu.major }}</p>
       <p>{{ edu.university }}</p>
-      <p class="text-sm">
-        {{ edu.year_of_study }} - {{ edu.graduate_year }}
-      </p>
+      <p class="text-sm">{{ edu.year_of_study }} - {{ edu.graduate_year }}</p>
     </div>
   </section>
 </template>

@@ -32,10 +32,7 @@ export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
     editData.value = data
   }
 
-  const saveProfile = (
-    targetData: Ref<T | null>, 
-    hasError: boolean
-  ) => {
+  const saveProfile = (targetData: Ref<T | null>, hasError: boolean) => {
     if (!editData.value) return
     if (hasError) {
       setTimeout(() => {
@@ -46,13 +43,13 @@ export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
     }
 
     targetData.value = editData.value
-    console.log("Saved data: ", targetData.value)
+    console.log('Saved data: ', targetData.value)
     // send data to backend here
 
     isEditing.value = false
     editData.value = null
     originalData.value = null
-    
+
     return
   }
 

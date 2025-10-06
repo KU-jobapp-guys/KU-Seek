@@ -17,12 +17,12 @@ const skillSearchQuery = ref('')
 const showSkillDropdown = ref(false)
 
 // Get all available skills from techStackColors
-const availableSkills = Object.keys(techStackColors).filter(skill => skill !== 'Default')
+const availableSkills = Object.keys(techStackColors).filter((skill) => skill !== 'Default')
 
 const filteredSkills = computed(() => {
   if (!skillSearchQuery.value) return availableSkills
-  return availableSkills.filter(skill => 
-    skill.toLowerCase().includes(skillSearchQuery.value.toLowerCase())
+  return availableSkills.filter((skill) =>
+    skill.toLowerCase().includes(skillSearchQuery.value.toLowerCase()),
   )
 })
 
@@ -54,7 +54,6 @@ const removeSkill = (index: number) => {
   editForm.value.skills.splice(index, 1)
 }
 
-
 onMounted(() => {
   if (!editForm.value.education || editForm.value.education.length === 0) {
     addEducation()
@@ -66,14 +65,12 @@ watch(
   (newVal) => {
     emit('update:modelValue', newVal)
   },
-  { deep: true }
+  { deep: true },
 )
-
 </script>
 
 <template>
   <div class="text-base">
-
     <!-- About Section -->
     <section :class="ProfileStyle.sectionBox" class="mt-8 mb-6">
       <div class="flex items-center gap-x-4">
@@ -81,7 +78,9 @@ watch(
           <CircleUserRound class="w-full h-full" :stroke-width="1.5" />
         </div>
         <p class="text-2xl font-bold">About</p>
-        <p v-if="editForm.about.trim() === ''" :class="ProfileStyle.errorText">(This field is required)</p>
+        <p v-if="editForm.about.trim() === ''" :class="ProfileStyle.errorText">
+          (This field is required)
+        </p>
       </div>
 
       <div :class="ProfileStyle.contentBox">
@@ -90,7 +89,7 @@ watch(
           rows="4"
           :class="[
             ProfileStyle.textBox,
-            editForm.about.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-orange-500'
+            editForm.about.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-orange-500',
           ]"
           placeholder="Tell us about yourself..."
         ></textarea>
@@ -105,7 +104,9 @@ watch(
             <Star class="w-full h-full" :stroke-width="1.5" />
           </div>
           <p class="text-2xl font-bold">Interest</p>
-          <p v-if="editForm.interests.trim() === ''" :class="ProfileStyle.errorText">(This field is required)</p>
+          <p v-if="editForm.interests.trim() === ''" :class="ProfileStyle.errorText">
+            (This field is required)
+          </p>
         </div>
 
         <div :class="ProfileStyle.contentBox">
@@ -114,7 +115,7 @@ watch(
             rows="5"
             :class="[
               ProfileStyle.textBox,
-              editForm.interests.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-pink-500'
+              editForm.interests.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-pink-500',
             ]"
             placeholder="What are your interests?"
           ></textarea>
@@ -208,7 +209,8 @@ watch(
         :class="['relative', ProfileStyle.contentBox]"
       >
         <button
-          v-if="editForm.education.length > 1" @click="removeEducation(eduIndex)"
+          v-if="editForm.education.length > 1"
+          @click="removeEducation(eduIndex)"
           class="absolute top-4 right-4 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
         >
           <X class="w-4 h-4" />
@@ -218,15 +220,21 @@ watch(
           <div v-for="field in EducationBaseFields" :key="field.key">
             <label class="text-sm font-medium text-gray-700 mb-1">
               {{ field.label }}
-              <span v-if="edu[field.key as EducationFieldKey].trim() === ''" :class="ProfileStyle.errorText">
+              <span
+                v-if="edu[field.key as EducationFieldKey].trim() === ''"
+                :class="ProfileStyle.errorText"
+              >
                 (This field is required)
               </span>
             </label>
             <input
-              v-model="edu[field.key as EducationFieldKey]" type="text"
+              v-model="edu[field.key as EducationFieldKey]"
+              type="text"
               :class="[
                 ProfileStyle.inputBox,
-                edu[field.key as EducationFieldKey].trim() === '' ? ProfileStyle.errorBox : 'focus:ring-blue-500 border-gray-300'
+                edu[field.key as EducationFieldKey].trim() === ''
+                  ? ProfileStyle.errorBox
+                  : 'focus:ring-blue-500 border-gray-300',
               ]"
               :placeholder="field.placeholder"
             />
@@ -241,24 +249,33 @@ watch(
                 </span>
               </label>
               <input
-                v-model="edu.year_of_study" type="number"
+                v-model="edu.year_of_study"
+                type="number"
                 :class="[
-                  ProfileStyle.inputBox, !edu.year_of_study ? ProfileStyle.errorBox : 'focus:ring-blue-500'
+                  ProfileStyle.inputBox,
+                  !edu.year_of_study ? ProfileStyle.errorBox : 'focus:ring-blue-500',
                 ]"
               />
             </div>
             <div class="flex-1">
               <label :class="ProfileStyle.formLabel">
                 Graduate Year
-                <span v-if="!edu.graduate_year || edu.graduate_year < edu.year_of_study" :class="ProfileStyle.errorText">
+                <span
+                  v-if="!edu.graduate_year || edu.graduate_year < edu.year_of_study"
+                  :class="ProfileStyle.errorText"
+                >
                   (Graduation year must be later than year of study)
                 </span>
               </label>
               <input
-                v-model="edu.graduate_year" type="number"
+                v-model="edu.graduate_year"
+                type="number"
                 :class="[
-                  ProfileStyle.inputBox, 'focus:ring-blue-500',
-                  !edu.graduate_year || edu.graduate_year < edu.year_of_study ? ProfileStyle.errorBox : ''
+                  ProfileStyle.inputBox,
+                  'focus:ring-blue-500',
+                  !edu.graduate_year || edu.graduate_year < edu.year_of_study
+                    ? ProfileStyle.errorBox
+                    : '',
                 ]"
               />
             </div>

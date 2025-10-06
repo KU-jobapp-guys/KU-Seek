@@ -30,9 +30,9 @@ const pageList = computed(() => {
 })
 
 const mockData = {
-  'company': mockCompany,
-  'student': mockStudents,
-  'professor': mockProfessor,
+  company: mockCompany,
+  student: mockStudents,
+  professor: mockProfessor,
 }
 
 function makeLink(page: string) {
@@ -47,7 +47,7 @@ onMounted(() => {
   const role = props.role
   if (role) {
     userData.value = mockData[role].find((u) => u.id === userId) || null
-    console.log("data: ", userData)
+    console.log('data: ', userData)
   }
 })
 </script>
@@ -68,7 +68,7 @@ onMounted(() => {
 
       <!-- Mobile Dropdown -->
       <Menu v-if="props.role" as="div" class="relative inline-block md:hidden">
-        <MenuButton 
+        <MenuButton
           class="flex w-full items-center justify-center"
           @click="openMenu = openMenu === 'page' ? null : 'page'"
         >
@@ -86,8 +86,8 @@ onMounted(() => {
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
           >
-            <div 
-              v-if="openMenu === 'page'" 
+            <div
+              v-if="openMenu === 'page'"
               class="fixed inset-0 bg-black bg-opacity-60 z-[40]"
               @click="openMenu = null"
             ></div>
@@ -127,13 +127,13 @@ onMounted(() => {
 
       <!-- Profile Dropdown -->
       <Menu v-if="userData" as="div" class="relative inline-block">
-        <MenuButton 
+        <MenuButton
           class="flex items-center justify-center"
           @click="openMenu = openMenu === 'profile' ? null : 'profile'"
         >
-          <img 
-            :src="userData.profilePhoto" 
-            class="rounded-full w-11 h-11 object-cover ring-2 ring-white/20 hover:ring-white/40 transition-all" 
+          <img
+            :src="userData.profilePhoto"
+            class="rounded-full w-11 h-11 object-cover ring-2 ring-white/20 hover:ring-white/40 transition-all"
           />
         </MenuButton>
 
@@ -158,7 +158,7 @@ onMounted(() => {
                     :class="[
                       active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                       'block px-4 py-2 text-lg md:text-base hover:bg-gray-50',
-                      page === 'Logout' ? 'text-red-600 hover:bg-red-50 hover:text-red-700' : ''
+                      page === 'Logout' ? 'text-red-600 hover:bg-red-50 hover:text-red-700' : '',
                     ]"
                   >
                     {{ page }}

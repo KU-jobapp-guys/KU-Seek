@@ -20,7 +20,8 @@ const router = useRouter()
 
 const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } = useEditableProfile<ProfessorProfile>()
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+  useEditableProfile<ProfessorProfile>()
 
 const loadProfessor = (id?: string) => {
   if (!id) {
@@ -40,8 +41,8 @@ const renderReady = () => {
 }
 
 const isNewProfile = computed(() => {
-  const hasNoBasicInfo = professorData.value &&
-                         !professorData.value.about?.trim() || !professorData.value
+  const hasNoBasicInfo =
+    (professorData.value && !professorData.value.about?.trim()) || !professorData.value
   return hasNoBasicInfo
 })
 
@@ -59,8 +60,12 @@ const edit = () => {
   if (professorData.value) editProfile(professorData.value)
 }
 
-const cancel = () => {cancelEdit()}
-const save = () => {saveProfile(professorData, hasValidationErrors.value)}
+const cancel = () => {
+  cancelEdit()
+}
+const save = () => {
+  saveProfile(professorData, hasValidationErrors.value)
+}
 
 onMounted(() => {
   loadProfessor(route.params.id as string)
@@ -78,8 +83,21 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner v-if="!isEditing" v-model="professorData" :professorData="professorData" @loaded="renderReady" @edit="edit" :isEditing />
-    <ProfessorBanner v-else-if="editData" v-model="editData" :professorData="editData" @loaded="renderReady" :isEditing />
+    <ProfessorBanner
+      v-if="!isEditing"
+      v-model="professorData"
+      :professorData="professorData"
+      @loaded="renderReady"
+      @edit="edit"
+      :isEditing
+    />
+    <ProfessorBanner
+      v-else-if="editData"
+      v-model="editData"
+      :professorData="editData"
+      @loaded="renderReady"
+      :isEditing
+    />
 
     <!-- No Profile Data -->
     <NoProfile
@@ -93,7 +111,7 @@ const switchTab = (tab: string) => {
       <div
         :class="[
           'bg-gradient-to-b to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',
-          isEditing ? 'from-gray-800/10' : 'from-orange-800/10' 
+          isEditing ? 'from-gray-800/10' : 'from-orange-800/10',
         ]"
       >
         <!-- Switch Tab Button IS HEREEEEE -->

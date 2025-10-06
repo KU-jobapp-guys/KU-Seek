@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { ProfessorProfile } from '@/types/profileType';
-import type { OverviewFieldKey } from '@/configs/EditProfileConfig';
-import { OverviewFields } from '@/configs/EditProfileConfig';
+import type { ProfessorProfile } from '@/types/profileType'
+import type { OverviewFieldKey } from '@/configs/EditProfileConfig'
+import { OverviewFields } from '@/configs/EditProfileConfig'
 import { Building2Icon } from 'lucide-vue-next'
-import { ProfileStyle } from '@/configs/profileStyleConfig';
+import { ProfileStyle } from '@/configs/profileStyleConfig'
 
 const props = defineProps<{ modelValue: ProfessorProfile }>()
 const emit = defineEmits<{
@@ -18,9 +18,8 @@ watch(
   (newVal) => {
     emit('update:modelValue', newVal)
   },
-  { deep: true }
+  { deep: true },
 )
-
 </script>
 
 <template>
@@ -30,9 +29,11 @@ watch(
       class="bg-white p-8 md:p-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md"
     >
       <div class="flex items-center gap-x-2">
-        <div class="w-12 h-12 flex items-center justify-center bg-green-600 rounded-full text-white">
-        <Building2Icon />
-      </div>
+        <div
+          class="w-12 h-12 flex items-center justify-center bg-green-600 rounded-full text-white"
+        >
+          <Building2Icon />
+        </div>
         <p class="text-2xl font-bold">Overview</p>
       </div>
 
@@ -42,8 +43,8 @@ watch(
           <div v-for="field in OverviewFields" :key="field.key">
             <label :class="ProfileStyle.formLabel">
               {{ field.label }}
-              <span 
-                v-if="editForm[field.key as OverviewFieldKey]?.trim() === ''" 
+              <span
+                v-if="editForm[field.key as OverviewFieldKey]?.trim() === ''"
                 :class="ProfileStyle.errorText"
               >
                 (This field is required)
@@ -56,7 +57,7 @@ watch(
                 ProfileStyle.inputBox,
                 editForm[field.key as OverviewFieldKey]?.trim() === ''
                   ? ProfileStyle.errorBox
-                  : 'focus:ring-blue-600 border-gray-300'
+                  : 'focus:ring-blue-600 border-gray-300',
               ]"
               :placeholder="field.placeholder"
             />
@@ -65,10 +66,7 @@ watch(
           <div>
             <label :class="ProfileStyle.formLabel">
               About
-              <span 
-                v-if="editForm['about']?.trim() === ''" 
-                :class="ProfileStyle.errorText"
-              >
+              <span v-if="editForm['about']?.trim() === ''" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
@@ -77,9 +75,7 @@ watch(
               rows="6"
               :class="[
                 'w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2',
-                editForm.about?.trim() === '' 
-                  ? ProfileStyle.errorBox 
-                  : 'focus:ring-blue-500'
+                editForm.about?.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-blue-500',
               ]"
               placeholder="Tell us about yourself, your background, and your expertise..."
             ></textarea>

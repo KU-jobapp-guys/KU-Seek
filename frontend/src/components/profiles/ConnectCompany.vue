@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Company } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/profileType'
 
-const props = defineProps<{ company: Company }>()
+const props = defineProps<{ company: CompanyProfile }>()
 const { company } = props
 </script>
 

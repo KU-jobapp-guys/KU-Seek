@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from 'vue'
 import { CircleCheck } from 'lucide-vue-next'
-import type { ProfessorProfile } from '@/types/profileType';
+import type { ProfessorProfile } from '@/types/profileType'
 import BaseBanner from './BaseBanner.vue'
 
-const props = defineProps<{ 
+const props = defineProps<{
   modelValue: ProfessorProfile
   professorData: ProfessorProfile
   isEditing: boolean
@@ -12,25 +12,30 @@ const props = defineProps<{
 const { professorData, isEditing } = props
 const editForm = ref<ProfessorProfile>({ ...props.modelValue })
 
-const emits = defineEmits<{ 
+const emits = defineEmits<{
   (e: 'edit'): void
   (e: 'update:modelValue', data: ProfessorProfile): void
 }>()
-
 
 watch(
   editForm,
   (newVal) => {
     emits('update:modelValue', newVal)
   },
-  { deep: true }
+  { deep: true },
 )
 
 const isOwner = professorData.id === '1'
 </script>
 
 <template>
-  <BaseBanner :data="professorData" role="professor" v-model="editForm" :isEditing @edit="emits('edit')">
+  <BaseBanner
+    :data="professorData"
+    role="professor"
+    v-model="editForm"
+    :isEditing
+    @edit="emits('edit')"
+  >
     <div class="flex w-full justify-between items-end">
       <div class="flex flex-col w-full">
         <h1 class="flex flex-col md:flex-row md:items-end">

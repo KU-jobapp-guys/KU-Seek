@@ -1,4 +1,4 @@
-import type { StudentProfile } from "@/types/profileType";
+import type { StudentProfile } from '@/types/profileType'
 
 export const mockStudents: StudentProfile[] = [
   {

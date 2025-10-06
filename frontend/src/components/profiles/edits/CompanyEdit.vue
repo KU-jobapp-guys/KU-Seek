@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { CompanyProfile } from '@/types/profileType';
+import type { CompanyProfile } from '@/types/profileType'
 import { Building2Icon, X } from 'lucide-vue-next'
-import { ProfileStyle } from '@/configs/profileStyleConfig';
-import { industryOptions, companySizeOptions } from '@/configs/EditProfileConfig';
+import { ProfileStyle } from '@/configs/profileStyleConfig'
+import { industryOptions, companySizeOptions } from '@/configs/EditProfileConfig'
 
 const props = defineProps<{ modelValue: CompanyProfile }>()
 const emit = defineEmits<{
@@ -15,7 +15,10 @@ const workFieldInput = ref('')
 
 // Work fields (specialties) handling
 const addWorkField = () => {
-  if (workFieldInput.value.trim() && !editForm.value.workFields.includes(workFieldInput.value.trim())) {
+  if (
+    workFieldInput.value.trim() &&
+    !editForm.value.workFields.includes(workFieldInput.value.trim())
+  ) {
     editForm.value.workFields = [...editForm.value.workFields, workFieldInput.value.trim()]
   }
   workFieldInput.value = ''
@@ -30,9 +33,8 @@ watch(
   (newVal) => {
     emit('update:modelValue', newVal)
   },
-  { deep: true }
+  { deep: true },
 )
-
 </script>
 
 <template>
@@ -42,7 +44,9 @@ watch(
       class="bg-white p-8 md:p-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md"
     >
       <div class="flex items-center gap-x-4">
-        <div class="w-12 h-12 shrink-0 flex items-center justify-center bg-orange-500 rounded-full text-white">
+        <div
+          class="w-12 h-12 shrink-0 flex items-center justify-center bg-orange-500 rounded-full text-white"
+        >
           <Building2Icon />
         </div>
         <p class="text-2xl font-bold">Company Overview</p>
@@ -50,14 +54,11 @@ watch(
 
       <div class="bg-white mt-4 py-6 w-full">
         <div class="space-y-4">
-          
           <!-- Website URL -->
           <div>
             <label :class="ProfileStyle.formLabel">
               Website URL
-              <span class="text-sm text-gray-500">
-                (Optional)
-              </span>
+              <span class="text-sm text-gray-500"> (Optional) </span>
             </label>
             <input
               v-model="editForm.website"
@@ -79,9 +80,7 @@ watch(
               v-model="editForm.industry"
               :class="[
                 ProfileStyle.inputBox,
-                !editForm.industry?.trim()
-                  ? ProfileStyle.errorBox
-                  : 'focus:ring-blue-500'
+                !editForm.industry?.trim() ? ProfileStyle.errorBox : 'focus:ring-blue-500',
               ]"
             >
               <option value="">Select an industry</option>
@@ -103,9 +102,7 @@ watch(
               v-model="editForm.size"
               :class="[
                 ProfileStyle.inputBox,
-                !editForm.size?.trim()
-                  ? ProfileStyle.errorBox
-                  : 'focus:ring-blue-500'
+                !editForm.size?.trim() ? ProfileStyle.errorBox : 'focus:ring-blue-500',
               ]"
             >
               <option value="">Select company size</option>
@@ -128,7 +125,7 @@ watch(
               type="text"
               :class="[
                 ProfileStyle.inputBox,
-                !editForm.fullLocation?.trim() ? ProfileStyle.errorBox : ''
+                !editForm.fullLocation?.trim() ? ProfileStyle.errorBox : '',
               ]"
               placeholder="e.g., San Francisco, CA, USA"
             />
@@ -148,7 +145,8 @@ watch(
                 @keyup.enter="addWorkField"
                 type="text"
                 :class="[
-                  ProfileStyle.inputBox, editForm.workFields.length === 0 ? ProfileStyle.errorBox : ''
+                  ProfileStyle.inputBox,
+                  editForm.workFields.length === 0 ? ProfileStyle.errorBox : '',
                 ]"
                 placeholder="Add a specialty (press Enter)"
               />
@@ -175,7 +173,7 @@ watch(
               </div>
             </div>
           </div>
-      
+
           <div>
             <label :class="ProfileStyle.formLabel">
               About
@@ -189,9 +187,7 @@ watch(
               rows="6"
               :class="[
                 ProfileStyle.inputBox,
-                !editForm.about?.trim()
-                  ? ProfileStyle.errorBox 
-                  : 'focus:ring-blue-500'
+                !editForm.about?.trim() ? ProfileStyle.errorBox : 'focus:ring-blue-500',
               ]"
               placeholder="Tell us about your company, mission, and values..."
             ></textarea>

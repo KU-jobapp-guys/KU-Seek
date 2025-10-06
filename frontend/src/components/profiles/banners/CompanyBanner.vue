@@ -5,13 +5,13 @@ import { useRouter } from 'vue-router'
 import BaseBanner from './BaseBanner.vue'
 
 const router = useRouter()
-const props = defineProps<{ 
+const props = defineProps<{
   modelValue: CompanyProfile
   companyData: CompanyProfile
   isEditing: boolean
 }>()
 
-const emits = defineEmits<{ 
+const emits = defineEmits<{
   (e: 'edit'): void
   (e: 'update:modelValue', data: CompanyProfile): void
 }>()
@@ -24,7 +24,7 @@ watch(
   (newVal) => {
     emits('update:modelValue', newVal)
   },
-  { deep: true }
+  { deep: true },
 )
 
 const goToJobBoard = () => {
@@ -36,7 +36,13 @@ const goToJobBoard = () => {
 </script>
 
 <template>
-  <BaseBanner :data="companyData" role="company" v-model="editForm" :isEditing @edit="emits('edit')">
+  <BaseBanner
+    :data="companyData"
+    role="company"
+    v-model="editForm"
+    :isEditing
+    @edit="emits('edit')"
+  >
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>
         <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>

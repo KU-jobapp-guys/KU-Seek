@@ -23,7 +23,8 @@ const isLoading = ref(true)
 const companyData = ref<CompanyProfile | null>(null)
 const companyJobs = ref<Job[]>([])
 
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } = useEditableProfile<CompanyProfile>()
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+  useEditableProfile<CompanyProfile>()
 
 const loadCompany = (id?: string) => {
   if (!id) {
@@ -41,8 +42,7 @@ const loadCompany = (id?: string) => {
 }
 
 const isNewProfile = computed(() => {
-  const hasNoBasicInfo = companyData.value &&
-                         !companyData.value.about?.trim()
+  const hasNoBasicInfo = companyData.value && !companyData.value.about?.trim()
   return hasNoBasicInfo
 })
 
@@ -60,9 +60,12 @@ const edit = () => {
   if (companyData.value) editProfile(companyData.value)
 }
 
-const cancel = () => {cancelEdit()}
-const save = () => {saveProfile(companyData, hasValidationErrors.value)}
-
+const cancel = () => {
+  cancelEdit()
+}
+const save = () => {
+  saveProfile(companyData, hasValidationErrors.value)
+}
 
 const renderReady = () => {
   isLoading.value = false
@@ -100,9 +103,22 @@ const displayedJobs = computed(() => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="companyData" class="px-[6vw] md:px-[12vw] py-16">
-    <CompanyBanner v-if="!isEditing" v-model="companyData" :companyData="companyData" @loaded="renderReady" @edit="edit" :isEditing />
-    <CompanyBanner v-else-if="editData" v-model="editData" :companyData="editData" @loaded="renderReady" :isEditing />
-    
+    <CompanyBanner
+      v-if="!isEditing"
+      v-model="companyData"
+      :companyData="companyData"
+      @loaded="renderReady"
+      @edit="edit"
+      :isEditing
+    />
+    <CompanyBanner
+      v-else-if="editData"
+      v-model="editData"
+      :companyData="editData"
+      @loaded="renderReady"
+      :isEditing
+    />
+
     <!-- No Profile Data -->
     <NoProfile
       v-if="isNewProfile && !isEditing"
@@ -116,10 +132,9 @@ const displayedJobs = computed(() => {
       <div
         :class="[
           'bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',
-          isEditing ? 'from-gray-800/10' : 'from-blue-800/10'
+          isEditing ? 'from-gray-800/10' : 'from-blue-800/10',
         ]"
       >
-
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
           <button

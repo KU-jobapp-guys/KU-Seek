@@ -68,5 +68,5 @@ export interface Announcement {
   content: string
   created_at: Date
 }
-  
+
 export type Profile = CompanyProfile | StudentProfile | ProfessorProfile

@@ -36,7 +36,7 @@ const mockData = {
 }
 
 function makeLink(page: string) {
-  let role = props.role
+  const role = props.role
   if (page === 'Profile') {
     return `/${role}/profile/${userId}`
   }
@@ -44,7 +44,7 @@ function makeLink(page: string) {
 }
 
 onMounted(() => {
-  let role = props.role
+  const role = props.role
   if (role) {
     userData.value = mockData[role].find((u) => u.id === userId) || null
     console.log("data: ", userData)

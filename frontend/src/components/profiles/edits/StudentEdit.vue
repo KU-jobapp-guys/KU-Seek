@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { EducationBaseFields } from '@/configs/EditProfileConfig'
 import type { EducationFieldKey } from '@/configs/EditProfileConfig'
 import type { StudentProfile } from '@/types/profileType'
@@ -12,7 +12,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', data: StudentProfile): void
 }>()
 
-const editForm = ref<StudentProfile>(props.modelValue)
+const editForm = ref<StudentProfile>(JSON.parse(JSON.stringify(props.modelValue)))
 const skillSearchQuery = ref('')
 const showSkillDropdown = ref(false)
 
@@ -60,6 +60,15 @@ onMounted(() => {
     addEducation()
   }
 })
+
+watch(
+  editForm,
+  (newVal) => {
+    emit('update:modelValue', newVal)
+  },
+  { deep: true }
+)
+
 </script>
 
 <template>

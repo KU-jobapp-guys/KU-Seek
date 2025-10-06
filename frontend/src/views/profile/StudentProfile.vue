@@ -50,9 +50,9 @@ const isNewProfile = computed(() => {
 
 const educationErrors = computed(() => {
   if (!editData.value) return true
-  let educations = editData.value.education
+  const educations = editData.value.education
   for (let index = 0; index < educations.length; index++) {
-    let edu = educations[index];
+    const edu = educations[index];
     if (
       !edu.curriculum_name?.trim() ||
       !edu.major?.trim() ||

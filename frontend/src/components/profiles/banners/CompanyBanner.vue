@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import type { CompanyProfile } from '@/types/profileType'
 import { useRouter } from 'vue-router'
 import BaseBanner from './BaseBanner.vue'
@@ -9,11 +10,22 @@ const props = defineProps<{
   companyData: CompanyProfile
   isEditing: boolean
 }>()
-const { companyData, isEditing } = props
 
-const emit = defineEmits<{
+const emits = defineEmits<{ 
   (e: 'edit'): void
+  (e: 'update:modelValue', data: CompanyProfile): void
 }>()
+
+const { companyData, isEditing } = props
+const editForm = ref<CompanyProfile>({ ...props.modelValue })
+
+watch(
+  editForm,
+  (newVal) => {
+    emits('update:modelValue', newVal)
+  },
+  { deep: true }
+)
 
 const goToJobBoard = () => {
   router.push({
@@ -24,7 +36,7 @@ const goToJobBoard = () => {
 </script>
 
 <template>
-  <BaseBanner :data="companyData" role="company" v-model="props.modelValue" :isEditing @edit="emit('edit')">
+  <BaseBanner :data="companyData" role="company" v-model="editForm" :isEditing @edit="emits('edit')">
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>
         <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>

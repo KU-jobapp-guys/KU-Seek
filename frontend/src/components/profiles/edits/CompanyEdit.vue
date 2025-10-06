@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { CompanyProfile } from '@/types/profileType';
 import { Building2Icon, X } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig';
@@ -10,22 +10,28 @@ const emit = defineEmits<{
   (e: 'update:modelValue', data: CompanyProfile): void
 }>()
 
-const editForm = ref<CompanyProfile>(props.modelValue)
+const editForm = ref<CompanyProfile>(JSON.parse(JSON.stringify(props.modelValue)))
 const workFieldInput = ref('')
 
 // Work fields (specialties) handling
 const addWorkField = () => {
   if (workFieldInput.value.trim() && !editForm.value.workFields.includes(workFieldInput.value.trim())) {
     editForm.value.workFields = [...editForm.value.workFields, workFieldInput.value.trim()]
-    emit('update:modelValue', editForm.value)
   }
   workFieldInput.value = ''
 }
 
 const removeWorkField = (index: number) => {
   editForm.value.workFields = editForm.value.workFields.filter((_, i) => i !== index)
-  emit('update:modelValue', editForm.value)
 }
+
+watch(
+  editForm,
+  (newVal) => {
+    emit('update:modelValue', newVal)
+  },
+  { deep: true }
+)
 
 </script>
 

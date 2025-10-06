@@ -20,7 +20,7 @@ const props = defineProps<{
 }>()
 
 const { data, role } = props
-const editForm = ref<Profile>(props.modelValue || null)
+const editForm = ref<Profile>({ ...props.modelValue })
 
 const isOwner = data.id === '1'
 const bannerLoaded = ref(false)
@@ -35,11 +35,16 @@ watch(isFullyLoaded, (newValue) => {
   if (newValue) emits('loaded')
 })
 
-const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
-  console.log('up0')
+watch(
+  editForm,
+  (newVal) => {
+    emits('update:modelValue', newVal)
+  },
+  { deep: true }
+)
 
+const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
   if (!editForm.value) return
-  console.log('up1')
   
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return

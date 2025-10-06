@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { ProfessorProfile } from '@/types/profileType';
 import type { OverviewFieldKey } from '@/configs/EditProfileConfig';
 import { OverviewFields } from '@/configs/EditProfileConfig';
 import { Building2Icon } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig';
 
-
 const props = defineProps<{ modelValue: ProfessorProfile }>()
 const emit = defineEmits<{
   (e: 'update:modelValue', data: ProfessorProfile): void
 }>()
 
-const editForm = ref<ProfessorProfile>(props.modelValue)
+const editForm = ref<ProfessorProfile>(JSON.parse(JSON.stringify(props.modelValue)))
+
+watch(
+  editForm,
+  (newVal) => {
+    emit('update:modelValue', newVal)
+  },
+  { deep: true }
+)
 
 </script>
 

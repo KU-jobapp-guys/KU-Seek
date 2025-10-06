@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import { CircleCheck } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType';
 import BaseBanner from './BaseBanner.vue'
@@ -9,16 +10,26 @@ const props = defineProps<{
   isEditing: boolean
 }>()
 const { studentData, isEditing } = props
+const editForm = ref<StudentProfile>({ ...props.modelValue })
 
-const emit = defineEmits<{
+const emits = defineEmits<{ 
   (e: 'edit'): void
+  (e: 'update:modelValue', data: StudentProfile): void
 }>()
+
+watch(
+  editForm,
+  (newVal) => {
+    emits('update:modelValue', newVal)
+  },
+  { deep: true }
+)
 
 const isOwner = studentData.id === '1'
 </script>
 
 <template>
-  <BaseBanner :data="studentData" v-model="props.modelValue" role="student" :isEditing @edit="emit('edit')">
+  <BaseBanner :data="studentData" v-model="editForm" role="student" :isEditing @edit="emits('edit')">
     <div class="flex flex-col w-full">
       <h1 class="font-bold text-4xl mr-2">{{
         studentData.first_name + ' ' + studentData.last_name

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StudentProfile } from '@/types/profileType';
+import type { StudentProfile } from '@/types/profileType'
 import { CircleUserRound, Wrench, GraduationCap, Star } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 

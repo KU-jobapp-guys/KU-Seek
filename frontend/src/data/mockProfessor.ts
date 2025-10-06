@@ -22,7 +22,7 @@ export const mockProfessor: ProfessorProfile[] = [
     research_interest: 'Artificial Intelligence, Natural Language Processing',
     description:
       'Professor Anan has over 20 years of experience in teaching and research in AI. He has published more than 50 papers in top-tier conferences.',
-    announcements: []
+    announcements: [],
   },
   {
     id: '2',
@@ -44,7 +44,7 @@ export const mockProfessor: ProfessorProfile[] = [
     research_interest: 'Renewable Energy, Smart Grid, Internet of Things',
     description:
       'Dr. Sudarat focuses on applying IoT technologies in renewable energy systems to enhance efficiency and sustainability.',
-    announcements: []
+    announcements: [],
   },
   {
     id: '4',

@@ -131,7 +131,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
       <div class="w-full h-8 flex justify-end">
         <PenBoxIcon
           v-if="isOwner"
-          class="h-8 w-8 hover:text-gray-500 hover:cursor-pointer"
+          :class="['h-8 w-8', isEditing ? 'text-gray-500' : 'hover:text-gray-500 hover:cursor-pointer']"
           :stroke-width="1.5"
           @click="emits('edit')"
         />

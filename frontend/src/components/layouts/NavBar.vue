@@ -3,9 +3,11 @@ import { computed, onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Profile } from '@/types/profileType'
+import { getUserId } from '@/libs/userUtil'
 import { mockCompany } from '@/data/mockCompany'
 import { mockStudents } from '@/data/mockStudent'
 import { mockProfessor } from '@/data/mockProfessor'
+import defaultProfile from '@/assets/images/defaultProfile.png'
 
 type UserRole = 'company' | 'student' | 'professor'
 
@@ -13,7 +15,7 @@ const props = defineProps<{
   role: UserRole
 }>()
 
-const userId = '1'
+const userId = getUserId()
 const userData = ref<Profile | null>(null)
 
 const companyList = ['Dashboard']
@@ -134,7 +136,7 @@ onMounted(() => {
           @click="openMenu = openMenu === 'profile' ? null : 'profile'"
         >
           <img
-            :src="userData.profilePhoto"
+            :src="userData.profilePhoto || defaultProfile"
             class="rounded-full w-11 h-11 object-cover ring-2 ring-white/20 hover:ring-white/40 transition-all"
           />
         </MenuButton>

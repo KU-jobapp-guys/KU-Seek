@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { PenBoxIcon, Camera } from 'lucide-vue-next'
 import type { Profile } from '@/types/profileType'
-import { isOwner } from '@/libs/isOwner'
+import { isOwner } from '@/libs/userUtil'
 import { profileConfig } from '@/configs/profileRoleConfig'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 import defaultBanner from '@/assets/images/defaultBanner.png'
@@ -130,7 +130,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
       <!-- Edit icon -->
       <div class="w-full h-8 flex justify-end">
         <PenBoxIcon
-          v-if="isOwner"
+          v-if="isOwner(data.id)"
           :class="['h-8 w-8', isEditing ? 'text-gray-500' : 'hover:text-gray-500 hover:cursor-pointer']"
           :stroke-width="1.5"
           @click="emits('edit')"

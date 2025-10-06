@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { CircleCheck } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
-import { isOwner } from '@/libs/isOwner'
+import { isOwner } from '@/libs/userUtil'
 import BaseBanner from './BaseBanner.vue'
 
 const props = defineProps<{

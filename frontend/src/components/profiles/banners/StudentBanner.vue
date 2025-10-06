@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { CircleCheck } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType';
+import { isOwner } from '@/libs/isOwner';
 import BaseBanner from './BaseBanner.vue'
 
 const props = defineProps<{ 
@@ -25,7 +26,6 @@ watch(
   { deep: true }
 )
 
-const isOwner = studentData.id === '1'
 </script>
 
 <template>
@@ -50,7 +50,7 @@ const isOwner = studentData.id === '1'
           </div>
 
           <button
-            v-if="isOwner && !studentData.is_verified"
+            v-if="isOwner(studentData.id) && !studentData.is_verified"
             class="text-base bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
           >
             <span class="hidden md:block">Verify Account</span>

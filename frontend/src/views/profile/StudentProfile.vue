@@ -2,21 +2,21 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Save, X } from 'lucide-vue-next'
-import customizeProfile from '@/assets/images/customizeProfile.png'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { isOwner } from '@/libs/isOwner'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockStudents } from '@/data/mockStudent'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import StudentBanner from '@/components/profiles/banners/StudentBanner.vue'
 import StudentEdit from '@/components/profiles/edits/StudentEdit.vue'
 import StudentView from '@/components/profiles/views/StudentView.vue'
+import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const isLoading = ref(true)
-const isOwner = ref(false)
 const studentData = ref<StudentProfile | null>(null)
 const { isEditing, editData, editProfile, cancelEdit, saveProfile } = useEditableProfile<StudentProfile>()
 
@@ -28,14 +28,12 @@ const loadStudent = (id?: string) => {
   }
 
   studentData.value = mockStudents.find((s) => s.id === id) || null
-  isOwner.value = studentData.value?.id === '1'
 
   if (!studentData.value) {
     router.replace({ name: 'not found' })
   }
 }
 
-// Called when all child components are loaded
 const renderReady = () => {
   isLoading.value = false
 }
@@ -96,22 +94,13 @@ onMounted(() => {
     <StudentBanner v-if="!isEditing" v-model="studentData" :studentData="studentData" :isEditing="isEditing" @loaded="renderReady" @edit="edit" />
     <StudentBanner v-else-if="editData" v-model="editData" :studentData="editData" :isEditing="isEditing" @loaded="renderReady" />
 
-    <!-- New profile setup -->
-    <section v-if="isNewProfile && !isEditing" class="w-full mt-24">
-      <div v-if="isOwner" class="flex flex-col items-center justify-center gap-y-2">
-        <img :src="customizeProfile" class="w-32 h-32" />
-        <p class="text-2xl font-bold">Your profile isn’t set up yet</p>
-        <button 
-          @click="edit"
-          class="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700"
-        >
-          Create your profile
-        </button>
-      </div>
-      <div v-else class="flex flex-col items-center justify-center gap-y-2">
-        <p class="text-2xl font-bold text-gray-500">This user hasn’t set up their profile yet.</p>
-      </div>
-    </section>
+    <!-- No Profile Data -->
+    <NoProfile
+      v-if="isNewProfile && !isEditing"
+      :isEditing="isEditing"
+      :isOwner="isOwner(studentData.id)"
+      @edit="edit"
+    />
 
     <!-- Profile view/edit -->
     <section v-else>

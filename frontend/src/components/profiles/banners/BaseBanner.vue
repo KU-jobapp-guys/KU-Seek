@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { PenBoxIcon, Camera } from 'lucide-vue-next'
 import type { Profile } from '@/types/profileType'
+import { isOwner } from '@/libs/isOwner'
 import { profileConfig } from '@/configs/profileRoleConfig'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 import defaultBanner from '@/assets/images/defaultBanner.png'
@@ -22,7 +23,6 @@ const props = defineProps<{
 const { data, role } = props
 const editForm = ref<Profile>({ ...props.modelValue })
 
-const isOwner = data.id === '1'
 const bannerLoaded = ref(false)
 const profileLoaded = ref(false)
 const isFullyLoaded = computed(() => bannerLoaded.value && profileLoaded.value)
@@ -79,7 +79,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
 
       <!-- Upload banner overlay -->
       <label
-        v-if="isOwner && isEditing"
+        v-if="isOwner(data.id) && isEditing"
         class="absolute top-3 right-3 z-20 bg-black/50 text-white p-2 rounded-lg transition cursor-pointer flex items-center gap-1"
       >
         <Camera class="w-4 h-4" /> Change banner
@@ -106,7 +106,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
 
         <!-- Upload profile overlay -->
         <label
-          v-if="isOwner && isEditing"
+          v-if="isOwner(data.id) && isEditing"
           class="absolute inset-0 bg-black/40 text-white flex items-center justify-center rounded-full transition cursor-pointer"
         >
           <Camera class="w-6 h-6" />

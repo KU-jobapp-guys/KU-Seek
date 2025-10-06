@@ -1,4 +1,4 @@
-import type { StudentProfile } from '@/types/studentType'
+import type { StudentProfile } from "@/types/profileType";
 
 export const mockStudents: StudentProfile[] = [
   {
@@ -96,5 +96,25 @@ export const mockStudents: StudentProfile[] = [
         graduate_year: 2024,
       },
     ],
+  },
+  {
+    id: '4',
+    first_name: 'John',
+    last_name: 'John',
+    about: '',
+    location: 'Somewhere',
+    contact_email: 'pimchanok.r@example.com',
+    gender: 'Female',
+    age: 23,
+    user_type: 'student',
+    profilePhoto: '',
+    bannerPhoto: '',
+    phone_number: '+66 934567890',
+    is_verified: false,
+    nisit_id: '6101122334',
+    gpa: 3.68,
+    skills: [],
+    interests: '',
+    education: [],
   },
 ]

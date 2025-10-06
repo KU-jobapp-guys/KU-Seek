@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { Save, X } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { isOwner } from '@/libs/isOwner'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockProfessor } from '@/data/mockProfessor'
 import { mockCompany } from '@/data/mockCompany'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -11,7 +13,7 @@ import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
 import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
-import { ProfileStyle } from '@/configs/profileStyleConfig'
+import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,6 +38,12 @@ const loadProfessor = (id?: string) => {
 const renderReady = () => {
   isLoading.value = false
 }
+
+const isNewProfile = computed(() => {
+  const hasNoBasicInfo = professorData.value &&
+                         !professorData.value.about?.trim() || !professorData.value
+  return hasNoBasicInfo
+})
 
 const hasValidationErrors = computed(() => {
   if (!editData.value) return true
@@ -73,8 +81,15 @@ const switchTab = (tab: string) => {
     <ProfessorBanner v-if="!isEditing" v-model="professorData" :professorData="professorData" @loaded="renderReady" @edit="edit" :isEditing />
     <ProfessorBanner v-else-if="editData" v-model="editData" :professorData="editData" @loaded="renderReady" :isEditing />
 
+    <!-- No Profile Data -->
+    <NoProfile
+      v-if="isNewProfile && !isEditing"
+      :isOwner="isOwner(professorData.id)"
+      @edit="edit"
+    />
+
     <!-- Content Part -->
-    <section class="data mt-8">
+    <section v-else class="data mt-8">
       <div
         :class="[
           'bg-gradient-to-b to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',

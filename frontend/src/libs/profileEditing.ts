@@ -47,12 +47,13 @@ export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
 
     targetData.value = editData.value
     console.log("Saved data: ", targetData.value)
+    // send data to backend here
 
     isEditing.value = false
     editData.value = null
     originalData.value = null
     
-    return true
+    return
   }
 
   return {

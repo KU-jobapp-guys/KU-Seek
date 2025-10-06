@@ -5,6 +5,7 @@ import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { isOwner } from '@/libs/isOwner'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockCompany } from '@/data/mockCompany'
 import { mockJobs } from '@/data/mockJobs'
@@ -13,6 +14,7 @@ import CompanyEdit from '@/components/profiles/edits/CompanyEdit.vue'
 import CompanyView from '@/components/profiles/views/CompanyView.vue'
 import CompanyBanner from '@/components/profiles/banners/CompanyBanner.vue'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
+import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,6 +39,12 @@ const loadCompany = (id?: string) => {
 
   companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
 }
+
+const isNewProfile = computed(() => {
+  const hasNoBasicInfo = companyData.value &&
+                         !companyData.value.about?.trim()
+  return hasNoBasicInfo
+})
 
 const hasValidationErrors = computed(() => {
   if (!editData.value) return true
@@ -94,15 +102,24 @@ const displayedJobs = computed(() => {
   <div v-if="companyData" class="px-[6vw] md:px-[12vw] py-16">
     <CompanyBanner v-if="!isEditing" v-model="companyData" :companyData="companyData" @loaded="renderReady" @edit="edit" :isEditing />
     <CompanyBanner v-else-if="editData" v-model="editData" :companyData="editData" @loaded="renderReady" :isEditing />
+    
+    <!-- No Profile Data -->
+    <NoProfile
+      v-if="isNewProfile && !isEditing"
+      :isEditing="isEditing"
+      :isOwner="isOwner(companyData.id)"
+      @edit="edit"
+    />
 
     <!-- Content Part -->
-    <section class="data mt-8">
+    <section v-else class="data mt-8">
       <div
         :class="[
           'bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',
           isEditing ? 'from-gray-800/10' : 'from-blue-800/10'
         ]"
       >
+
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
           <button

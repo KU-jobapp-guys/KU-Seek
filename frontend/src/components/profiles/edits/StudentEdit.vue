@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { EducationBaseFields } from '@/configs/EditProfileConfig'
 import type { EducationFieldKey } from '@/configs/EditProfileConfig'
 import type { StudentProfile } from '@/types/profileType'

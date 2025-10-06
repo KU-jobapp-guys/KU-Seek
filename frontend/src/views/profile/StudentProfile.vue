@@ -10,15 +10,15 @@ import type { StudentProfile } from '@/types/studentType'
 import customizeProfile from '@/assets/images/customizeProfile.png'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { Save, X } from 'lucide-vue-next'
+import { useEditableProfile } from '@/libs/profileEditing'
 
 const route = useRoute()
 const router = useRouter()
 
 const isLoading = ref(true)
-const isEditing = ref(false)
 const isOwner = ref(false)
 const studentData = ref<StudentProfile | null>(null)
-const editData = ref<StudentProfile | null>(null)
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } = useEditableProfile<StudentProfile>()
 
 // Load student from mock data (replace with API in production)
 const loadStudent = (id?: string) => {
@@ -48,25 +48,6 @@ const isNewProfile = computed(() => {
   return hasNoBasicInfo
 })
 
-const editProfile = () => {
-  if (!studentData.value) return
-
-  editData.value = {
-    ...studentData.value,
-    education: studentData.value.education.map(edu => ({ ...edu })),
-    skills: [...studentData.value.skills],
-    bannerPhoto: studentData.value.bannerPhoto,
-    profilePhoto: studentData.value.profilePhoto
-  }
-
-  isEditing.value = true
-}
-
-const cancelEdit = () => {
-  isEditing.value = false
-  editData.value = null
-}
-
 const educationErrors = computed(() => {
   if (!editData.value) return true
   let educations = editData.value.education
@@ -92,25 +73,13 @@ const hasValidationErrors = computed(() => {
   return false
 })
 
-const saveProfile = () => {
-  if (!editData) return
-
-  if (hasValidationErrors.value) {
-    setTimeout(() => {
-      const firstError = document.querySelector('.error-form')
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
-    return
-  }
-
-  studentData.value = editData.value
-
-  // Send studentData.value to backend here
-  console.log("Saving profile:", studentData.value)
-
-  isEditing.value = false
-  editData.value = null
+const edit = () => {
+  if (studentData.value) editProfile(studentData.value)
 }
+
+const cancel = () => {cancelEdit()}
+const save = () => {saveProfile(studentData, hasValidationErrors.value)}
+
 
 onMounted(() => {
   loadStudent(route.params.id as string)
@@ -124,8 +93,8 @@ onMounted(() => {
   <div v-if="studentData" class="px-[6vw] md:px-[12vw] py-16">
 
     <!-- Banner -->
-    <StudentBanner v-if="!isEditing" v-model="studentData" :studentData="studentData" :isEditing="isEditing" @loaded="renderReady" @edit="editProfile" />
-    <StudentBanner v-else-if="editData" v-model="editData" :studentData="editData" :isEditing="isEditing" @loaded="renderReady" @edit="editProfile" />
+    <StudentBanner v-if="!isEditing" v-model="studentData" :studentData="studentData" :isEditing="isEditing" @loaded="renderReady" @edit="edit" />
+    <StudentBanner v-else-if="editData" v-model="editData" :studentData="editData" :isEditing="isEditing" @loaded="renderReady" />
 
     <!-- New profile setup -->
     <section v-if="isNewProfile && !isEditing" class="w-full mt-24">
@@ -133,7 +102,7 @@ onMounted(() => {
         <img :src="customizeProfile" class="w-32 h-32" />
         <p class="text-2xl font-bold">Your profile isn’t set up yet</p>
         <button 
-          @click="editProfile"
+          @click="edit"
           class="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700"
         >
           Create your profile
@@ -157,10 +126,10 @@ onMounted(() => {
 
     <!-- Save/Cancel Buttons -->
     <div v-if="isEditing" class="flex justify-end gap-3 my-8">
-      <button @click="cancelEdit" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
+      <button @click="cancel" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
         <X class="w-5 h-5" /> Cancel
       </button>
-      <button @click="saveProfile" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+      <button @click="save" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
         <Save class="w-5 h-5" /> Save
       </button>
     </div>

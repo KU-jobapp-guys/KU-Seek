@@ -11,6 +11,10 @@ const props = defineProps<{
 }>()
 const { companyData, isEditing } = props
 
+const emit = defineEmits<{
+  (e: 'edit'): void
+}>()
+
 const goToJobBoard = () => {
   router.push({
     name: 'job board',
@@ -20,7 +24,7 @@ const goToJobBoard = () => {
 </script>
 
 <template>
-  <BaseBanner :data="companyData" role="company" v-model="props.modelValue" :isEditing>
+  <BaseBanner :data="companyData" role="company" v-model="props.modelValue" :isEditing @edit="emit('edit')">
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>
         <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>

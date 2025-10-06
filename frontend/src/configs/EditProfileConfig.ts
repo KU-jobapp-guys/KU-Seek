@@ -11,5 +11,36 @@ export const OverviewFields = [
   { key: 'research_interest', label: 'Research Interest', placeholder: 'e.g., Machine Learning, AI' }
 ]
 
+export const companySizeOptions = [
+  'less than 100',
+  '101 - 1,000',
+  '1,001 - 10,000',
+  'more than 10,000',
+]
+
+export const industryOptions = [
+  'Software Development',
+  'Cloud Computing & Infrastructure',
+  'Artificial Intelligence & Machine Learning',
+  'Cybersecurity',
+  'Data Science & Analytics',
+  'Semiconductor & Hardware',
+  'Telecommunications',
+  'Financial Technology (FinTech)',
+  'Healthcare Technology (HealthTech)',
+  'Gaming & Entertainment',
+  'E-commerce & Retail Tech',
+  'Education Technology (EdTech)',
+  'Internet of Things (IoT)',
+  'Automotive & Autonomous Vehicles',
+  'Aerospace & Defense',
+  'Blockchain & Cryptocurrency',
+  'Robotics & Automation',
+  'Enterprise Software (SaaS)',
+  'Consulting & Professional Services',
+  'Research & Development',
+  'Other'
+]
+
 export type EducationFieldKey = 'curriculum_name' | 'major' | 'university'
 export type OverviewFieldKey = 'department' | 'position' | 'office_location' | 'research_interest'

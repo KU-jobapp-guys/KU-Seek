@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ProfessorProfile } from '@/types/professorType'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -11,14 +11,14 @@ import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
 import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
 import { Save, X } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
+import { useEditableProfile } from '@/libs/profileEditing'
 
 const route = useRoute()
 const router = useRouter()
 
 const isLoading = ref(true)
-const isEditing = ref(false)
 const professorData = ref<ProfessorProfile | null>(null)
-const editData = ref<ProfessorProfile | null>(null)
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } = useEditableProfile<ProfessorProfile>()
 
 const loadProfessor = (id?: string) => {
   if (!id) {
@@ -47,52 +47,12 @@ const hasValidationErrors = computed(() => {
   return false
 })
 
-const editProfile = () => {
-  if (!professorData.value) return
-
-  editData.value = {
-    ...professorData.value
-  }
-
-  isEditing.value = true
+const edit = () => {
+  if (professorData.value) editProfile(professorData.value)
 }
 
-const cancelEdit = () => {
-  isEditing.value = false
-  editData.value = null
-}
-
-const saveProfile = () => {
-  if (!editData) return
-
-  if (hasValidationErrors.value) {
-    setTimeout(() => {
-      const firstError = document.querySelector('.error-form')
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
-    return
-  }
-
-  professorData.value = editData.value
-
-  // Send studentData.value to backend here
-  console.log("Saving profile:", professorData.value)
-
-  isEditing.value = false
-  editData.value = null
-}
-
-const updateImage = (payload: { newFile: File, field: 'bannerPhoto' | 'profilePhoto' }) => {
-  if (!editData.value) return
-  
-  const { newFile, field } = payload
-  const previewUrl = URL.createObjectURL(newFile)
-  
-  editData.value = {
-    ...editData.value,
-    [field]: previewUrl
-  }
-}
+const cancel = () => {cancelEdit()}
+const save = () => {saveProfile(professorData, hasValidationErrors.value)}
 
 onMounted(() => {
   loadProfessor(route.params.id as string)
@@ -110,8 +70,8 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner v-if="!isEditing" v-model="professorData" :professorData="professorData" @loaded="renderReady" @edit="editProfile" :isEditing />
-    <ProfessorBanner v-else-if="editData" v-model="editData" :professorData="editData" @loaded="renderReady" :isEditing @updateImage="updateImage"/>
+    <ProfessorBanner v-if="!isEditing" v-model="professorData" :professorData="professorData" @loaded="renderReady" @edit="edit" :isEditing />
+    <ProfessorBanner v-else-if="editData" v-model="editData" :professorData="editData" @loaded="renderReady" :isEditing />
 
     <!-- Content Part -->
     <section class="data mt-8">
@@ -158,10 +118,10 @@ const switchTab = (tab: string) => {
 
     <!-- Save/Cancel Buttons -->
     <div v-if="isEditing" class="flex justify-end gap-3 my-8">
-      <button @click="cancelEdit" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
+      <button @click="cancel" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
         <X class="w-5 h-5" /> Cancel
       </button>
-      <button @click="saveProfile" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+      <button @click="save" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
         <Save class="w-5 h-5" /> Save
       </button>
     </div>

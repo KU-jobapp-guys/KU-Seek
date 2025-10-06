@@ -54,6 +54,7 @@ const removeSkill = (index: number) => {
   editForm.value.skills.splice(index, 1)
 }
 
+
 onMounted(() => {
   if (!editForm.value.education || editForm.value.education.length === 0) {
     addEducation()
@@ -101,7 +102,7 @@ onMounted(() => {
         <div :class="ProfileStyle.contentBox">
           <textarea
             v-model="editForm.interests"
-            rows="4"
+            rows="5"
             :class="[
               ProfileStyle.textBox,
               editForm.interests.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-pink-500'
@@ -129,8 +130,10 @@ onMounted(() => {
             <input
               v-model="skillSearchQuery"
               @focus="showSkillDropdown = true"
+              @mousedown.prevent="showSkillDropdown = true"
+              @blur="showSkillDropdown = false"
               type="text"
-              :class="ProfileStyle.inputBox"
+              :class="[ProfileStyle.inputBox, 'focus:ring-purple-500']"
               placeholder="Search and add skills..."
             />
             <div
@@ -141,6 +144,7 @@ onMounted(() => {
                 v-for="skill in filteredSkills"
                 :key="skill"
                 @click="addSkill(skill)"
+                @mousedown.prevent="addSkill(skill)"
                 class="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
                 :class="editForm.skills.includes(skill) ? 'bg-gray-50 text-gray-400' : ''"
                 :disabled="editForm.skills.includes(skill)"

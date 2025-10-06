@@ -1,16 +1,16 @@
-import type { Company } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/companyType'
 
-export const mockCompany: Company[] = [
+export const mockCompany: CompanyProfile[] = [
   {
     id: '1',
     name: 'Urban Mobility Tech',
     type: 'Tech House',
-    website: { name: 'LINE Company (Thailand)', url: 'https://linecorp.com/en/' },
-    industry: 'Information & Communication Technology',
+    website: 'https://linecorp.com/en/',
+    industry: 'Artificial Intelligence & Machine Learning',
     workFields: ['Information and Internet', 'Technology'],
     location: 'Bangkok, Thailand',
     fullLocation: '127 Ratchadamri Road, Gaysorn Tower, Bangkok 10330 Thailand',
-    size: '101 - 1,000',
+    size: '101-1,000',
     contacts: '',
     about:
       'We are a tech company that focuses on mobility. Our solution is an on-demand shared service called MuvMi (muvmi.co)...',
@@ -21,7 +21,7 @@ export const mockCompany: Company[] = [
     id: '2',
     name: 'AgriNext Solutions',
     type: 'Startup',
-    website: { name: 'AgriNext', url: 'https://agrinext.io' },
+    website: 'https://agrinext.io',
     industry: 'Agriculture & Biotechnology',
     workFields: ['AgriTech', 'Sustainability'],
     location: 'Chiang Mai, Thailand',
@@ -37,7 +37,7 @@ export const mockCompany: Company[] = [
     id: '3',
     name: 'HealthPlus Digital',
     type: 'Corporate',
-    website: { name: 'HealthPlus', url: 'https://healthplus.com' },
+    website: 'https://healthplus.com',
     industry: 'Healthcare & Wellness',
     workFields: ['HealthTech', 'Telemedicine'],
     location: 'Bangkok, Thailand',
@@ -53,7 +53,7 @@ export const mockCompany: Company[] = [
     id: '4',
     name: 'EcoDrive Motors',
     type: 'Tech House',
-    website: { name: 'EcoDrive', url: 'https://ecodrive.com' },
+    website: 'https://ecodrive.com',
     industry: 'Automotive & Clean Energy',
     workFields: ['Electric Vehicles', 'Renewable Energy'],
     location: 'Rayong, Thailand',
@@ -69,7 +69,7 @@ export const mockCompany: Company[] = [
     id: '5',
     name: 'FinSphere Analytics',
     type: 'Startup',
-    website: { name: 'FinSphere', url: 'https://finsphere.ai' },
+    website: 'https://finsphere.ai',
     industry: 'Financial Services & AI',
     workFields: ['FinTech', 'Data Science'],
     location: 'Bangkok, Thailand',

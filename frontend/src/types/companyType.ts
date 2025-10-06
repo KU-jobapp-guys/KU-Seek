@@ -2,7 +2,7 @@ export interface CompanyProfile {
   id: string
   name: string
   type: string
-  website: { name: string; url: string }
+  website: string
   industry: string
   workFields: string[]
   location: string

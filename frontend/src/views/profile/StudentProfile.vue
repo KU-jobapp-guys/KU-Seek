@@ -64,14 +64,6 @@ const educationErrors = computed(() => {
   return false
 })
 
-const hasValidationErrors = computed(() => {
-  if (!editData.value) return true
-  if (!editData.value.about?.trim()) return true
-  if (!editData.value.interests?.trim()) return true
-  if (educationErrors.value) return true
-  return false
-})
-
 const edit = () => {
   if (studentData.value) editProfile(studentData.value)
 }
@@ -80,7 +72,7 @@ const cancel = () => {
   cancelEdit()
 }
 const save = () => {
-  saveProfile(studentData, hasValidationErrors.value)
+  saveProfile(studentData)
 }
 
 onMounted(() => {

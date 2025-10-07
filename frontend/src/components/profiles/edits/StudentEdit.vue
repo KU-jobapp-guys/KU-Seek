@@ -241,30 +241,47 @@ watch(
 
           <div class="flex flex-col md:flex-row gap-3">
             <div class="flex-1">
-              <label :class="ProfileStyle.formLabel">
+              <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Year of study
-                <span v-if="!edu.year_of_study" :class="ProfileStyle.errorText">
-                  (This field is required)
-                </span>
+                <div :class="ProfileStyle.errorText">
+                  <span v-if="!edu.year_of_study">
+                    (This field is required)
+                  </span>
+                  <span v-else-if="edu.year_of_study < 0">
+                    (This field must be a positive number)
+                  </span>
+                  <span v-else-if="edu.year_of_study > 3000">
+                    (Your input number is too large)
+                  </span>
+                </div>
               </label>
               <input
                 v-model="edu.year_of_study"
                 type="number"
                 :class="[
                   ProfileStyle.inputBox,
-                  !edu.year_of_study ? ProfileStyle.errorBox : 'focus:ring-blue-500',
+                  !edu.year_of_study  || edu.year_of_study < 0 || edu.year_of_study > 3000
+                  ? ProfileStyle.errorBox : ''
                 ]"
               />
             </div>
             <div class="flex-1">
-              <label :class="ProfileStyle.formLabel">
+              <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Graduate Year
-                <span
-                  v-if="!edu.graduate_year || edu.graduate_year < edu.year_of_study"
-                  :class="ProfileStyle.errorText"
-                >
-                  (Graduation year must be later than year of study)
-                </span>
+                <div :class="ProfileStyle.errorText">
+                  <span v-if="!edu.graduate_year">
+                    (This field is required)
+                  </span>
+                  <span v-else-if="edu.graduate_year < 0">
+                    (This field must be a positive number)
+                  </span>
+                  <span v-else-if="edu.graduate_year > 3000">
+                    (Your input number is too large)
+                  </span>
+                  <span v-else-if="edu.graduate_year < edu.year_of_study">
+                    (Graduation year must be later than year of study)
+                  </span>
+                </div>
               </label>
               <input
                 v-model="edu.graduate_year"
@@ -272,7 +289,7 @@ watch(
                 :class="[
                   ProfileStyle.inputBox,
                   'focus:ring-blue-500',
-                  !edu.graduate_year || edu.graduate_year < edu.year_of_study
+                  !edu.graduate_year || edu.graduate_year < edu.year_of_study || edu.graduate_year < 0 || edu.graduate_year > 3000
                     ? ProfileStyle.errorBox
                     : '',
                 ]"

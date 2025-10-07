@@ -46,16 +46,6 @@ const isNewProfile = computed(() => {
   return hasNoBasicInfo
 })
 
-const hasValidationErrors = computed(() => {
-  if (!editData.value) return true
-  if (!editData.value.about?.trim()) return true
-  if (!editData.value.department?.trim()) return true
-  if (!editData.value.position?.trim()) return true
-  if (!editData.value.office_location?.trim()) return true
-  if (!editData.value.research_interest?.trim()) return true
-  return false
-})
-
 const edit = () => {
   if (professorData.value) editProfile(professorData.value)
 }
@@ -64,7 +54,7 @@ const cancel = () => {
   cancelEdit()
 }
 const save = () => {
-  saveProfile(professorData, hasValidationErrors.value)
+  saveProfile(professorData)
 }
 
 onMounted(() => {

@@ -46,16 +46,6 @@ const isNewProfile = computed(() => {
   return hasNoBasicInfo
 })
 
-const hasValidationErrors = computed(() => {
-  if (!editData.value) return true
-  if (!editData.value.about?.trim()) return true
-  if (!editData.value.industry?.trim()) return true
-  if (!editData.value.size?.trim()) return true
-  if (!editData.value.fullLocation?.trim()) return true
-  if (editData.value.workFields.length === 0) return true
-  return false
-})
-
 const edit = () => {
   if (companyData.value) editProfile(companyData.value)
 }
@@ -64,7 +54,7 @@ const cancel = () => {
   cancelEdit()
 }
 const save = () => {
-  saveProfile(companyData, hasValidationErrors.value)
+  saveProfile(companyData)
 }
 
 const renderReady = () => {

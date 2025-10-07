@@ -1,7 +1,7 @@
 export function isOwner(thisId?: string) {
   if (!thisId) return false
 
-  let userId = getUserId()
+  const userId = getUserId()
 
   return thisId === userId
 }

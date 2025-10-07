@@ -46,24 +46,6 @@ const isNewProfile = computed(() => {
   return hasNoBasicInfo
 })
 
-const educationErrors = computed(() => {
-  if (!editData.value) return true
-  const educations = editData.value.education
-  for (let index = 0; index < educations.length; index++) {
-    const edu = educations[index]
-    if (
-      !edu.curriculum_name?.trim() ||
-      !edu.major?.trim() ||
-      !edu.university?.trim() ||
-      !edu.graduate_year ||
-      !edu.year_of_study ||
-      edu.graduate_year < edu.year_of_study
-    )
-      return true
-  }
-  return false
-})
-
 const edit = () => {
   if (studentData.value) editProfile(studentData.value)
 }

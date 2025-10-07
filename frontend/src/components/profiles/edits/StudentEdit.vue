@@ -17,6 +17,8 @@ const skillSearchQuery = ref('')
 const showSkillDropdown = ref(false)
 const skillInputRef = ref<HTMLInputElement | null>(null)
 
+const MINYEAR = 1950, MAXYEAR = 2035
+
 // Get all available skills from techStackColors
 const availableSkills = Object.keys(techStackColors).filter((skill) => skill !== 'Default')
 
@@ -247,11 +249,11 @@ watch(
                   <span v-if="!edu.year_of_study">
                     (This field is required)
                   </span>
-                  <span v-else-if="edu.year_of_study < 0">
-                    (This field must be a positive number)
+                  <span v-else-if="edu.year_of_study < MINYEAR">
+                    (Year of study cannot be earlier than {{ MINYEAR }})
                   </span>
-                  <span v-else-if="edu.year_of_study > 3000">
-                    (Your input number is too large)
+                  <span v-else-if="edu.year_of_study > MAXYEAR">
+                    (Year of study cannot be later than {{ MAXYEAR }})
                   </span>
                 </div>
               </label>
@@ -272,11 +274,11 @@ watch(
                   <span v-if="!edu.graduate_year">
                     (This field is required)
                   </span>
-                  <span v-else-if="edu.graduate_year < 0">
-                    (This field must be a positive number)
+                  <span v-else-if="edu.graduate_year < MINYEAR">
+                    (Graduate year cannot be earlier than {{ MINYEAR }})
                   </span>
-                  <span v-else-if="edu.graduate_year > 3000">
-                    (Your input number is too large)
+                  <span v-else-if="edu.graduate_year > MAXYEAR">
+                    (Graduate year cannot be later than {{ MAXYEAR }})
                   </span>
                   <span v-else-if="edu.graduate_year < edu.year_of_study">
                     (Graduation year must be later than year of study)

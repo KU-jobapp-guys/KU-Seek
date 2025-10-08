@@ -155,7 +155,6 @@ watch(
             </ul>
           </div>
 
-
           <!-- Primary Location -->
           <div>
             <label :class="ProfileStyle.formLabel">

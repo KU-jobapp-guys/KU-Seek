@@ -17,7 +17,9 @@ const skillSearchQuery = ref('')
 const showSkillDropdown = ref(false)
 const skillInputRef = ref<HTMLInputElement | null>(null)
 
-const MINYEAR = 1950, MAXYEAR = 2035
+const currentYear = new Date().getFullYear()
+const MINYEAR = currentYear - 100,
+  MAXYEAR = currentYear + 100
 
 // Get all available skills from techStackColors
 const availableSkills = Object.keys(techStackColors).filter((skill) => skill !== 'Default')
@@ -34,8 +36,8 @@ const addEducation = () => {
     curriculum_name: '',
     major: '',
     university: '',
-    year_of_study: 1900,
-    graduate_year: 1900,
+    year_of_study: MINYEAR,
+    graduate_year: MINYEAR,
   })
 }
 
@@ -246,9 +248,7 @@ watch(
               <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Year of study
                 <div :class="ProfileStyle.errorText">
-                  <span v-if="!edu.year_of_study">
-                    (This field is required)
-                  </span>
+                  <span v-if="!edu.year_of_study"> (This field is required) </span>
                   <span v-else-if="edu.year_of_study < MINYEAR">
                     (Year of study cannot be earlier than {{ MINYEAR }})
                   </span>
@@ -262,8 +262,9 @@ watch(
                 type="number"
                 :class="[
                   ProfileStyle.inputBox,
-                  !edu.year_of_study  || edu.year_of_study < 0 || edu.year_of_study > 3000
-                  ? ProfileStyle.errorBox : ''
+                  !edu.year_of_study || edu.year_of_study < 0 || edu.year_of_study > 3000
+                    ? ProfileStyle.errorBox
+                    : '',
                 ]"
               />
             </div>
@@ -271,9 +272,7 @@ watch(
               <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Graduate Year
                 <div :class="ProfileStyle.errorText">
-                  <span v-if="!edu.graduate_year">
-                    (This field is required)
-                  </span>
+                  <span v-if="!edu.graduate_year"> (This field is required) </span>
                   <span v-else-if="edu.graduate_year < MINYEAR">
                     (Graduate year cannot be earlier than {{ MINYEAR }})
                   </span>
@@ -291,7 +290,10 @@ watch(
                 :class="[
                   ProfileStyle.inputBox,
                   'focus:ring-blue-500',
-                  !edu.graduate_year || edu.graduate_year < edu.year_of_study || edu.graduate_year < 0 || edu.graduate_year > 3000
+                  !edu.graduate_year ||
+                  edu.graduate_year < edu.year_of_study ||
+                  edu.graduate_year < 0 ||
+                  edu.graduate_year > 3000
                     ? ProfileStyle.errorBox
                     : '',
                 ]"

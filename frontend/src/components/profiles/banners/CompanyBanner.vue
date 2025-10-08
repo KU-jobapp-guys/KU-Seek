@@ -51,7 +51,7 @@ const goToJobBoard = () => {
       </div>
 
       <button
-        class="bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
+        class="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-500 md:to-blue-700 text-white px-4 py-2 rounded-full whitespace-nowrap hover:md:to-blue-500 hover:to-blue-600 hover:via-blue-500"
         @click="goToJobBoard"
       >
         See Jobs

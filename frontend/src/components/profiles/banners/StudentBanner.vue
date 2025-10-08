@@ -56,9 +56,9 @@ watch(
 
           <button
             v-if="isOwner(studentData.id) && !studentData.is_verified"
-            class="text-base bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
+            class="text-base bg-red-600 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60 hover:bg-red-500"
           >
-            <span class="hidden md:block">Verify Account</span>
+            <span class="hidden md:block">Verify Your Account</span>
             <span class="block md:hidden">Verify</span>
           </button>
         </div>

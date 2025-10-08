@@ -112,7 +112,7 @@ const switchTab = (tab: string) => {
           </div>
 
           <!-- Connection Tab -->
-          <div v-if="activeTab === 'Connection'" class="space-y-4">
+          <div v-if="activeTab === 'Connection'" class="space-y-4 max-h-[410px] overflow-y-auto">
             <div v-for="c in mockCompany" v-bind:key="c.id">
               <ConnectCompany :company="c" />
             </div>

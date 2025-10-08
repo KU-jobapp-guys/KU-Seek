@@ -1,0 +1,66 @@
+import { ref, type Ref } from 'vue'
+import type { Profile } from '@/types/profileType'
+
+export type EditableProfile<T> = {
+  isEditing: Ref<boolean>
+  editData: Ref<T | null>
+  originalData: Ref<T | null>
+  editProfile: (data: T) => void
+  cancelEdit: () => void
+  saveProfile: (targetData: Ref<T | null>) => void
+  handleUpdate: (data: T) => void
+}
+
+export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
+  const isEditing = ref(false)
+  const editData = ref<T | null>(null) as Ref<T | null>
+  const originalData = ref<T | null>(null) as Ref<T | null>
+
+  const editProfile = (data: T) => {
+    originalData.value = JSON.parse(JSON.stringify(data)) as T
+    editData.value = JSON.parse(JSON.stringify(data)) as T
+    isEditing.value = true
+  }
+
+  const cancelEdit = () => {
+    isEditing.value = false
+    editData.value = null
+    originalData.value = null
+  }
+
+  const handleUpdate = (data: T) => {
+    editData.value = data
+  }
+
+  const saveProfile = (targetData: Ref<T | null>) => {
+    if (!editData.value) return
+
+    const firstError = document.querySelector('.error-form')
+    if (firstError) {
+      setTimeout(() => {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+      return
+    }
+
+    targetData.value = editData.value
+    console.log('Saved data: ', targetData.value)
+    // send data to backend here
+
+    isEditing.value = false
+    editData.value = null
+    originalData.value = null
+
+    return
+  }
+
+  return {
+    isEditing,
+    editData,
+    originalData,
+    editProfile,
+    cancelEdit,
+    saveProfile,
+    handleUpdate,
+  }
+}

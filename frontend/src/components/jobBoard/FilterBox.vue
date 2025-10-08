@@ -54,7 +54,7 @@ const clearFilters = () => {
   >
     <div class="h-4 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
 
-    <div class="p-8 flex flex-col gap-y-8">
+    <div class="p-8 flex flex-col gap-y-8 text-base">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
         <!-- Dynamic Text Inputs -->
         <div v-for="textField in textConfig" :key="textField.key" class="group">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Tag from '@/components/dashboards/Tag.vue'
+import Tag from '@/components/dashboards/JobTag.vue'
 
 defineProps<{
   company: string

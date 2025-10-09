@@ -62,7 +62,7 @@ const config = computed(() => headerConfigs[props.page || 'dashBoard'])
 <template>
   <header class="relative h-[360px] w-full bg-black text-white overflow-hidden">
     <img :src="config.background" class="absolute bottom-0 w-full" />
-    <div class="absolute inset-0 px-[12vw] pt-16 flex flex-col">
+    <div class="absolute inset-0 px-[8vw] md:px-[12vw] pt-16 flex flex-col">
       <div class="w-full flex gap-x-8">
         <div class="flex-shrink-0 rounded-full bg-[#F9219B] h-20 w-20 p-4">
           <img :src="config.icon" class="w-full h-full" />

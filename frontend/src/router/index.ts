@@ -5,7 +5,8 @@ import CompanyDashboardView from '@/views/dashboard/CompanyDashboardView.vue'
 import StaffDashboardView from '@/views/dashboard/StaffDashboardView.vue'
 import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
-import CompanyProfile from '@/views/profile/CompanyProfile.vue'
+import CompanyProfile from '@/views/CompanyProfile.vue'
+import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
@@ -71,6 +72,11 @@ const router = createRouter({
       component: JobView,
     },
     {
+      path: '/student/job-application',
+      name: 'student job application',
+      component: JobApplicationView,
+    },
+    {
       path: '/login',
       name: 'login',
       component: LoginView,
@@ -79,7 +85,7 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'not found',
       component: NotFoundView,
-    },
+    }
   ],
 })
 

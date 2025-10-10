@@ -22,21 +22,21 @@ defineProps<{
     :class="[
       'group',
       'bg-white',
-      'rounded-2xl',
+      'rounded-xl',
       'shadow',
-      'border-4',
-      'p-6',
+      'border-2',
+      'p-4',
       'relative',
       'transition',
-      'hover:shadow-xl',
+      'hover:shadow-lg',
       cardClass,
     ]"
   >
-    <div class="absolute top-6 right-6 flex items-center space-x-2">
+    <div class="absolute top-4 right-4 flex items-center space-x-1">
       <span
         :class="[
           'font-semibold',
-          'text-2xl',
+          'text-base',
           applied
             ? 'text-green-600 group-hover:text-green-800'
             : 'text-red-600 group-hover:text-red-800',
@@ -47,20 +47,20 @@ defineProps<{
       <img
         :src="bookmarked ? BookmarkBlackIcon : BookmarkWhiteIcon"
         alt="Bookmark"
-        class="w-10 h-10 transform transition-transform duration-200 hover:scale-125"
+        class="w-6 h-6 transform transition-transform duration-200 hover:scale-110"
       />
     </div>
 
-    <div class="text-gray-600 font-bold text-2xl mb-1 group-hover:text-white">
+    <div class="text-gray-600 font-bold text-lg mb-1 group-hover:text-white">
       {{ company }}
     </div>
-    <div class="text-black font-bold text-4xl mb-2 group-hover:text-white">
+    <div class="text-black font-bold text-2xl mb-1 group-hover:text-white">
       {{ job }}
     </div>
 
-    <div class="flex items-center text-gray-600 text-lg mb-2 space-x-2 group-hover:text-white">
+    <div class="flex items-center text-gray-600 text-sm mb-2 space-x-1 group-hover:text-white">
       <svg
-        class="w-4 h-4 inline-block"
+        class="w-3 h-3 inline-block"
         fill="none"
         stroke="currentColor"
         stroke-width="2"
@@ -76,7 +76,7 @@ defineProps<{
       <span>{{ place }}</span>
 
       <svg
-        class="w-4 h-4 inline-block ml-2"
+        class="w-3 h-3 inline-block ml-1"
         fill="none"
         stroke="currentColor"
         stroke-width="2"
@@ -88,14 +88,14 @@ defineProps<{
       <span>{{ days }}</span>
     </div>
 
-    <div class="text-gray-700 text-2xl mb-2 group-hover:text-white">
+    <div class="text-gray-700 text-base mb-2 group-hover:text-white">
       {{ description }}
     </div>
-    <div class="text-blue-500 font-semibold text-xl mb-2 group-hover:text-white">
+    <div class="text-blue-500 font-semibold text-sm mb-2 group-hover:text-white">
       {{ type }}
     </div>
 
-    <div class="flex flex-wrap gap-2 mb-4">
+    <div class="flex flex-wrap gap-1 mb-3">
       <Tag
         v-for="tag in tags"
         :key="tag.label"
@@ -107,7 +107,7 @@ defineProps<{
 
     <div class="mt-auto flex justify-end">
       <button
-        class="bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-gray-800 hover:scale-105 transition transform duration-200"
+        class="bg-gray-600 text-white font-medium px-4 py-2 rounded-md shadow-md hover:bg-gray-800 hover:scale-105 transition transform duration-200 text-sm"
       >
         View Details
       </button>

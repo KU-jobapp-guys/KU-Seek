@@ -9,8 +9,10 @@ import CompanyProfile from '@/views/profile/CompanyProfile.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
+import CompanyJobView from '@/views/CompanyJobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,6 +71,11 @@ const router = createRouter({
       path: '/job/:id',
       name: 'job view',
       component: JobView,
+    },
+    {
+      path: '/company/job/:id',
+      name: 'company job view',
+      component: CompanyJobView,
     },
     {
       path: '/login',

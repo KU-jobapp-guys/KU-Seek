@@ -9,8 +9,6 @@ import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'
 import searchIcon from '@/assets/search-icon.svg'
 
 import type { Job } from '@/assets/type'
-// import your API function instead of mockJobs
-// import { getBookmarkedJobs, getRecentlyViewedJobs } from '@/api/jobs'
 
 type Section = 'bookmarked' | 'recentlyViewed'
 
@@ -20,7 +18,6 @@ const router = useRouter()
 const bookmarkedJobs = ref<Job[]>([])
 const recentlyViewedJobs = ref<Job[]>([])
 
-// Toggle section
 const toggleSection = (section: Section) => {
   openSection.value = section
 }
@@ -41,10 +38,33 @@ async function fetchJobs() {
     import('@/data/mockJobs').then(({ mockJobs }) => {
       bookmarkedJobs.value = mockJobs.slice(0, 6)
       recentlyViewedJobs.value = mockJobs.slice(6, 10)
+
+      // Restore bookmarked jobs from localStorage
+      const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
+      bookmarkedJobs.value = mockJobs.filter((job) => saved.includes(job.jobId))
     })
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
   }
+}
+
+function handleBookmark(payload: { id: string; bookmarked: boolean }) {
+  const { id, bookmarked } = payload
+  const job =
+    recentlyViewedJobs.value.find((j) => j.jobId === id) ||
+    bookmarkedJobs.value.find((j) => j.jobId === id)
+
+  if (!job) return
+
+  if (bookmarked) {
+    if (!bookmarkedJobs.value.some((j) => j.jobId === id)) {
+      bookmarkedJobs.value.push(job)
+    }
+  } else {
+    bookmarkedJobs.value = bookmarkedJobs.value.filter((j) => j.jobId !== id)
+  }
+
+  localStorage.setItem('bookmarkedJobs', JSON.stringify(bookmarkedJobs.value.map((j) => j.jobId)))
 }
 
 onMounted(() => {
@@ -105,16 +125,19 @@ onMounted(() => {
         class="w-full p-2 md:p-3 rounded-lg border mb-4 md:mb-8 text-black"
       />
 
-      <div class="max-h-[600px] overflow-y-auto pr-2">
+      <div v-if="bookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           <JobCard
             v-for="job in bookmarkedJobs"
             :key="job.jobId"
             :job="job"
+            :bookmarked="true"
             @select="handleSelect"
+            @bookmark="handleBookmark"
           />
         </div>
       </div>
+      <p v-else class="text-gray-500 text-center mt-8">No bookmarked jobs yet.</p>
     </section>
 
     <section
@@ -137,7 +160,9 @@ onMounted(() => {
             v-for="job in recentlyViewedJobs"
             :key="job.jobId"
             :job="job"
+            :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"
             @select="handleSelect"
+            @bookmark="handleBookmark"
           />
         </div>
       </div>

@@ -1,21 +1,38 @@
 <script setup lang="ts">
-import type { Job } from '@/types/jobType'
-import { Bookmark } from 'lucide-vue-next'
+import { ref, watch, onMounted } from 'vue'
+import type { Job } from '@/assets/type'
+import { Bookmark, BookmarkCheck } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 
-// Add optional prop showBookmark with default true
 const props = withDefaults(
   defineProps<{
     job: Job
+    bookmarked?: boolean
     showBookmark?: boolean
   }>(),
-  { showBookmark: true }, // default value
+  { showBookmark: true, bookmarked: false },
 )
 
-const emit = defineEmits<{ (e: 'select', id: string): void }>()
+const emit = defineEmits<{
+  (e: 'select', id: string): void
+  (e: 'bookmark', payload: { id: string; bookmarked: boolean }): void
+}>()
+
+const isBookmarked = ref(props.bookmarked)
+
+// Keep local state in sync with parent
+watch(
+  () => props.bookmarked,
+  (newVal) => (isBookmarked.value = newVal),
+)
 
 function handleJobSelected() {
   emit('select', props.job.jobId)
+}
+
+function toggleBookmark() {
+  isBookmarked.value = !isBookmarked.value
+  emit('bookmark', { id: props.job.jobId, bookmarked: isBookmarked.value })
 }
 </script>
 
@@ -43,8 +60,13 @@ function handleJobSelected() {
 
     <div class="w-full flex justify-between mt-4 text-sm text-gray-500">
       <p>{{ getPostTime(job.postTime) }}</p>
-      <!-- Conditionally show Bookmark -->
-      <Bookmark v-if="showBookmark" class="h-6 w-6 cursor-pointer" />
+
+      <component
+        :is="isBookmarked ? BookmarkCheck : Bookmark"
+        v-if="showBookmark"
+        class="h-6 w-6 cursor-pointer text-blue-500 hover:scale-110 transition-transform"
+        @click.stop="toggleBookmark"
+      />
     </div>
   </div>
 </template>

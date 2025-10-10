@@ -81,7 +81,7 @@ function makeLink(page: string) {
                   :href="makeLink(page)"
                   :class="[
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-8 py-3 text-sm focus:outline-none hover:bg-gray-50',
+                    'block px-8 py-3 text-lg focus:outline-none hover:bg-gray-50',
                   ]"
                 >
                   {{ page }}

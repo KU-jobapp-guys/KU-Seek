@@ -67,22 +67,22 @@ const displayedJobs = computed(() => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <div v-if="companyData" class="px-[8vw] md:px-[12vw] py-16">
+  <div v-if="companyData" class="px-[6vw] md:px-[12vw] py-16">
     <CompanyBanner :companyData="companyData" @loaded="renderReady" />
 
     <!-- Content Part -->
     <section class="data mt-8">
       <div
-        class="bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8"
+        class="bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
-        <div class="flex">
+        <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
           <button
             v-for="tab in tabList"
             :key="tab"
             @click="switchTab(tab)"
             :class="[
-              'px-6 py-4 text-xl rounded-t-[20px] transition-colors duration-200',
+              'text-base md:text-lg max-sm:block sm:inline-block transition-colors duration-200',
               activeTab === tab ? 'text-black font-black' : 'text-gray-600 hover:text-gray-900',
             ]"
           >
@@ -93,36 +93,40 @@ const displayedJobs = computed(() => {
         <div class="w-full h-1 bg-gray-400"></div>
 
         <!-- Tab Content -->
-        <div class="py-8">
+        <div class="py-4 md:py-8">
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
             <div
-              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-12 gap-y-4 rounded-xl shadow-md"
+              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12 gap-y-4 rounded-xl shadow-md"
             >
               <div class="flex items-center gap-x-2">
                 <div
-                  class="w-12 h-12 flex items-center justify-center bg-orange-500 rounded-full text-white"
+                  class="w-12 h-12 shrink-0 flex items-center justify-center bg-orange-500 rounded-full text-white"
                 >
                   <Building2Icon />
                 </div>
                 <h2 class="font-bold text-2xl">Company Overview</h2>
               </div>
 
-              <div class="pl-4">
+              <div class="flex flex-col md:pl-4 gap-y-1">
                 <p>
-                  <span class="font-medium">Website: </span>
+                  <span class="font-medium block md:inline">Website: </span>
                   <a :href="companyData.website.url" class="underline">{{
                     companyData.website.name
                   }}</a>
                 </p>
-                <p><span class="font-medium">Industry: </span> {{ companyData.industry }}</p>
                 <p>
-                  <span class="font-medium">Specialities: </span>
+                  <span class="font-medium block md:inline">Industry: </span>
+                  {{ companyData.industry }}
+                </p>
+                <p>
+                  <span class="font-medium block md:inline">Specialities: </span>
                   {{ companyData.workFields.join(', ') }}
                 </p>
                 <p><span class="font-medium">Company Size:</span> {{ companyData.size }}</p>
                 <p>
-                  <span class="font-medium">Primary Location:</span> {{ companyData.fullLocation }}
+                  <span class="font-medium block md:inline">Primary Location:</span>
+                  {{ companyData.fullLocation }}
                 </p>
               </div>
 
@@ -131,7 +135,7 @@ const displayedJobs = computed(() => {
           </div>
 
           <!-- Jobs Tab Content -->
-          <div v-else-if="activeTab === 'Job'" class="relative">
+          <div v-else-if="activeTab === 'Job'" class="relative text-base">
             <div v-if="displayedJobs.length > 0">
               <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 <CompanyJob v-for="job in displayedJobs" :key="job.jobId" :job="job" />

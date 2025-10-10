@@ -16,6 +16,7 @@ type Section = 'total' | 'application'
 
 const openSection = ref<Section>('total')
 const router = useRouter()
+const profileView = ref<number>(0)
 
 const totalJobs = ref<Job[]>([])
 const applicationJobs = ref<Job[]>([])
@@ -43,7 +44,7 @@ async function fetchJobs() {
       totalJobs.value = mockJobs.slice(0, 5)
       applicationJobs.value = mockJobs.slice(5, 10)
     })
-    profileView = 237
+    profileView.value = 237
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
   }
@@ -108,7 +109,13 @@ onMounted(() => {
 
       <div class="max-h-[600px] overflow-y-auto pr-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-          <JobCard v-for="job in totalJobs" :key="job.jobId" :job="job" @select="handleSelect" />
+          <JobCard
+            v-for="job in totalJobs"
+            :key="job.jobId"
+            :job="job"
+            :showBookmark="false"
+            @select="handleSelect"
+          />
         </div>
       </div>
     </section>
@@ -133,6 +140,7 @@ onMounted(() => {
             v-for="job in applicationJobs"
             :key="job.jobId"
             :job="job"
+            :showBookmark="false"
             @select="handleSelect"
           />
         </div>

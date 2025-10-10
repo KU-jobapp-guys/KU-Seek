@@ -1,5 +1,5 @@
 export interface Company {
-  id: string
+  user_id: string
   name: string
   type: string
   website: { name: string; url: string }
@@ -10,6 +10,6 @@ export interface Company {
   size: string
   contacts: string
   about: string
-  bannerPhoto: string
-  profilePhoto: string
+  profile_img: string
+  banner_img: string
 }

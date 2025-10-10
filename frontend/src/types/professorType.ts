@@ -1,5 +1,5 @@
 export interface ProfessorProfile {
-  id: string
+  user_id: string
   first_name: string
   last_name: string
   about: string
@@ -7,8 +7,8 @@ export interface ProfessorProfile {
   contact_email: string
   gender: string
   age: number
-  profilePhoto: string
-  bannerPhoto: string
+  profile_img: string
+  banner_img: string
   phone_number: string
   is_verified: boolean
   skills: string[]

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import StudentBanner from '@/components/profiles/banners/StudentBanner.vue'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
-import { mockStudents } from '@/data/mockStudent'
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import type { StudentProfile } from '@/types/studentType'
@@ -14,14 +13,41 @@ const router = useRouter()
 const isLoading = ref(true)
 const studentData = ref<StudentProfile | null>(null)
 
-const loadStudent = (id?: string) => {
+async function getProfileData(user_id: string) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/v1/users/${user_id}/profile`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || ''
+      },
+    })
+    return res
+  }
+  catch (error) {
+    console.error('Fetching profile error:', error)
+    return null
+  }
+}
+
+async function loadStudent(id?: string) {
   if (!id) {
     router.replace({ name: 'not found' })
     return
   }
-
-  studentData.value = mockStudents.find((s) => s.id === id) || null
-
+  
+  const res = await getProfileData(id)
+  
+  if (res && res.ok) {   
+    const data = await res.json() 
+    studentData.value = data
+  } else {
+    console.error('Failed to load profile:', res?.status)
+    router.replace({ name: 'not found' })
+    return
+  }
+  
   if (!studentData.value) {
     router.replace({ name: 'not found' })
   }
@@ -40,6 +66,7 @@ const renderReady = () => {
 
 onMounted(() => {
   loadStudent(route.params.id as string)
+  console.log(route.params.id)
 })
 </script>
 

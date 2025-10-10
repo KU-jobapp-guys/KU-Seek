@@ -13,7 +13,6 @@ const props = defineProps<{
 }>()
 const { data, role } = props
 
-const isOwner = data.id === '1'
 const bannerLoaded = ref(false)
 const profileLoaded = ref(false)
 const isFullyLoaded = computed(() => bannerLoaded.value && profileLoaded.value)
@@ -55,7 +54,7 @@ watch(isFullyLoaded, (newValue) => {
         :class="profileClass.border"
       >
         <img
-          :src="data.profilePhoto"
+          :src="data.profile_img"
           class="rounded-full w-full h-full bg-black"
           alt="Profile"
           @load="profileLoaded = true"

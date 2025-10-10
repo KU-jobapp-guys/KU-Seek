@@ -18,7 +18,7 @@ const pageList = computed(() => {
 
 function makeLink(page: string) {
   const role = props.role
-  const userId = '1'
+  const userId = localStorage.getItem('user_id')
   if (page === 'Profile') {
     return `/${role}/profile/${userId}`
   }

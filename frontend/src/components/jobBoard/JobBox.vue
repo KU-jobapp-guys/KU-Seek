@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import type { Job } from '@/assets/type'
 import { Bookmark, BookmarkCheck } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'

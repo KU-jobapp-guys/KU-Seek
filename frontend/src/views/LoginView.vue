@@ -10,7 +10,7 @@ const router = useRouter()
 const route = useRoute()
 
 async function handleURICallback() {
-  let csrf_token:string
+  let csrf_token: string
 
   try {
     const code = route.query.code
@@ -18,8 +18,8 @@ async function handleURICallback() {
       throw new Error('No code found in callback URL')
     }
 
-    const csrf_res = await fetch("http://localhost:8000/api/v1/csrf-token", {
-      method: "GET",
+    const csrf_res = await fetch('http://localhost:8000/api/v1/csrf-token', {
+      method: 'GET',
       credentials: 'include',
     })
     if (csrf_res.ok) {
@@ -29,14 +29,13 @@ async function handleURICallback() {
     } else {
       throw new Error('Login request failed, please try again.')
     }
-    
 
-    const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
-      method: "POST",
+    const res = await fetch('http://localhost:8000/api/v1/auth/oauth', {
+      method: 'POST',
       credentials: 'include',
-      headers: { 
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrf_token,
       },
       body: JSON.stringify({ code }),
     })

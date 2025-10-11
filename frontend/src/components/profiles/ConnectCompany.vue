@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Company } from '@/types/companyType'
+import type { CompanyProfile } from '@/types/profileType'
 
-const props = defineProps<{ company: Company }>()
+const props = defineProps<{ company: CompanyProfile }>()
 const { company } = props
 </script>
 
@@ -30,8 +30,8 @@ const { company } = props
         <div class="flex flex-col">
           <span class="flex gap-x-4 items-start md:items-center">
             <h1 class="font-bold text-2xl mb-2">{{ company.name }}</h1>
-            <p class="flex text-white gap-x-1 px-2 bg-blue-500 rounded-full">
-              14 <span class="hidden md:block">Jobs</span>
+            <p class="flex text-white px-2 bg-blue-500 gap-x-1 rounded-full">
+              14 <span class="hidden md:block"> Jobs</span>
             </p>
           </span>
           <p>{{ company.type }}</p>

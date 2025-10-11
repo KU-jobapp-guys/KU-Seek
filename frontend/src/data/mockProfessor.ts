@@ -1,4 +1,4 @@
-import type { ProfessorProfile } from '@/types/professorType'
+import type { ProfessorProfile } from '@/types/profileType'
 
 export const mockProfessor: ProfessorProfile[] = [
   {
@@ -22,6 +22,7 @@ export const mockProfessor: ProfessorProfile[] = [
     research_interest: 'Artificial Intelligence, Natural Language Processing',
     description:
       'Professor Anan has over 20 years of experience in teaching and research in AI. He has published more than 50 papers in top-tier conferences.',
+    announcements: [],
   },
   {
     id: '2',
@@ -43,5 +44,27 @@ export const mockProfessor: ProfessorProfile[] = [
     research_interest: 'Renewable Energy, Smart Grid, Internet of Things',
     description:
       'Dr. Sudarat focuses on applying IoT technologies in renewable energy systems to enhance efficiency and sustainability.',
+    announcements: [],
+  },
+  {
+    id: '4',
+    first_name: 'Nana',
+    last_name: 'Nanan',
+    about: '',
+    location: 'Chiang Mai, Thailand',
+    contact_email: 'sudarat.thongchai@university.ac.th',
+    gender: 'Female',
+    age: 39,
+    profilePhoto: '',
+    bannerPhoto: '',
+    phone_number: '+66-899876543',
+    is_verified: false,
+    skills: [],
+    department: '',
+    position: '',
+    office_location: '',
+    research_interest: '',
+    description: '',
+    announcements: [],
   },
 ]

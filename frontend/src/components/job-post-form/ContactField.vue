@@ -17,12 +17,60 @@ const emit = defineEmits<{
 const contactTypes = ['Email', 'Phone', 'Facebook', 'LinkedIn', 'Website']
 
 const newContact = ref<Contact>({ type: '', link: '' })
+const error = ref('')
 
-const addContact = (): void => {
-  if (newContact.value.type && newContact.value.link) {
-    emit('update:modelValue', [...props.modelValue, { ...newContact.value }])
-    newContact.value = { type: '', link: '' }
+// --- Validation helpers ---
+const validatePhone = (phone: string): boolean => {
+  const phoneRegex = /^[+]?[0-9\s\-()]{7,15}$/
+  return phoneRegex.test(phone)
+}
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+const validateURL = (url: string): boolean => {
+  try {
+    if (!/^https?:\/\//i.test(url)) {
+      url = 'https://' + url
+    }
+    const parsed = new URL(url)
+    // Ensure hostname contains at least one dot (like example.com)
+    if (!parsed.hostname.includes('.')) return false
+    return true
+  } catch {
+    return false
   }
+}
+// --- Add Contact ---
+const addContact = (): void => {
+  error.value = ''
+
+  if (!newContact.value.type || !newContact.value.link.trim()) {
+    error.value = 'Please fill out all fields.'
+    return
+  }
+
+  const { type, link } = newContact.value
+
+  if (type === 'Phone' && !validatePhone(link)) {
+    error.value = 'Invalid phone number format.'
+    return
+  }
+
+  if (type === 'Email' && !validateEmail(link)) {
+    error.value = 'Invalid email address.'
+    return
+  }
+
+  if (type === 'Website' && !validateURL(link)) {
+    error.value = 'Invalid website URL.'
+    return
+  }
+
+  emit('update:modelValue', [...props.modelValue, { ...newContact.value }])
+  newContact.value = { type: '', link: '' }
 }
 
 const removeContact = (index: number): void => {
@@ -52,14 +100,29 @@ const removeContact = (index: number): void => {
         <option value="">Select type</option>
         <option v-for="type in contactTypes" :key="type" :value="type">{{ type }}</option>
       </select>
+
       <input
         v-model="newContact.link"
-        placeholder="Contact Link"
+        :placeholder="
+          newContact.type === 'Phone'
+            ? 'Enter phone number'
+            : newContact.type === 'Email'
+              ? 'Enter email address'
+              : 'Enter link or username'
+        "
         class="flex-1 px-3 py-2 border rounded-xl text-black"
       />
-      <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-xl" @click="addContact">
+
+      <button
+        type="button"
+        class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+        @click="addContact"
+      >
         +
       </button>
     </div>
+
+    <!-- Error Message -->
+    <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
   </div>
 </template>

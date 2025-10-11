@@ -22,6 +22,9 @@ const validate = () => {
   if (min < 0 || max < 0) {
     error.value = 'Salary cannot be negative.'
     emit('validity', false)
+  } else if (min === 0 || max === 0) {
+    error.value = 'Salary cannot be zero.'
+    emit('validity', false)
   } else if (min && max && max < min) {
     error.value = 'Maximum salary cannot be less than minimum salary.'
     emit('validity', false)
@@ -33,9 +36,8 @@ const validate = () => {
 
 watch(() => [props.salaryMin, props.salaryMax], validate, { immediate: true })
 
-// Clean invalid characters
+// Sanitize input (digits only)
 const sanitizeValue = (raw: string) => {
-  // Only keep digits (and optional one decimal point if you want decimals)
   return raw.replace(/[^\d]/g, '')
 }
 
@@ -52,7 +54,6 @@ const handleInput = (event: Event, field: 'min' | 'max') => {
   const input = event.target as HTMLInputElement
   let value = sanitizeValue(input.value)
 
-  // Clamp negatives (not needed now but keep for safety)
   if (Number(value) < 0) value = '0'
 
   input.value = value

@@ -27,6 +27,9 @@ const jobPost = ref({
 const isSalaryValid = ref(true)
 
 const isFormValid = computed(() => {
+  const min = Number(jobPost.value.salaryMin)
+  const max = Number(jobPost.value.salaryMax)
+
   return (
     jobPost.value.company.trim() !== '' &&
     jobPost.value.role.trim() !== '' &&
@@ -36,11 +39,21 @@ const isFormValid = computed(() => {
     jobPost.value.workFields.length > 0 &&
     jobPost.value.salaryMin.trim() !== '' &&
     jobPost.value.salaryMax.trim() !== '' &&
+    min > 0 &&
+    max > 0 &&
     isSalaryValid.value
   )
 })
 
 const handleSubmit = (): void => {
+  const min = Number(jobPost.value.salaryMin)
+  const max = Number(jobPost.value.salaryMax)
+
+  if (min <= 0 || max <= 0) {
+    alert('Salary cannot be zero or negative.')
+    return
+  }
+
   if (!isFormValid.value) {
     alert('Please complete all fields before submitting.')
     return
@@ -112,6 +125,7 @@ const handleSubmit = (): void => {
               <option value="Contract">Contract</option>
             </select>
           </div>
+
           <SalaryInput
             v-model:salaryMin="jobPost.salaryMin"
             v-model:salaryMax="jobPost.salaryMax"

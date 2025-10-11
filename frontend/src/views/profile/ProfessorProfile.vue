@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
 import { isOwner } from '@/libs/userUtil'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockProfessor } from '@/data/mockProfessor'
 import { mockCompany } from '@/data/mockCompany'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
@@ -17,22 +18,27 @@ import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 
 const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<ProfessorProfile>()
 
-const loadProfessor = (id?: string) => {
+async function loadProfessor(id?: string) {
   if (!id) {
     router.replace({ name: 'not found' })
     return
   }
 
-  professorData.value = mockProfessor.find((c) => c.id === id) || null
-
-  if (!professorData.value) {
+  const res = await getProfileData(id)
+  
+  if (res && res.ok) {   
+    const data = await res.json() 
+    professorData.value = data
+  } else {
     router.replace({ name: 'not found' })
+    return
   }
 }
 
@@ -53,8 +59,34 @@ const edit = () => {
 const cancel = () => {
   cancelEdit()
 }
-const save = () => {
-  saveProfile(professorData)
+
+const save = async () => {
+  if (!checkProfile()) return
+
+  let data = editData.value
+
+  if (!data) return
+
+  const plainData: ProfessorProfile = {
+    ...data,
+    profile_img: data.profile_img || '',
+    banner_img: data.banner_img || '',
+    phone_number: data.phone_number || '',
+  }
+
+  const res = await updateProfileData(plainData)
+  
+  if (!res) return
+
+  if (res.ok) {
+    await loadProfessor(route.params.id as string)
+    saveProfile()
+    toast.success('Profile updated successfully')
+  } else {
+    const err = await res.json()
+    console.error('Error:', err.title, '-', err.detail)
+    toast.error('Failed to update profile. Please try again.')
+  }
 }
 
 onMounted(() => {
@@ -92,7 +124,7 @@ const switchTab = (tab: string) => {
     <!-- No Profile Data -->
     <NoProfile
       v-if="isNewProfile && !isEditing"
-      :isOwner="isOwner(professorData.id)"
+      :isOwner="isOwner(professorData.user_id)"
       @edit="edit"
     />
 
@@ -131,7 +163,7 @@ const switchTab = (tab: string) => {
 
           <!-- Connection Tab -->
           <div v-if="activeTab === 'Connection'" class="space-y-4 max-h-[410px] overflow-y-auto">
-            <div v-for="c in mockCompany" v-bind:key="c.id">
+            <div v-for="c in mockCompany" v-bind:key="c.user_id">
               <ConnectCompany :company="c" />
             </div>
           </div>

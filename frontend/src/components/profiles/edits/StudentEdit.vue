@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { EducationBaseFields } from '@/configs/EditProfileConfig'
 import type { EducationFieldKey } from '@/configs/EditProfileConfig'
 import type { StudentProfile } from '@/types/profileType'
@@ -70,6 +70,16 @@ watch(
   },
   { deep: true },
 )
+
+onMounted(() => {
+  if(!editForm.value.skills) {
+    editForm.value.skills = []
+  }
+  if(!editForm.value.education) {
+    editForm.value.education = []
+    addEducation()
+  }
+})
 </script>
 
 <template>
@@ -81,7 +91,7 @@ watch(
           <CircleUserRound class="w-full h-full" :stroke-width="1.5" />
         </div>
         <p class="text-2xl font-bold">About</p>
-        <p v-if="editForm.about.trim() === ''" :class="ProfileStyle.errorText">
+        <p v-if="(editForm.about || '').trim() === ''" :class="ProfileStyle.errorText">
           (This field is required)
         </p>
       </div>
@@ -92,7 +102,7 @@ watch(
           rows="4"
           :class="[
             ProfileStyle.textBox,
-            editForm.about.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-orange-500',
+            (editForm.about || '').trim() === '' ? ProfileStyle.errorBox : 'focus:ring-orange-500',
           ]"
           placeholder="Tell us about yourself..."
         ></textarea>
@@ -107,7 +117,7 @@ watch(
             <Star class="w-full h-full" :stroke-width="1.5" />
           </div>
           <p class="text-2xl font-bold">Interest</p>
-          <p v-if="editForm.interests.trim() === ''" :class="ProfileStyle.errorText">
+          <p v-if="(editForm.interests || '').trim() === ''" :class="ProfileStyle.errorText">
             (This field is required)
           </p>
         </div>
@@ -118,7 +128,7 @@ watch(
             rows="5"
             :class="[
               ProfileStyle.textBox,
-              editForm.interests.trim() === '' ? ProfileStyle.errorBox : 'focus:ring-pink-500',
+              (editForm.interests || '').trim() === '' ? ProfileStyle.errorBox : 'focus:ring-pink-500',
             ]"
             placeholder="What are your interests?"
           ></textarea>
@@ -224,7 +234,7 @@ watch(
             <label class="text-sm font-medium text-gray-700 mb-1">
               {{ field.label }}
               <span
-                v-if="edu[field.key as EducationFieldKey].trim() === ''"
+                v-if="(edu[field.key as EducationFieldKey] || '').trim() === ''"
                 :class="ProfileStyle.errorText"
               >
                 (This field is required)
@@ -235,7 +245,7 @@ watch(
               type="text"
               :class="[
                 ProfileStyle.inputBox,
-                edu[field.key as EducationFieldKey].trim() === ''
+                (edu[field.key as EducationFieldKey] || '').trim() === ''
                   ? ProfileStyle.errorBox
                   : 'focus:ring-blue-500 border-gray-300',
               ]"
@@ -247,12 +257,12 @@ watch(
             <div class="flex-1">
               <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Year of study
-                <div :class="ProfileStyle.errorText">
-                  <span v-if="!edu.year_of_study"> (This field is required) </span>
-                  <span v-else-if="edu.year_of_study < MINYEAR">
+                <div>
+                  <span v-if="!edu.year_of_study" :class=ProfileStyle.errorText> (This field is required) </span>
+                  <span v-else-if="edu.year_of_study < MINYEAR" :class=ProfileStyle.errorText>
                     (Year of study cannot be earlier than {{ MINYEAR }})
                   </span>
-                  <span v-else-if="edu.year_of_study > MAXYEAR">
+                  <span v-else-if="edu.year_of_study > MAXYEAR" :class=ProfileStyle.errorText>
                     (Year of study cannot be later than {{ MAXYEAR }})
                   </span>
                 </div>
@@ -271,15 +281,15 @@ watch(
             <div class="flex-1">
               <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Graduate Year
-                <div :class="ProfileStyle.errorText">
-                  <span v-if="!edu.graduate_year"> (This field is required) </span>
-                  <span v-else-if="edu.graduate_year < MINYEAR">
+                <div>
+                  <span v-if="!edu.graduate_year" :class=ProfileStyle.errorText> (This field is required) </span>
+                  <span v-else-if="edu.graduate_year < MINYEAR" :class=ProfileStyle.errorText>
                     (Graduate year cannot be earlier than {{ MINYEAR }})
                   </span>
-                  <span v-else-if="edu.graduate_year > MAXYEAR">
+                  <span v-else-if="edu.graduate_year > MAXYEAR" :class=ProfileStyle.errorText>
                     (Graduate year cannot be later than {{ MAXYEAR }})
                   </span>
-                  <span v-else-if="edu.graduate_year < edu.year_of_study">
+                  <span v-else-if="edu.graduate_year < edu.year_of_study" :class=ProfileStyle.errorText>
                     (Graduation year must be later than year of study)
                   </span>
                 </div>

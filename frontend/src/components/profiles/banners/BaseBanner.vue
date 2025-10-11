@@ -52,10 +52,10 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
   const previewUrl = URL.createObjectURL(file)
   if (field === 'bannerPhoto') {
     bannerPreview.value = previewUrl
-    editForm.value.bannerPhoto = previewUrl
+    editForm.value.banner_img = previewUrl
   } else {
     profilePreview.value = previewUrl
-    editForm.value.profilePhoto = previewUrl
+    editForm.value.profile_img = previewUrl
   }
 
   emits('update:modelValue', { ...editForm.value })
@@ -70,7 +70,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
         class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-black/0 z-10"
       ></div>
       <img
-        :src="bannerPreview || data.bannerPhoto || defaultBanner"
+        :src="bannerPreview || data.banner_img || defaultBanner"
         class="absolute z-0 w-full h-full object-cover"
         alt="Banner"
         loading="lazy"
@@ -80,7 +80,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
 
       <!-- Upload banner overlay -->
       <label
-        v-if="isOwner(data.id) && isEditing"
+        v-if="isOwner(data.user_id) && isEditing"
         class="absolute top-3 right-3 z-20 bg-black/50 text-white p-2 rounded-lg transition cursor-pointer flex items-center gap-1"
       >
         <Camera class="w-4 h-4" /> Change banner
@@ -105,7 +105,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
         "
       >
         <img
-          :src="profilePreview || data.profilePhoto || defaultProfile"
+          :src="profilePreview || data.profile_img || defaultProfile"
           class="rounded-full w-full h-full object-cover bg-black"
           alt="Profile"
           @load="profileLoaded = true"
@@ -114,7 +114,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
 
         <!-- Upload profile overlay -->
         <label
-          v-if="isOwner(data.id) && isEditing"
+          v-if="isOwner(data.user_id) && isEditing"
           class="absolute inset-0 bg-black/40 text-white flex items-center justify-center rounded-full transition cursor-pointer"
         >
           <Camera class="w-6 h-6" />
@@ -130,7 +130,7 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
       <!-- Edit icon -->
       <div class="w-full h-8 flex justify-end">
         <PenBoxIcon
-          v-if="isOwner(data.id)"
+          v-if="isOwner(data.user_id)"
           :class="[
             'h-8 w-8',
             isEditing ? 'text-gray-500' : 'hover:text-gray-500 hover:cursor-pointer',

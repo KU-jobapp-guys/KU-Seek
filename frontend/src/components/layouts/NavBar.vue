@@ -3,9 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Profile } from '@/types/profileType'
-import { getUserId } from '@/libs/userUtil'
 import { mockCompany } from '@/data/mockCompany'
-import { mockStudents } from '@/data/mockStudent'
 import { mockProfessor } from '@/data/mockProfessor'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 
@@ -15,7 +13,7 @@ const props = defineProps<{
   role: UserRole
 }>()
 
-const userId = getUserId()
+const userId = localStorage.getItem('user_id')
 const userData = ref<Profile | null>(null)
 
 const companyList = ['Dashboard']
@@ -32,7 +30,7 @@ const pageList = computed(() => {
 
 const mockData = {
   company: mockCompany,
-  student: mockStudents,
+  student: [],
   professor: mockProfessor,
 }
 
@@ -48,11 +46,11 @@ function makeLink(page: string) {
 }
 
 onMounted(() => {
-  const role = props.role
-  if (role) {
-    userData.value = mockData[role].find((u) => u.id === userId) || null
-    console.log('data: ', userData)
-  }
+  // const role = props.role
+  // if (role) {
+  //   userData.value = mockData[role].find((u) => u.id === userId) || null
+  //   console.log('data: ', userData)
+  // }
 })
 </script>
 
@@ -130,13 +128,13 @@ onMounted(() => {
       </Menu>
 
       <!-- Profile Dropdown -->
-      <Menu v-if="userData" as="div" class="relative inline-block">
+      <Menu as="div" class="relative inline-block">
         <MenuButton
           class="flex items-center justify-center"
           @click="openMenu = openMenu === 'profile' ? null : 'profile'"
         >
           <img
-            :src="userData.profilePhoto || defaultProfile"
+            :src="defaultProfile"
             class="rounded-full w-11 h-11 object-cover ring-2 ring-white/20 hover:ring-white/40 transition-all"
           />
         </MenuButton>

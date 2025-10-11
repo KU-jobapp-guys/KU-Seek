@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
 import { isOwner } from '@/libs/userUtil'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockCompany } from '@/data/mockCompany'
 import { mockJobs } from '@/data/mockJobs'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import CompanyEdit from '@/components/profiles/edits/CompanyEdit.vue'
@@ -18,27 +19,31 @@ import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 
 const isLoading = ref(true)
 const companyData = ref<CompanyProfile | null>(null)
 const companyJobs = ref<Job[]>([])
 
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<CompanyProfile>()
 
-const loadCompany = (id?: string) => {
+async function loadCompany(id?: string) {
   if (!id) {
     router.replace({ name: 'not found' })
     return
   }
 
-  companyData.value = mockCompany.find((c) => c.id === id) || null
-
-  if (!companyData.value) {
+  const res = await getProfileData(id)
+  
+  if (res && res.ok) {   
+    const data = await res.json() 
+    companyData.value = data
+  } else {
     router.replace({ name: 'not found' })
+    return
   }
-
-  companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
+  companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.company_name)
 }
 
 const isNewProfile = computed(() => {
@@ -53,8 +58,33 @@ const edit = () => {
 const cancel = () => {
   cancelEdit()
 }
-const save = () => {
-  saveProfile(companyData)
+
+const save = async () => {
+  if (!checkProfile()) return
+
+  let data = editData.value
+
+  if (!data) return
+
+  const plainData: CompanyProfile = {
+    ...data,
+    profile_img: data.profile_img || '',
+    banner_img: data.banner_img || '',
+  }
+
+  const res = await updateProfileData(plainData)
+  
+  if (!res) return
+
+  if (res.ok) {
+    await loadCompany(route.params.id as string)
+    saveProfile()
+    toast.success('Profile updated successfully')
+  } else {
+    const err = await res.json()
+    console.error('Error:', err.title, '-', err.detail)
+    toast.error('Failed to update profile. Please try again.')
+  }
 }
 
 const renderReady = () => {
@@ -113,7 +143,7 @@ const displayedJobs = computed(() => {
     <NoProfile
       v-if="isNewProfile && !isEditing"
       :isEditing="isEditing"
-      :isOwner="isOwner(companyData.id)"
+      :isOwner="isOwner(companyData.user_id)"
       @edit="edit"
     />
 

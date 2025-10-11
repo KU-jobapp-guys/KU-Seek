@@ -30,7 +30,7 @@ watch(
 const goToJobBoard = () => {
   router.push({
     name: 'job board',
-    query: { company: companyData.name },
+    query: { company: companyData.company_name },
   })
 }
 </script>
@@ -45,8 +45,8 @@ const goToJobBoard = () => {
   >
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>
-        <h1 class="font-semibold text-4xl">{{ companyData.name }}</h1>
-        <p class="font-medium">{{ companyData.type }}</p>
+        <h1 class="font-semibold text-4xl">{{ companyData.company_name }}</h1>
+        <p class="font-medium">{{ companyData.company_type }}</p>
         <p>{{ companyData.location }}</p>
       </div>
 

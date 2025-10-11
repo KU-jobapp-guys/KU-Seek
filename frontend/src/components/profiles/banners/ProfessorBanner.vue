@@ -25,7 +25,7 @@ watch(
   { deep: true },
 )
 
-const isOwner = professorData.id === '1'
+const isOwner = professorData.user_id === '1'
 </script>
 
 <template>

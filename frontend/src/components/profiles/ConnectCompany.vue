@@ -9,7 +9,7 @@ const { company } = props
   <div
     class="relative bg-white rounded-xl border border-[#B1B1B1] w-full h-[160px] shadow-md overflow-hidden hover:bg-gray-100 hover:cursor-pointer"
   >
-    <router-link :to="`/company/profile/${company.id}`">
+    <router-link :to="`/company/profile/${company.user_id}`">
       <!-- Background -->
       <div class="absolute inset-0">
         <div
@@ -17,7 +17,7 @@ const { company } = props
           style="clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%)"
         >
           <img
-            :src="company.bannerPhoto"
+            :src="company.banner_img"
             class="w-full h-full object-cover text-white"
             alt="banner"
             loading="lazy"
@@ -29,17 +29,17 @@ const { company } = props
       <div class="relative px-8 md:px-12 h-full w-full flex justify-between items-center">
         <div class="flex flex-col">
           <span class="flex gap-x-4 items-start md:items-center">
-            <h1 class="font-bold text-2xl mb-2">{{ company.name }}</h1>
+            <h1 class="font-bold text-2xl mb-2">{{ company.company_name }}</h1>
             <p class="flex text-white px-2 bg-blue-500 gap-x-1 rounded-full">
               14 <span class="hidden md:block"> Jobs</span>
             </p>
           </span>
-          <p>{{ company.type }}</p>
+          <p>{{ company.company_type }}</p>
           <p class="text-gray-500">{{ company.location }}</p>
         </div>
 
         <img
-          :src="company.profilePhoto"
+          :src="company.profile_img"
           class="hidden md:block w-28 h-28 rounded-full border-[4px] border-gray-400 overflow-hidden bg-black"
           alt="Profile"
         />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 // Import components
 import BaseInput from '@/components/job-post-form/BaseInput.vue'
@@ -79,6 +79,22 @@ const handleSubmit = (): void => {
       alert('Failed to submit job post.')
     })
 }
+
+// Prevent accidental submit via Enter/Return
+onMounted(() => {
+  const form = document.querySelector('form')
+  if (form) {
+    form.addEventListener('keydown', (e) => {
+      // Allow Enter in textareas only
+      const target = e.target as HTMLElement
+      const isTextarea = target.tagName === 'TEXTAREA'
+
+      if (e.key === 'Enter' && !isTextarea) {
+        e.preventDefault()
+      }
+    })
+  }
+})
 </script>
 
 <template>

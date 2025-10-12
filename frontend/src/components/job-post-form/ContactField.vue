@@ -32,17 +32,34 @@ const validateEmail = (email: string): boolean => {
 
 const validateURL = (url: string): boolean => {
   try {
-    if (!/^https?:\/\//i.test(url)) {
-      url = 'https://' + url
-    }
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
     const parsed = new URL(url)
-    // Ensure hostname contains at least one dot (like example.com)
-    if (!parsed.hostname.includes('.')) return false
-    return true
+    return parsed.hostname.includes('.')
   } catch {
     return false
   }
 }
+
+const validateFacebook = (url: string): boolean => {
+  try {
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+    const parsed = new URL(url)
+    return parsed.hostname.includes('facebook.com') || parsed.hostname.endsWith('fb.com')
+  } catch {
+    return false
+  }
+}
+
+const validateLinkedIn = (url: string): boolean => {
+  try {
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+    const parsed = new URL(url)
+    return parsed.hostname.includes('linkedin.com')
+  } catch {
+    return false
+  }
+}
+
 // --- Add Contact ---
 const addContact = (): void => {
   error.value = ''
@@ -61,6 +78,16 @@ const addContact = (): void => {
 
   if (type === 'Email' && !validateEmail(link)) {
     error.value = 'Invalid email address.'
+    return
+  }
+
+  if (type === 'Facebook' && !validateFacebook(link)) {
+    error.value = 'Invalid Facebook profile/page link.'
+    return
+  }
+
+  if (type === 'LinkedIn' && !validateLinkedIn(link)) {
+    error.value = 'Invalid LinkedIn profile link.'
     return
   }
 

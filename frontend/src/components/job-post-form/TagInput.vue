@@ -11,15 +11,28 @@ const emit = defineEmits<{
 }>()
 
 const newTag = ref('')
+const error = ref('')
 
+// --- Add Tag ---
 const addTag = (): void => {
   const value = newTag.value.trim()
-  if (value && !props.modelValue.includes(value)) {
-    emit('update:modelValue', [...props.modelValue, value])
-    newTag.value = ''
+  error.value = ''
+
+  if (!value) {
+    error.value = 'Please fill out all fields.'
+    return
   }
+
+  if (props.modelValue.includes(value)) {
+    error.value = 'This tag already exists.'
+    return
+  }
+
+  emit('update:modelValue', [...props.modelValue, value])
+  newTag.value = ''
 }
 
+// --- Remove Tag ---
 const removeTag = (index: number): void => {
   const updated = [...props.modelValue]
   updated.splice(index, 1)
@@ -28,38 +41,40 @@ const removeTag = (index: number): void => {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-2 p-2 border rounded-xl shadow-sm">
-    <!-- Existing tags -->
-    <div
-      v-for="(tag, index) in modelValue"
-      :key="index"
-      class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full flex items-center space-x-2"
-    >
-      <span>{{ tag }}</span>
-      <button type="button" class="text-red-500 hover:text-red-700" @click="removeTag(index)">
-        ✕
-      </button>
+  <div class="space-y-3">
+    <!-- Existing Tags -->
+    <div class="flex flex-wrap gap-2">
+      <div
+        v-for="(tag, index) in modelValue"
+        :key="index"
+        class="flex items-center gap-2 px-3 py-1 bg-gray-200 text-black rounded-lg text-sm"
+      >
+        <span>{{ tag }}</span>
+        <button type="button" class="text-red-500 hover:text-red-700" @click="removeTag(index)">
+          ✕
+        </button>
+      </div>
     </div>
 
-    <!-- Input and "+" button -->
-    <div class="flex items-center flex-1 gap-2">
+    <!-- New Tag Input (matches Contact input layout) -->
+    <div class="flex gap-2">
       <input
         v-model="newTag"
-        :placeholder="placeholder || 'e.g. Urgent, Remote, Internship'"
+        :placeholder="placeholder || 'Enter tag (e.g. Urgent, Remote, Internship)'"
+        class="flex-1 px-3 py-2 border rounded-xl text-black placeholder-gray-400"
         @keydown.enter.prevent
-        class="flex-1 px-3 py-1 border-none outline-none text-black placeholder-gray-400"
       />
 
-      <!-- Blue circular "+" button -->
       <button
         type="button"
+        class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
         @click="addTag"
-        class="flex items-center justify-center w-9 h-9 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition"
-        :disabled="!newTag.trim()"
-        :class="{ 'opacity-50 cursor-not-allowed': !newTag.trim() }"
       >
         +
       </button>
     </div>
+
+    <!-- Error Message -->
+    <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
   </div>
 </template>

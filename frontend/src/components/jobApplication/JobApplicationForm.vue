@@ -38,7 +38,6 @@
               />
             </div>
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700">Location</label>
@@ -48,7 +47,6 @@
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700">Phone</label>
               <input
@@ -56,17 +54,11 @@
                 type="tel"
                 inputmode="numeric"
                 pattern="[0-9]*"
-                maxlength="15"
                 @input="onPhoneInput"
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
-                :class="{ 'border-red-500': !isPhoneValid && form.phone }"
               />
-              <p v-if="!isPhoneValid && form.phone" class="text-red-500 text-sm mt-1">
-                Please enter a valid phone number (digits only).
-              </p>
             </div>
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -74,12 +66,7 @@
               type="email"
               required
               class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
-              :class="{ 'border-red-500': !isEmailValid && form.email }"
-              @input="validateEmail"
             />
-            <p v-if="!isEmailValid && form.email" class="text-red-500 text-sm mt-1">
-              Please enter a valid email address.
-            </p>
           </div>
         </div>
 
@@ -266,7 +253,7 @@
           <button
             type="button"
             v-if="step < 3"
-            @click="nextStep"
+            @click="step++"
             class="ml-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Next
@@ -293,9 +280,11 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const jobId = route.params.job_id
 
+// Step control
 const step = ref(1)
 const resumeOption = ref('upload')
 
+// Form state
 const form = ref({
   first_name: '',
   last_name: '',
@@ -309,23 +298,7 @@ const form = ref({
   application_letter: null as File | null,
 })
 
-const isEmailValid = ref(true)
-const isPhoneValid = ref(true)
-
-// Email validation
-function validateEmail() {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  isEmailValid.value = emailPattern.test(form.value.email)
-}
-
-// Phone validation (digits only)
-function onPhoneInput(event: Event) {
-  const input = event.target as HTMLInputElement
-  input.value = input.value.replace(/\D/g, '')
-  form.value.phone = input.value
-  isPhoneValid.value = /^[0-9]{7,15}$/.test(form.value.phone)
-}
-
+// Select options
 const experienceOptions = [
   { label: 'no experience', value: 'no experience' },
   { label: '<1 year', value: '<1 year' },
@@ -342,6 +315,14 @@ const salaryOptions = [
   { label: '>80,000 ฿', value: '>80000' },
 ]
 
+// Input sanitization for phone
+function onPhoneInput(event: Event) {
+  const input = event.target as HTMLInputElement
+  input.value = input.value.replace(/\D/g, '')
+  form.value.phone = input.value
+}
+
+// File inputs
 const resumeInput = ref<HTMLInputElement | null>(null)
 const letterInput = ref<HTMLInputElement | null>(null)
 
@@ -361,31 +342,14 @@ function onDrop(event: DragEvent, field: string) {
   }
 }
 
-// Prevent moving to next step with invalid input
-function nextStep() {
-  if (step.value === 1) {
-    validateEmail()
-    if (!isEmailValid.value) {
-      alert('Please enter a valid email address.')
-      return
-    }
-    if (!isPhoneValid.value) {
-      alert('Please enter a valid phone number.')
-      return
-    }
-  }
-  step.value++
-}
-
+// Validation
 const isFormValid = computed(() => {
   const hasPersonalInfo =
     form.value.first_name.trim() &&
     form.value.last_name.trim() &&
     form.value.email.trim() &&
     form.value.phone.trim() &&
-    form.value.address.trim() &&
-    isEmailValid.value &&
-    isPhoneValid.value
+    form.value.address.trim()
 
   const hasResume =
     resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.value.resume)
@@ -399,14 +363,9 @@ const isFormValid = computed(() => {
   )
 })
 
+// Submit handler
 async function handleSubmit(e: Event) {
   e.preventDefault()
-
-  validateEmail()
-  if (!isEmailValid.value || !isPhoneValid.value) {
-    alert('Please correct invalid email or phone number.')
-    return
-  }
 
   if (!isFormValid.value) {
     alert('Please complete all required sections before submitting.')
@@ -414,6 +373,8 @@ async function handleSubmit(e: Event) {
   }
 
   const formData = new FormData()
+
+  // Text fields
   formData.append('first_name', form.value.first_name)
   formData.append('last_name', form.value.last_name)
   formData.append('email', form.value.email)
@@ -424,17 +385,20 @@ async function handleSubmit(e: Event) {
   formData.append('confirm', form.value.confirm ? 'true' : 'false')
   formData.append('resume_option', resumeOption.value)
 
+  // Files
   if (form.value.resume) formData.append('resume', form.value.resume)
   if (form.value.application_letter)
     formData.append('application_letter', form.value.application_letter)
 
   try {
+    // Dynamic endpoint based on route param
     const response = await fetch(`http://localhost:8000/jobs/${jobId}/apply/`, {
       method: 'POST',
       body: formData,
     })
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
     const result = await response.json()
     alert('Application submitted successfully!')
     console.log(result)

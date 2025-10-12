@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { onMounted } from 'vue'
+import { mockJobs } from '@/data/mockJobs'
 import JobApplicationForm from '@/components/JobApplication/JobApplicationForm.vue'
 
 const route = useRoute()
-
-onMounted(() => {
-  window.scrollTo({ top: 0 })
-})
+const job = mockJobs.find((j) => j.jobId === route.params.id)
 </script>
 
 <template>
   <div class="px-[8vw] md:px-[12vw] mt-24">
-    <JobApplicationForm :jobId="route.params.id as string" />
+    <JobApplicationForm v-if="job" :job="job" />
+    <p v-else>Job not found.</p>
   </div>
 </template>

@@ -1,8 +1,155 @@
+<script setup lang="ts">
+import type { Job } from '@/types/jobType'
+import { ref, reactive, computed } from 'vue'
+
+// Props: pass the Job object from parent
+const props = defineProps<{ job: Job }>()
+
+// Step control
+const step = ref(1)
+const resumeOption = ref('upload')
+
+// Form state
+const form = reactive({
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  address: '',
+  experience: '',
+  expected_salary: '',
+  confirm: false,
+  resume: null as File | null,
+  application_letter: null as File | null,
+})
+
+// Validation helpers
+const errors = reactive({ phone: '', email: '' })
+
+const validatePhone = (phone: string) => /^[+]?[0-9\s\-()]{7,15}$/.test(phone)
+const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
+function validatePersonalInfo() {
+  errors.phone = ''
+  errors.email = ''
+
+  if (form.phone.trim() && !validatePhone(form.phone)) {
+    errors.phone = 'Invalid phone number format.'
+  }
+
+  if (form.email.trim() && !validateEmail(form.email)) {
+    errors.email = 'Invalid email address.'
+  }
+}
+
+function onPhoneInput(event: Event) {
+  const input = event.target as HTMLInputElement
+  input.value = input.value.replace(/\D/g, '')
+  form.phone = input.value
+  validatePersonalInfo()
+}
+
+// File inputs
+const resumeInput = ref<HTMLInputElement | null>(null)
+const letterInput = ref<HTMLInputElement | null>(null)
+
+function onFileChange(event: Event, field: string) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  if (field === 'resume') form.resume = file
+  if (field === 'application_letter') form.application_letter = file
+}
+
+function onDrop(event: DragEvent, field: string) {
+  const file = event.dataTransfer?.files[0]
+  if (!file) return
+  if (field === 'resume') form.resume = file
+  if (field === 'application_letter') form.application_letter = file
+}
+
+// Select options
+const experienceOptions = [
+  { label: 'no experience', value: 'no experience' },
+  { label: '<1 year', value: '<1 year' },
+  { label: '1–2 years', value: '1-2 years' },
+  { label: '3–5 years', value: '3-5 years' },
+  { label: '>5 years', value: '>5 years' },
+]
+
+const salaryOptions = [
+  { label: '<20,000 ฿', value: '<20000' },
+  { label: '20,000–40,000 ฿', value: '20000-40000' },
+  { label: '40,000–60,000 ฿', value: '40000-60000' },
+  { label: '60,000–80,000 ฿', value: '60000-80000' },
+  { label: '>80,000 ฿', value: '>80000' },
+]
+
+// Validation computed
+const isFormValid = computed(() => {
+  validatePersonalInfo()
+
+  const hasValidPhone = form.phone.trim() && !errors.phone
+  const hasValidEmail = form.email.trim() && !errors.email
+  const hasPersonalInfo =
+    form.first_name.trim() &&
+    form.last_name.trim() &&
+    hasValidEmail &&
+    hasValidPhone &&
+    form.address.trim()
+
+  const hasResume =
+    resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.resume)
+  const hasLetter = !!form.application_letter
+  const hasExperience = !!form.experience
+  const hasExpectedSalary = !!form.expected_salary
+  const confirmed = form.confirm
+
+  return (
+    hasPersonalInfo && hasResume && hasLetter && hasExperience && hasExpectedSalary && confirmed
+  )
+})
+
+// Submit handler
+function handleSubmit(e: Event) {
+  e.preventDefault()
+
+  if (!isFormValid.value) {
+    alert('Please complete all required sections before submitting.')
+    return
+  }
+
+  const formData = new FormData()
+  formData.append('first_name', form.first_name)
+  formData.append('last_name', form.last_name)
+  formData.append('email', form.email)
+  formData.append('phone', form.phone)
+  formData.append('address', form.address)
+  formData.append('experience', form.experience)
+  formData.append('expected_salary', form.expected_salary)
+  formData.append('confirm', form.confirm ? 'true' : 'false')
+  formData.append('resume_option', resumeOption.value)
+
+  if (form.resume) formData.append('resume', form.resume)
+  if (form.application_letter) formData.append('application_letter', form.application_letter)
+
+  alert(`Form submitted for ${props.job.role}! (Replace this with API call.)`)
+}
+</script>
+
 <template>
-  <div class="min-h-screen flex items-center justify-center py-20 px-20">
+  <div v-if="props.job" class="min-h-screen flex items-center justify-center py-20 px-20">
     <div class="max-w-3xl w-full mx-auto p-6 shadow-md rounded-lg border border-gray-200">
       <!-- Title -->
-      <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Job Applying</h1>
+      <div class="text-center mb-8">
+        <!-- Job Role -->
+        <h1 class="text-4xl font-extrabold text-gray-900">
+          {{ job?.role }}
+        </h1>
+        <!-- Company Name -->
+        <p class="text-xl text-gray-500 mt-1">
+          {{ job?.company }}
+        </p>
+      </div>
 
       <!-- Step Indicator -->
       <div class="flex justify-center mb-8 space-x-4">
@@ -16,7 +163,7 @@
 
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Step 1: Applicant Info -->
+        <!-- Step 1: Personal Info -->
         <div v-if="step === 1" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -48,14 +195,12 @@
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700">Phone</label>
               <input
                 v-model="form.phone"
                 type="tel"
                 inputmode="numeric"
-                pattern="[0-9]*"
                 @input="onPhoneInput"
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
@@ -76,113 +221,59 @@
           </div>
         </div>
 
-        <!-- Step 2: Resume + Application Letter -->
+        <!-- Step 2: Resume & Application Letter -->
         <div v-if="step === 2" class="space-y-8">
-          <!-- Resume -->
+          <!-- Resume Upload -->
           <div class="p-6 border rounded-lg shadow-sm bg-white">
             <h2 class="font-semibold text-lg mb-4">Your Resume</h2>
-
             <div class="space-y-2 mb-4">
               <label class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  v-model="resumeOption"
-                  value="profile"
-                  class="text-blue-600 focus:ring-blue-500"
-                />
-                <span>Use the resume from your profile</span>
+                <input type="radio" v-model="resumeOption" value="profile" />
+                <span>Use resume from profile</span>
               </label>
               <label class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  v-model="resumeOption"
-                  value="upload"
-                  class="text-blue-600 focus:ring-blue-500"
-                />
-                <span>Use a new resume</span>
+                <input type="radio" v-model="resumeOption" value="upload" />
+                <span>Upload new resume</span>
               </label>
             </div>
 
             <div
-              v-show="resumeOption === 'upload'"
+              v-if="resumeOption === 'upload'"
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'resume')"
               @dragover.prevent
+              @click="resumeInput?.click()"
             >
-              <svg
-                class="w-10 h-10 text-gray-400 mb-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 16V4m0 0L3 8m4-4l4 4m6 4h2a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h2m6 0V4m0 0l-4 4m4-4l4 4"
-                />
-              </svg>
-              <p class="text-gray-600">Choose a file or drag & drop it here</p>
-              <p class="text-xs text-gray-400 mb-3">PDF, DOC, DOCX up to 50MB</p>
+              <p>Drag & drop your resume or click to browse</p>
               <input
                 type="file"
-                accept=".pdf,.doc,.docx"
                 class="hidden"
                 ref="resumeInput"
                 @change="onFileChange($event, 'resume')"
               />
-              <button
-                type="button"
-                class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-                @click="$refs.resumeInput.click()"
-              >
-                Browse File
-              </button>
-              <p v-if="form.resume" class="mt-2 text-sm text-gray-700">
+              <p v-if="form.resume" class="mt-2 text-gray-700 font-medium">
                 Selected: {{ form.resume.name }}
               </p>
             </div>
           </div>
 
-          <!-- Application Letter -->
+          <!-- Application Letter Upload -->
           <div class="p-6 border rounded-lg shadow-sm bg-white">
-            <h2 class="font-semibold text-lg mb-4">Your Application Letter</h2>
-
+            <h2 class="font-semibold text-lg mb-4">Application Letter</h2>
             <div
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'application_letter')"
               @dragover.prevent
+              @click="letterInput?.click()"
             >
-              <svg
-                class="w-10 h-10 text-gray-400 mb-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 16V4m0 0L3 8m4-4l4 4m6 4h2a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h2m6 0V4m0 0l-4 4m4-4l4 4"
-                />
-              </svg>
-              <p class="text-gray-600">Choose a file or drag & drop it here</p>
-              <p class="text-xs text-gray-400 mb-3">PDF, DOC, DOCX up to 50MB</p>
+              <p>Drag & drop your application letter or click to browse</p>
               <input
                 type="file"
-                accept=".pdf,.doc,.docx"
                 class="hidden"
                 ref="letterInput"
                 @change="onFileChange($event, 'application_letter')"
               />
-              <button
-                type="button"
-                class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-                @click="$refs.letterInput.click()"
-              >
-                Browse File
-              </button>
-              <p v-if="form.application_letter" class="mt-2 text-sm text-gray-700">
+              <p v-if="form.application_letter" class="mt-2 text-gray-700 font-medium">
                 Selected: {{ form.application_letter.name }}
               </p>
             </div>
@@ -196,39 +287,21 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <p class="font-medium text-gray-700 mb-3">Years of experience</p>
-                <div class="space-y-2">
-                  <label
-                    v-for="option in experienceOptions"
-                    :key="option.value"
-                    class="flex items-center space-x-2"
-                  >
-                    <input
-                      type="radio"
-                      v-model="form.experience"
-                      :value="option.value"
-                      class="text-blue-600 focus:ring-blue-500"
-                    />
+                <p>Years of experience</p>
+                <div v-for="option in experienceOptions" :key="option.value">
+                  <label class="flex items-center space-x-2">
+                    <input type="radio" v-model="form.experience" :value="option.value" />
                     <span>{{ option.label }}</span>
                   </label>
                 </div>
               </div>
 
               <div>
-                <p class="font-medium text-gray-700 mb-3">Expected Salary</p>
-                <div class="space-y-2">
-                  <label
-                    v-for="salary in salaryOptions"
-                    :key="salary.value"
-                    class="flex items-center space-x-2"
-                  >
-                    <input
-                      type="radio"
-                      v-model="form.expected_salary"
-                      :value="salary.value"
-                      class="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span>{{ salary.label }}</span>
+                <p>Expected Salary</p>
+                <div v-for="option in salaryOptions" :key="option.value">
+                  <label class="flex items-center space-x-2">
+                    <input type="radio" v-model="form.expected_salary" :value="option.value" />
+                    <span>{{ option.label }}</span>
                   </label>
                 </div>
               </div>
@@ -236,40 +309,39 @@
           </div>
 
           <div class="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              v-model="form.confirm"
-              class="text-blue-600 focus:ring-blue-500 rounded"
-            />
+            <input type="checkbox" v-model="form.confirm" />
             <span>I confirm the information is correct.</span>
           </div>
         </div>
 
         <!-- Buttons -->
         <div class="flex justify-between pt-4">
+          <!-- Back button -->
           <button
-            type="button"
             v-if="step > 1"
+            type="button"
             @click="step--"
-            class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-md transition"
           >
             Back
           </button>
 
+          <!-- Next button -->
           <button
-            type="button"
             v-if="step < 3"
+            type="button"
             @click="step++"
-            class="ml-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            class="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition"
           >
             Next
           </button>
 
+          <!-- Submit button -->
           <button
-            type="submit"
             v-if="step === 3"
+            type="submit"
             :disabled="!isFormValid"
-            class="ml-auto px-4 py-2 rounded-lg text-white transition bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            class="ml-auto bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit
           </button>
@@ -278,177 +350,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-
-const route = useRoute()
-const jobId = route.params.job_id
-
-// Step control
-const step = ref(1)
-const resumeOption = ref('upload')
-
-// Form state
-const form = ref({
-  first_name: '',
-  last_name: '',
-  email: '',
-  phone: '',
-  address: '',
-  experience: '',
-  expected_salary: '',
-  confirm: false,
-  resume: null as File | null,
-  application_letter: null as File | null,
-})
-
-// --- Validation helpers ---
-const validatePhone = (phone: string): boolean => {
-  const phoneRegex = /^[+]?[0-9\s\-()]{7,15}$/
-  return phoneRegex.test(phone)
-}
-
-const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-const errors = ref({
-  phone: '',
-  email: '',
-})
-
-function validatePersonalInfo() {
-  errors.value.phone = ''
-  errors.value.email = ''
-
-  if (form.value.phone.trim() && !validatePhone(form.value.phone)) {
-    errors.value.phone = 'Invalid phone number format.'
-  }
-
-  if (form.value.email.trim() && !validateEmail(form.value.email)) {
-    errors.value.email = 'Invalid email address.'
-  }
-}
-
-// Input sanitization for phone
-function onPhoneInput(event: Event) {
-  const input = event.target as HTMLInputElement
-  input.value = input.value.replace(/\D/g, '')
-  form.value.phone = input.value
-  validatePersonalInfo() // validate immediately when phone changes
-}
-
-// File inputs
-const resumeInput = ref<HTMLInputElement | null>(null)
-const letterInput = ref<HTMLInputElement | null>(null)
-
-function onFileChange(event: Event, field: string) {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (file) {
-    if (field === 'resume') form.value.resume = file
-    if (field === 'application_letter') form.value.application_letter = file
-  }
-}
-
-function onDrop(event: DragEvent, field: string) {
-  const file = event.dataTransfer?.files[0]
-  if (file) {
-    if (field === 'resume') form.value.resume = file
-    if (field === 'application_letter') form.value.application_letter = file
-  }
-}
-
-// Select options
-const experienceOptions = [
-  { label: 'no experience', value: 'no experience' },
-  { label: '<1 year', value: '<1 year' },
-  { label: '1–2 years', value: '1-2 years' },
-  { label: '3–5 years', value: '3-5 years' },
-  { label: '>5 years', value: '>5 years' },
-]
-
-const salaryOptions = [
-  { label: '<20,000 ฿', value: '<20000' },
-  { label: '20,000–40,000 ฿', value: '20000-40000' },
-  { label: '40,000–60,000 ฿', value: '40000-60000' },
-  { label: '60,000–80,000 ฿', value: '60000-80000' },
-  { label: '>80,000 ฿', value: '>80000' },
-]
-
-// Validation
-const isFormValid = computed(() => {
-  // ensure errors are up-to-date
-  validatePersonalInfo()
-
-  const hasValidPhone = form.value.phone.trim() && !errors.value.phone
-  const hasValidEmail = form.value.email.trim() && !errors.value.email
-
-  const hasPersonalInfo =
-    form.value.first_name.trim() &&
-    form.value.last_name.trim() &&
-    hasValidEmail &&
-    hasValidPhone &&
-    form.value.address.trim()
-
-  const hasResume =
-    resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.value.resume)
-  const hasLetter = !!form.value.application_letter
-  const hasExperience = !!form.value.experience
-  const hasExpectedSalary = !!form.value.expected_salary
-  const confirmed = form.value.confirm
-
-  return (
-    hasPersonalInfo && hasResume && hasLetter && hasExperience && hasExpectedSalary && confirmed
-  )
-})
-
-// Run initial validation so errors appear early if fields are pre-filled/invalid
-onMounted(() => {
-  validatePersonalInfo()
-})
-
-// Submit handler
-async function handleSubmit(e: Event) {
-  e.preventDefault()
-
-  if (!isFormValid.value) {
-    alert('Please complete all required sections before submitting.')
-    return
-  }
-
-  const formData = new FormData()
-
-  formData.append('first_name', form.value.first_name)
-  formData.append('last_name', form.value.last_name)
-  formData.append('email', form.value.email)
-  formData.append('phone', form.value.phone)
-  formData.append('address', form.value.address)
-  formData.append('experience', form.value.experience)
-  formData.append('expected_salary', form.value.expected_salary)
-  formData.append('confirm', form.value.confirm ? 'true' : 'false')
-  formData.append('resume_option', resumeOption.value)
-
-  if (form.value.resume) formData.append('resume', form.value.resume)
-  if (form.value.application_letter)
-    formData.append('application_letter', form.value.application_letter)
-
-  try {
-    const response = await fetch(`http://localhost:8000/jobs/${jobId}/apply/`, {
-      method: 'POST',
-      body: formData,
-    })
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-
-    const result = await response.json()
-    alert('Application submitted successfully!')
-    console.log(result)
-  } catch (error) {
-    console.error('Submission failed:', error)
-    alert('Failed to submit the form. Please try again.')
-  }
-}
-</script>

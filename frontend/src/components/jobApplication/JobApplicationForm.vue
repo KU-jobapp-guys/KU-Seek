@@ -38,6 +38,7 @@
               />
             </div>
           </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700">Location</label>
@@ -47,6 +48,7 @@
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
+
             <div>
               <label class="block text-sm font-medium text-gray-700">Phone</label>
               <input
@@ -57,16 +59,20 @@
                 @input="onPhoneInput"
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
+              <p v-if="errors.phone" class="text-red-500 text-sm mt-1">{{ errors.phone }}</p>
             </div>
           </div>
+
           <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
             <input
               v-model="form.email"
               type="email"
               required
+              @input="validatePersonalInfo"
               class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
             />
+            <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
           </div>
         </div>
 
@@ -274,7 +280,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -298,28 +304,41 @@ const form = ref({
   application_letter: null as File | null,
 })
 
-// Select options
-const experienceOptions = [
-  { label: 'no experience', value: 'no experience' },
-  { label: '<1 year', value: '<1 year' },
-  { label: '1–2 years', value: '1-2 years' },
-  { label: '3–5 years', value: '3-5 years' },
-  { label: '>5 years', value: '>5 years' },
-]
+// --- Validation helpers ---
+const validatePhone = (phone: string): boolean => {
+  const phoneRegex = /^[+]?[0-9\s\-()]{7,15}$/
+  return phoneRegex.test(phone)
+}
 
-const salaryOptions = [
-  { label: '<20,000 ฿', value: '<20000' },
-  { label: '20,000–40,000 ฿', value: '20000-40000' },
-  { label: '40,000–60,000 ฿', value: '40000-60000' },
-  { label: '60,000–80,000 ฿', value: '60000-80000' },
-  { label: '>80,000 ฿', value: '>80000' },
-]
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+const errors = ref({
+  phone: '',
+  email: '',
+})
+
+function validatePersonalInfo() {
+  errors.value.phone = ''
+  errors.value.email = ''
+
+  if (form.value.phone.trim() && !validatePhone(form.value.phone)) {
+    errors.value.phone = 'Invalid phone number format.'
+  }
+
+  if (form.value.email.trim() && !validateEmail(form.value.email)) {
+    errors.value.email = 'Invalid email address.'
+  }
+}
 
 // Input sanitization for phone
 function onPhoneInput(event: Event) {
   const input = event.target as HTMLInputElement
   input.value = input.value.replace(/\D/g, '')
   form.value.phone = input.value
+  validatePersonalInfo() // validate immediately when phone changes
 }
 
 // File inputs
@@ -342,13 +361,36 @@ function onDrop(event: DragEvent, field: string) {
   }
 }
 
+// Select options
+const experienceOptions = [
+  { label: 'no experience', value: 'no experience' },
+  { label: '<1 year', value: '<1 year' },
+  { label: '1–2 years', value: '1-2 years' },
+  { label: '3–5 years', value: '3-5 years' },
+  { label: '>5 years', value: '>5 years' },
+]
+
+const salaryOptions = [
+  { label: '<20,000 ฿', value: '<20000' },
+  { label: '20,000–40,000 ฿', value: '20000-40000' },
+  { label: '40,000–60,000 ฿', value: '40000-60000' },
+  { label: '60,000–80,000 ฿', value: '60000-80000' },
+  { label: '>80,000 ฿', value: '>80000' },
+]
+
 // Validation
 const isFormValid = computed(() => {
+  // ensure errors are up-to-date
+  validatePersonalInfo()
+
+  const hasValidPhone = form.value.phone.trim() && !errors.value.phone
+  const hasValidEmail = form.value.email.trim() && !errors.value.email
+
   const hasPersonalInfo =
     form.value.first_name.trim() &&
     form.value.last_name.trim() &&
-    form.value.email.trim() &&
-    form.value.phone.trim() &&
+    hasValidEmail &&
+    hasValidPhone &&
     form.value.address.trim()
 
   const hasResume =
@@ -363,6 +405,11 @@ const isFormValid = computed(() => {
   )
 })
 
+// Run initial validation so errors appear early if fields are pre-filled/invalid
+onMounted(() => {
+  validatePersonalInfo()
+})
+
 // Submit handler
 async function handleSubmit(e: Event) {
   e.preventDefault()
@@ -374,7 +421,6 @@ async function handleSubmit(e: Event) {
 
   const formData = new FormData()
 
-  // Text fields
   formData.append('first_name', form.value.first_name)
   formData.append('last_name', form.value.last_name)
   formData.append('email', form.value.email)
@@ -385,13 +431,11 @@ async function handleSubmit(e: Event) {
   formData.append('confirm', form.value.confirm ? 'true' : 'false')
   formData.append('resume_option', resumeOption.value)
 
-  // Files
   if (form.value.resume) formData.append('resume', form.value.resume)
   if (form.value.application_letter)
     formData.append('application_letter', form.value.application_letter)
 
   try {
-    // Dynamic endpoint based on route param
     const response = await fetch(`http://localhost:8000/jobs/${jobId}/apply/`, {
       method: 'POST',
       body: formData,

@@ -76,102 +76,132 @@
 
       <!-- Register Box -->
       <div
-        class="bg-white rounded-r-xl shadow-xl p-8 h-full w-[37.5%] border-l border-gray-200"
+        class="bg-white rounded-r-xl shadow-xl p-8 w-[37.5%] border-l border-gray-200 flex flex-col h-[60vh] overflow-hidden"
       >
         <!-- Tabs -->
-        <div class="flex justify-center mb-6 space-x-4">
+        <div class="flex justify-center mb-6 space-x-4 flex-shrink-0">
           <button
-            @click="$emit('update:role', 'staff')"
-            :class="[ 
-              'px-4 py-2 rounded-full font-semibold transition', 
-              props.role === 'staff' 
-                ? 'bg-blue-600 text-white shadow-md' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
+            @click="form_role = 'staff'"
+            :class="[
+              'px-4 py-2 rounded-full font-semibold transition',
+              form_role === 'staff'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             ]"
           >
             Staff
           </button>
           <button
-            @click="$emit('update:role', 'company')"
-            :class="[ 
-              'px-4 py-2 rounded-full font-semibold transition', 
-              props.role === 'company' 
-                ? 'bg-blue-600 text-white shadow-md' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
+            @click="form_role = 'company'"
+            :class="[
+              'px-4 py-2 rounded-full font-semibold transition',
+              form_role === 'company'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             ]"
           >
             Company
           </button>
         </div>
 
-        <h2 class="text-2xl font-bold text-center mb-6">Register</h2>
+        <h2 class="text-2xl font-bold text-center mb-6 flex-shrink-0">Register</h2>
 
-        <!-- Registration Form -->
-        <form class="space-y-4">
-          <!-- Shared Fields -->
-          <div>
-            <label class="block text-gray-600 text-sm mb-1">KU ID</label>
-            <input
-              type="text"
-              class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your KU ID"
-            />
-          </div>
-
-          <div>
-            <label class="block text-gray-600 text-sm mb-1">First Name</label>
-            <input
-              type="text"
-              class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your first name"
-            />
-          </div>
-
-          <div>
-            <label class="block text-gray-600 text-sm mb-1">Last Name</label>
-            <input
-              type="text"
-              class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your last name"
-            />
-          </div>
-
-          <!-- Role-specific Fields -->
-          <template v-if="props.role === 'company'">
+        <!-- Scrollable Fields -->
+        <div class="flex-1 overflow-y-auto space-y-4">
+          <form @submit.prevent="handleSubmit" class="space-y-4">
+            <!-- Shared Fields -->
             <div>
-              <label class="block text-gray-600 text-sm mb-1">Company Name</label>
+              <label class="block text-gray-600 text-sm mb-1">First Name</label>
               <input
                 type="text"
+                v-model="form.firstName"
                 class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your company name"
+                placeholder="Enter your first name"
               />
             </div>
-            <div>
-              <label class="block text-gray-600 text-sm mb-1">Business Email</label>
-              <input
-                type="email"
-                class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your company email"
-              />
-            </div>
-          </template>
 
-          <button
-            type="submit"
-            class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition"
-          >
-            Continue
-          </button>
-        </form>
+            <div>
+              <label class="block text-gray-600 text-sm mb-1">Last Name</label>
+              <input
+                type="text"
+                v-model="form.lastName"
+                class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your last name"
+              />
+            </div>
+
+            <!-- Role-specific Fields -->
+            <template v-if="form_role === 'staff'">
+              <div>
+                <label class="block text-gray-600 text-sm mb-1">KU ID</label>
+                <input
+                  type="text"
+                  v-model="form.kuId"
+                  class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your KU ID"
+                />
+              </div>
+            </template>
+
+            <template v-else-if="form_role === 'company'">
+              <div>
+                <label class="block text-gray-600 text-sm mb-1">Company Name</label>
+                <input
+                  type="text"
+                  v-model="form.companyName"
+                  class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your company name"
+                />
+              </div>
+              <div>
+                <label class="block text-gray-600 text-sm mb-1">Business Email</label>
+                <input
+                  type="email"
+                  v-model="form.businessEmail"
+                  class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your company email"
+                />
+              </div>
+            </template>
+          </form>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="button"
+          @click="handleSubmit"
+          :disabled="!isFormValid"
+          class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+        >
+          Continue
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  role: String,
+import { reactive, ref, computed } from 'vue'
+
+const form_role = ref<'staff' | 'company'>('staff')
+
+const form = reactive({
+  kuId: '',
+  firstName: '',
+  lastName: '',
+  companyName: '',
+  businessEmail: '',
 })
 
-const emit = defineEmits(['update:role'])
+const isFormValid = computed(() => {
+  if (!form.firstName || !form.lastName) return false
+  if (form_role.value === 'staff') {
+    return !!form.kuId
+  }
+  return form.companyName && form.businessEmail
+})
+
+function handleSubmit() {
+  alert(`Form submitted for ${form_role.value}: ` + JSON.stringify(form, null, 2))
+}
 </script>

@@ -25,6 +25,7 @@ const router = createRouter({
       path: '/registration',
       name: 'registration',
       component: Registration,
+      meta: {noFooter: true}
     },
     {
       path: '/student/profile/:id',

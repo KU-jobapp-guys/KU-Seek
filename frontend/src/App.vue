@@ -4,7 +4,7 @@ import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref } from 'vue'
 
-const userRole = ref('professor')
+const userRole = ref('visitor')
 </script>
 
 <template>
@@ -14,5 +14,8 @@ const userRole = ref('professor')
     <RouterView v-model:role="userRole" />
   </div>
 
-  <Footer />
+  <div id="footer">
+    <div v-if="$route.meta.noFooter" class="hidden"></div>
+    <Footer v-else></Footer>
+  </div>
 </template>

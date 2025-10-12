@@ -10,7 +10,7 @@ const userRole = ref('company')
 <template>
   <NavBar v-model:role="userRole" />
 
-  <div class="min-h-screen mt-16">
+  <div class="min-h-screen mt-8 md:mt-16">
     <RouterView v-model:role="userRole" />
   </div>
 

@@ -11,7 +11,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="px-[8vw] md:px-[12vw] mt-24">
+  <div class="px-[6vw] md:px-[12vw] mt-24">
     <JobFull :jobId="route.params.id as string" />
   </div>
 </template>

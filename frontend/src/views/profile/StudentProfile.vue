@@ -29,7 +29,7 @@ const loadStudent = (id?: string) => {
 
 const profileStyle = {
   sectionBox:
-    'bg-gradient-to-b from-green-800/10 to-white py-8 px-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md',
+    'bg-gradient-to-b from-green-800/10 to-white py-8 px-8 md:px-12 rounded-xl w-full ring-1 ring-[#B1B1B1] ring-inset shadow-md',
   sectionIcon: 'w-12 h-12 p-2 flex items-center justify-center rounded-full text-white',
   contentBox: 'bg-white mt-4 px-4 py-6 w-full border border-gray-400 rounded-md shadow-md',
 }
@@ -46,7 +46,7 @@ onMounted(() => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <div v-if="studentData" class="px-[8vw] md:px-[12vw] py-16">
+  <div v-if="studentData" class="px-[6vw] md:px-[12vw] py-16">
     <StudentBanner :studentData="studentData" @loaded="renderReady" />
 
     <section :class="profileStyle.sectionBox" class="mt-8 mb-6">

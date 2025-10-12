@@ -5,6 +5,7 @@ import Footer from './components/layouts/AppFooter.vue'
 import { ref } from 'vue'
 
 type UserRole = 'company' | 'student' | 'professor'
+
 const userRole = ref('student')
 </script>
 

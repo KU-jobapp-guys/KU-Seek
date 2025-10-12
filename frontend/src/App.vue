@@ -4,7 +4,7 @@ import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref } from 'vue'
 
-const userRole = ref('professor')
+const userRole = ref('company')
 </script>
 
 <template>

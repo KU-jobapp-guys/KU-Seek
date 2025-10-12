@@ -18,6 +18,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['React', 'TypeScript', 'HTML', 'CSS', 'TailwindCSS'],
     salary: '50,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 2,
+    totalApplicants: 5
   },
   {
     jobId: 'datasolutions-analyst-3c4d',
@@ -32,6 +35,9 @@ export const mockJobs: Job[] = [
     jobType: 'Contract',
     skills: ['SQL', 'Python', 'Excel', 'Tableau'],
     salary: '40,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 3,
+    totalApplicants: 4
   },
   {
     jobId: 'fintech-backend-5e6f',
@@ -50,6 +56,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Node.js', 'Express', 'MongoDB', 'Docker'],
     salary: '60,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 4,
+    totalApplicants: 6
   },
   {
     jobId: 'creative-uiux-7g8h',
@@ -68,6 +77,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Figma', 'Adobe XD', 'Sketch', 'User Research'],
     salary: '45,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 4,
+    totalApplicants: 6
   },
   {
     jobId: 'greenenergy-devops-9i0j',
@@ -82,6 +94,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins'],
     salary: '70,000 THB/month',
+    status: 'pending',
+    pendingApplicants: 0,
+    totalApplicants: 0
   },
   {
     jobId: 'meditech-data-1k2l',
@@ -95,6 +110,9 @@ export const mockJobs: Job[] = [
     highlights: ['Develop ML models', 'Data preprocessing', 'Model evaluation & deployment'],
     jobType: 'Full-time',
     skills: ['Python', 'TensorFlow', 'PyTorch', 'Data Science'],
+    status: 'approved',
+    pendingApplicants: 20,
+    totalApplicants: 30
   },
   {
     jobId: 'logistics-qa-3m4n',
@@ -113,6 +131,9 @@ export const mockJobs: Job[] = [
     jobType: 'Contract',
     skills: ['Selenium', 'Postman', 'Jira', 'Manual Testing'],
     salary: '35,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 14,
+    totalApplicants: 16
   },
   {
     jobId: 'fintech-qa-5o6p',
@@ -126,6 +147,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Selenium', 'Cypress', 'Jira'],
     salary: '40,000 THB/month',
+    status: 'pending',
+    pendingApplicants: 0,
+    totalApplicants: 0
   },
   {
     jobId: 'edutech-frontend-7q8r',
@@ -140,6 +164,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['React', 'TypeScript', 'CSS', 'HTML', 'TailwindCSS'],
     salary: '50,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 40,
+    totalApplicants: 60
   },
   {
     jobId: 'marketing-creative-9s0t',
@@ -154,6 +181,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['SEO', 'Google Ads', 'Social Media', 'Content Marketing'],
     salary: '45,000 THB/month',
+    status: 'pending',
+    pendingApplicants: 0,
+    totalApplicants: 0
   },
   {
     jobId: 'techcorp-frontend-1a2b',
@@ -172,6 +202,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['React', 'TypeScript', 'HTML', 'CSS', 'TailwindCSS'],
     salary: '50,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 4,
+    totalApplicants: 6
   },
   {
     jobId: 'techcorp-backend-2b3c',
@@ -190,6 +223,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Node.js', 'MongoDB', 'Express', 'Docker', 'PostgreSQL', 'Redis'],
     salary: '70,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 4,
+    totalApplicants: 6
   },
   {
     jobId: 'techcorp-uiux-3c4d',
@@ -208,6 +244,9 @@ export const mockJobs: Job[] = [
     jobType: 'Part-time',
     skills: ['Figma', 'Adobe XD', 'User Research', 'Prototyping', 'Sketch'],
     salary: '30,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 20,
+    totalApplicants: 24
   },
   {
     jobId: 'techcorp-devops-4d5e',
@@ -225,6 +264,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['AWS', 'Kubernetes', 'CI/CD', 'Terraform', 'Docker', 'Jenkins'],
     salary: '80,000 THB/month',
+    status: 'pending',
+    pendingApplicants: 0,
+    totalApplicants: 0
   },
   {
     jobId: 'techcorp-datasci-5e6f',
@@ -242,6 +284,9 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Python', 'Machine Learning', 'SQL', 'TensorFlow', 'Pandas'],
     salary: '65,000 THB/month',
+    status: 'approved',
+    pendingApplicants: 40,
+    totalApplicants: 60
   },
   {
     jobId: 'techcorp-pm-6f7g',
@@ -260,5 +305,8 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Product Strategy', 'Agile', 'Leadership', 'Analytics'],
     salary: '75,000 THB/month',
+    status: 'rejected',
+    pendingApplicants: 0,
+    totalApplicants: 0
   },
 ]

@@ -10,6 +10,9 @@ export interface Job {
   jobLevel: string
   skills: string[]
   salary?: string
+  status: string
+  totalApplicants: number
+  pendingApplicants: number
 }
 
 export type FilterKeys = 'role' | 'skills' | 'company' | 'jobLevel' | 'location' | 'jobType'

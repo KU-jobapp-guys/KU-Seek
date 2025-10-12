@@ -9,10 +9,10 @@ defineProps<{
 </script>
 
 <template>
-  <div :class="cardClass + ' h-[300px] relative flex flex-col justify-center'">
-    <div>
-      <div class="text-4xl mb-2">{{ title }}</div>
-      <div class="text-8xl font-bold">{{ value }}</div>
+  <div :class="cardClass + ' rounded-lg ring-8 ring-white/10 p-8 flex-1 text-white relative overflow-hidden h-[240px] relative flex flex-col justify-center'">
+    <div class="flex flex-col">
+      <div class="text-2xl mb-6">{{ title }}</div>
+      <div class="text-7xl font-bold">{{ value }}</div>
       <div class="text-xl mt-2">{{ description }}</div>
     </div>
 

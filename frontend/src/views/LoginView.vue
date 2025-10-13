@@ -14,6 +14,8 @@ async function handleURICallback() {
 
   try {
     const code = route.query.code
+    const user_info = localStorage.getItem("userInfo")
+    localStorage.removeItem("userInfo")
     if (!code) {
       throw new Error('No code found in callback URL')
     }
@@ -29,23 +31,33 @@ async function handleURICallback() {
     } else {
       throw new Error('Login request failed, please try again.')
     }
+
+    const formData = new FormData();
+    formData.append("code", code.toString())
     
+    if (user_info) {
+      const user_data = JSON.parse(user_info);
+      for (let key in user_data) {
+        formData.append(key, user_data[key]);
+      }
+    }
+
 
     const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
       method: "POST",
       credentials: 'include',
       headers: { 
-        "Content-Type": "application/json",
         "X-CSRFToken": csrf_token
       },
-      body: JSON.stringify({ code }),
+      body: formData
     })
 
     if (res.ok) {
       const user_jwt = await res.json()
       localStorage.setItem('user_jwt', user_jwt.access_token)
-      emit('update:role', 'company')
-      router.replace({ name: 'company dashboard' })
+      console.log(user_jwt)
+      emit('update:role', user_jwt["type"])
+      router.replace({ name: `${user_jwt["type"]} dashboard` })
     } else {
       throw new Error(`Login request failed, please try again.`)
     }

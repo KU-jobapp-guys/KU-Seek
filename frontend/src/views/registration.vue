@@ -55,6 +55,7 @@
       </div>
     </div>
 
+    <!-- Link back to landing page-->
     <RouterLink
     to="/"
     class="absolute top-6 left-6 z-20 text-white font-semibold hover:underline transition"
@@ -141,10 +142,11 @@
                 <div>
                   <label class="block text-gray-600 text-sm mb-1">KU ID</label>
                   <input
-                    type="text"
+                    type="string"
                     v-model="form.kuId"
                     class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your KU ID"
+                    placeholder="Enter your KU ID ex: 6610541234"
+                    maxlength="10"
                   />
                 </div>
               </template>
@@ -160,12 +162,14 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-gray-600 text-sm mb-1">Business Email</label>
+                  <label class="block text-gray-600 text-sm mb-1">Company size</label>
                   <input
-                    type="email"
-                    v-model="form.businessEmail"
+                    type="number"
+                    step="1"
+                    min="1"
+                    v-model="form.companySize"
                     class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your company email"
+                    placeholder="Enter your company size"
                   />
                 </div>
               </template>
@@ -181,6 +185,17 @@
           >
             Register with Google Oauth
           </button>
+
+        <!-- Login button -->
+          <div class="mt-4 text-sm text-gray-600 text-left">
+            Already have an account?
+            <button
+              @click="loginWithGoogle()"
+              class="text-blue-600 font-semibold hover:underline focus:outline-none ml-1"
+            >
+              Sign in with Google
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -193,19 +208,21 @@ import { reactive, ref, computed } from 'vue'
 const form_role = ref<'staff' | 'company'>('staff')
 
 const form = reactive({
+  type: form_role,
   kuId: '',
   firstName: '',
   lastName: '',
   companyName: '',
-  businessEmail: '',
+  companySize: '',
 })
 
 const isFormValid = computed(() => {
+  const regex = /^\d+$/ // checks if string is all numeric
   if (!form.firstName || !form.lastName) return false
   if (form_role.value === 'staff') {
-    return !!form.kuId
+    return !!form.kuId && regex.test(form.kuId)
   }
-  return form.companyName && form.businessEmail
+  return form.companyName && form.companySize
 })
 
 function loginWithGoogle() {
@@ -213,7 +230,9 @@ function loginWithGoogle() {
 }
 
 function handleSubmit() {
-  alert(`Form submitted for ${form_role.value}: ` + JSON.stringify(form, null, 2))
+  const user_data = JSON.stringify(form, null)
+  localStorage.setItem("userInfo", user_data)
+
   loginWithGoogle()
 }
 </script>

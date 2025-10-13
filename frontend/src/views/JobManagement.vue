@@ -46,5 +46,11 @@ onMounted(() => {
 </script>
 
 <template>
+  <section>
+    <!-- Job Detail Section -->
+  </section>
 
+  <section>
+    <!-- Applicants Section -->
+  </section>
 </template>

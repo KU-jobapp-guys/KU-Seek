@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
@@ -20,6 +20,7 @@ const router = useRouter()
 const toast = useToast()
 
 const isLoading = ref(true)
+const isSaveDisabled = ref(false)
 const studentData = ref<StudentProfile | null>(null)
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } = useEditableProfile<StudentProfile>()
 
@@ -79,7 +80,7 @@ const save = async () => {
   
   if (!res) return
 
-  if (res.ok) {
+  if (!res.ok) {
     await loadStudent(route.params.id as string)
     saveProfile()
     toast.success('Profile updated successfully')
@@ -87,6 +88,10 @@ const save = async () => {
     const err = await res.json()
     console.error('Error:', err.title, '-', err.detail)
     toast.error('Failed to update profile. Please try again.')
+    isSaveDisabled.value = true
+    setTimeout(() => {
+      isSaveDisabled.value = false
+    }, 3000)
   }
 }
 
@@ -137,7 +142,7 @@ onMounted(() => {
       <button @click="cancel" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
         <X class="w-5 h-5" /> Cancel
       </button>
-      <button @click="save" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+      <button @click="save" :disabled="isSaveDisabled" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
         <Save class="w-5 h-5" /> Save
       </button>
     </div>

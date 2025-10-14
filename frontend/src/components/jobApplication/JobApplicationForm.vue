@@ -2,14 +2,14 @@
 import type { Job } from '@/types/jobType'
 import { ref, reactive, computed } from 'vue'
 
-// Props: pass the Job object from parent
+// Props
 const props = defineProps<{ job: Job }>()
 
 // Step control
 const step = ref(1)
 const resumeOption = ref('upload')
 
-// Form state
+// Form data
 const form = reactive({
   first_name: '',
   last_name: '',
@@ -23,7 +23,7 @@ const form = reactive({
   application_letter: null as File | null,
 })
 
-// Validation helpers
+// Validation errors
 const errors = reactive({ phone: '', email: '' })
 
 const validatePhone = (phone: string) => /^[+]?[0-9\s\-()]{7,15}$/.test(phone)
@@ -49,7 +49,7 @@ function onPhoneInput(event: Event) {
   validatePersonalInfo()
 }
 
-// File inputs
+// File input refs
 const resumeInput = ref<HTMLInputElement | null>(null)
 const letterInput = ref<HTMLInputElement | null>(null)
 
@@ -67,7 +67,7 @@ function onDrop(event: DragEvent, field: string) {
   if (field === 'application_letter') form.application_letter = file
 }
 
-// Select options
+// Options
 const experienceOptions = [
   { label: 'no experience', value: 'no experience' },
   { label: '<1 year', value: '<1 year' },
@@ -84,10 +84,9 @@ const salaryOptions = [
   { label: '>80,000 ฿', value: '>80000' },
 ]
 
-// Validation computed
+// Validation checker
 const isFormValid = computed(() => {
   validatePersonalInfo()
-
   const hasValidPhone = form.phone.trim() && !errors.phone
   const hasValidEmail = form.email.trim() && !errors.email
   const hasPersonalInfo =
@@ -109,15 +108,39 @@ const isFormValid = computed(() => {
   )
 })
 
+// Helper to collect missing fields
+function getMissingFields() {
+  const missing: string[] = []
+
+  if (!form.first_name.trim()) missing.push('First Name')
+  if (!form.last_name.trim()) missing.push('Last Name')
+  if (!form.address.trim()) missing.push('Location')
+  if (!form.phone.trim()) missing.push('Phone')
+  else if (errors.phone) missing.push(`Phone (${errors.phone})`)
+  if (!form.email.trim()) missing.push('Email')
+  else if (errors.email) missing.push(`Email (${errors.email})`)
+  if (resumeOption.value === 'upload' && !form.resume)
+    missing.push('Resume file (or select "Use resume from profile")')
+  if (!form.application_letter) missing.push('Application Letter')
+  if (!form.experience) missing.push('Years of Experience')
+  if (!form.expected_salary) missing.push('Expected Salary')
+  if (!form.confirm) missing.push('Confirmation checkbox')
+
+  return missing
+}
+
 // Submit handler
 function handleSubmit(e: Event) {
   e.preventDefault()
+  validatePersonalInfo()
 
   if (!isFormValid.value) {
-    alert('Please complete all required sections before submitting.')
+    const missing = getMissingFields()
+    alert(`Please fix the following before submitting:\n\n- ${missing.join('\n- ')}`)
     return
   }
 
+  // If valid
   const formData = new FormData()
   formData.append('first_name', form.first_name)
   formData.append('last_name', form.last_name)
@@ -132,18 +155,16 @@ function handleSubmit(e: Event) {
   if (form.resume) formData.append('resume', form.resume)
   if (form.application_letter) formData.append('application_letter', form.application_letter)
 
-  alert(`Form submitted for ${props.job.role}! (Replace this with API call.)`)
+  alert(`Form submitted for ${props.job.role}! (Replace this with your API call.)`)
 }
 </script>
 
 <template>
   <div v-if="props.job" class="min-h-screen flex items-center justify-center py-20 px-20">
-    <div class="max-w-3xl w-full mx-auto p-6 shadow-md rounded-lg border border-gray-200">
+    <div class="max-w-3xl w-full mx-auto p-6 shadow-md rounded-lg border border-gray-200 bg-white">
       <!-- Title -->
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-extrabold text-gray-900">
-          {{ job?.role }}
-        </h1>
+        <h1 class="text-4xl font-extrabold text-gray-900">{{ job?.role }}</h1>
         <p class="text-xl text-gray-500 mt-1">{{ job?.company }}</p>
       </div>
 
@@ -173,7 +194,6 @@ function handleSubmit(e: Event) {
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700">
                 Last Name
@@ -199,7 +219,6 @@ function handleSubmit(e: Event) {
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700">
                 Phone
@@ -233,8 +252,7 @@ function handleSubmit(e: Event) {
 
         <!-- Step 2 -->
         <div v-if="step === 2" class="space-y-8">
-          <!-- Resume Upload -->
-          <div class="p-6 border rounded-lg shadow-sm bg-white">
+          <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-4">
               Your Resume
               <span v-if="resumeOption === 'upload' && !form.resume" class="text-red-500">*</span>
@@ -271,8 +289,7 @@ function handleSubmit(e: Event) {
             </div>
           </div>
 
-          <!-- Application Letter -->
-          <div class="p-6 border rounded-lg shadow-sm bg-white">
+          <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-4">
               Application Letter
               <span v-if="!form.application_letter" class="text-red-500">*</span>
@@ -299,7 +316,7 @@ function handleSubmit(e: Event) {
 
         <!-- Step 3 -->
         <div v-if="step === 3" class="space-y-6">
-          <div class="p-6 border rounded-lg shadow-sm bg-white">
+          <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-6">General Questions</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -363,8 +380,7 @@ function handleSubmit(e: Event) {
           <button
             v-if="step === 3"
             type="submit"
-            :disabled="!isFormValid"
-            class="ml-auto bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+            class="ml-auto bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md transition"
           >
             Submit
           </button>

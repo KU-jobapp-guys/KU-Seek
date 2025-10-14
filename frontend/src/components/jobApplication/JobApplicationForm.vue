@@ -141,14 +141,10 @@ function handleSubmit(e: Event) {
     <div class="max-w-3xl w-full mx-auto p-6 shadow-md rounded-lg border border-gray-200">
       <!-- Title -->
       <div class="text-center mb-8">
-        <!-- Job Role -->
         <h1 class="text-4xl font-extrabold text-gray-900">
           {{ job?.role }}
         </h1>
-        <!-- Company Name -->
-        <p class="text-xl text-gray-500 mt-1">
-          {{ job?.company }}
-        </p>
+        <p class="text-xl text-gray-500 mt-1">{{ job?.company }}</p>
       </div>
 
       <!-- Step Indicator -->
@@ -163,24 +159,29 @@ function handleSubmit(e: Event) {
 
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Step 1: Personal Info -->
+        <!-- Step 1 -->
         <div v-if="step === 1" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">First Name</label>
+              <label class="block text-sm font-medium text-gray-700">
+                First Name
+                <span v-if="!form.first_name" class="text-red-500">*</span>
+              </label>
               <input
                 v-model="form.first_name"
                 type="text"
-                required
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-gray-700">Last Name</label>
+              <label class="block text-sm font-medium text-gray-700">
+                Last Name
+                <span v-if="!form.last_name" class="text-red-500">*</span>
+              </label>
               <input
                 v-model="form.last_name"
                 type="text"
-                required
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
@@ -188,15 +189,22 @@ function handleSubmit(e: Event) {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Location</label>
+              <label class="block text-sm font-medium text-gray-700">
+                Location
+                <span v-if="!form.address" class="text-red-500">*</span>
+              </label>
               <input
                 v-model="form.address"
                 type="text"
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-gray-700">Phone</label>
+              <label class="block text-sm font-medium text-gray-700">
+                Phone
+                <span v-if="!form.phone" class="text-red-500">*</span>
+              </label>
               <input
                 v-model="form.phone"
                 type="tel"
@@ -209,11 +217,13 @@ function handleSubmit(e: Event) {
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <label class="block text-sm font-medium text-gray-700">
+              Email
+              <span v-if="!form.email" class="text-red-500">*</span>
+            </label>
             <input
               v-model="form.email"
               type="email"
-              required
               @input="validatePersonalInfo"
               class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
             />
@@ -221,11 +231,15 @@ function handleSubmit(e: Event) {
           </div>
         </div>
 
-        <!-- Step 2: Resume & Application Letter -->
+        <!-- Step 2 -->
         <div v-if="step === 2" class="space-y-8">
           <!-- Resume Upload -->
           <div class="p-6 border rounded-lg shadow-sm bg-white">
-            <h2 class="font-semibold text-lg mb-4">Your Resume</h2>
+            <h2 class="font-semibold text-lg mb-4">
+              Your Resume
+              <span v-if="resumeOption === 'upload' && !form.resume" class="text-red-500">*</span>
+            </h2>
+
             <div class="space-y-2 mb-4">
               <label class="flex items-center space-x-2">
                 <input type="radio" v-model="resumeOption" value="profile" />
@@ -257,9 +271,12 @@ function handleSubmit(e: Event) {
             </div>
           </div>
 
-          <!-- Application Letter Upload -->
+          <!-- Application Letter -->
           <div class="p-6 border rounded-lg shadow-sm bg-white">
-            <h2 class="font-semibold text-lg mb-4">Application Letter</h2>
+            <h2 class="font-semibold text-lg mb-4">
+              Application Letter
+              <span v-if="!form.application_letter" class="text-red-500">*</span>
+            </h2>
             <div
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'application_letter')"
@@ -280,14 +297,17 @@ function handleSubmit(e: Event) {
           </div>
         </div>
 
-        <!-- Step 3: General Questions -->
+        <!-- Step 3 -->
         <div v-if="step === 3" class="space-y-6">
           <div class="p-6 border rounded-lg shadow-sm bg-white">
             <h2 class="font-semibold text-lg mb-6">General Questions</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <p>Years of experience</p>
+                <p>
+                  Years of experience
+                  <span v-if="!form.experience" class="text-red-500">*</span>
+                </p>
                 <div v-for="option in experienceOptions" :key="option.value">
                   <label class="flex items-center space-x-2">
                     <input type="radio" v-model="form.experience" :value="option.value" />
@@ -297,7 +317,10 @@ function handleSubmit(e: Event) {
               </div>
 
               <div>
-                <p>Expected Salary</p>
+                <p>
+                  Expected Salary
+                  <span v-if="!form.expected_salary" class="text-red-500">*</span>
+                </p>
                 <div v-for="option in salaryOptions" :key="option.value">
                   <label class="flex items-center space-x-2">
                     <input type="radio" v-model="form.expected_salary" :value="option.value" />
@@ -310,13 +333,15 @@ function handleSubmit(e: Event) {
 
           <div class="flex items-center space-x-2">
             <input type="checkbox" v-model="form.confirm" />
-            <span>I confirm the information is correct.</span>
+            <span>
+              I confirm the information is correct
+              <span v-if="!form.confirm" class="text-red-500">*</span>.
+            </span>
           </div>
         </div>
 
         <!-- Buttons -->
         <div class="flex justify-between pt-4">
-          <!-- Back button -->
           <button
             v-if="step > 1"
             type="button"
@@ -326,7 +351,6 @@ function handleSubmit(e: Event) {
             Back
           </button>
 
-          <!-- Next button -->
           <button
             v-if="step < 3"
             type="button"
@@ -336,7 +360,6 @@ function handleSubmit(e: Event) {
             Next
           </button>
 
-          <!-- Submit button -->
           <button
             v-if="step === 3"
             type="submit"

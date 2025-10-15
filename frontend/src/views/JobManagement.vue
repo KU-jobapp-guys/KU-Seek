@@ -3,14 +3,15 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { mockCompany } from '@/data/mockCompany'
 import { mockJobs } from '@/data/mockJobs'
+import { mockJobApplications } from '@/data/mockApplicants'
 import type { Job } from '@/types/jobType'
-import type { ApplicationForm } from '@/types/applicationType'
+import type { JobApplication } from '@/types/applicationType'
 
 const route = useRoute()
 const router = useRouter()
 
 const jobDetail = ref<Job>()
-const applicantsList = ref<ApplicationForm[]>()
+const applicantsList = ref<JobApplication[]>()
 
 async function loadJob(id?: string) {
   if (!id) {
@@ -19,7 +20,7 @@ async function loadJob(id?: string) {
   }
 
   jobDetail.value = mockJobs.find((j) => j.jobId === id)
-
+  applicantsList.value = mockJobApplications.filter((a) => a.job_id === id)
 
   if (!jobDetail.value) {
     router.replace({ name: 'not found' })

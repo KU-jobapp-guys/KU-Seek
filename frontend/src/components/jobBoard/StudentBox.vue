@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
 type Student = {
   id: string
@@ -11,12 +11,26 @@ type Student = {
   avatar: string
 }
 
-const props = defineProps<{ student: Student }>()
-const emit = defineEmits<{ (e: 'select', id: string): void }>()
+export default defineComponent({
+  name: 'StudentBox',
+  props: {
+    student: {
+      type: Object as () => Student,
+      required: true,
+    },
+  },
+  emits: ['select'],
+  setup(props, { emit }) {
+    function handleStudentSelected() {
+      emit('select', props.student.id)
+    }
 
-function handleStudentSelected() {
-  emit('select', props.student.id)
-}
+    return {
+      handleStudentSelected,
+      student: props.student,
+    }
+  },
+})
 </script>
 
 <template>

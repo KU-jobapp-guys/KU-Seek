@@ -43,17 +43,17 @@ const router = createRouter({
     },
     {
       path: '/company/dashboard',
-      name: 'CompanyDashboard',
+      name: 'company dashboard',
       component: CompanyDashboardView,
     },
     {
       path: '/staff/dashboard',
-      name: 'StaffDashboard',
+      name: 'staff dashboard',
       component: StaffDashboardView,
     },
     {
       path: '/professor/dashboard',
-      name: 'Professor Dashboard',
+      name: 'professor dashboard',
       component: StaffDashboardView,
     },
     {

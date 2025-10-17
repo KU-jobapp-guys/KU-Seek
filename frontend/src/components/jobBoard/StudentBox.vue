@@ -27,7 +27,7 @@ export default defineComponent({
 
     return {
       handleStudentSelected,
-      student: props.student,
+      props, // return props if needed
     }
   },
 })
@@ -41,7 +41,7 @@ export default defineComponent({
     <!-- Avatar -->
     <div class="relative">
       <img
-        :src="student.avatar"
+        :src="props.student.avatar"
         alt="Student Avatar"
         class="w-24 h-24 rounded-full border-4 border-blue-500 object-cover"
       />
@@ -50,11 +50,13 @@ export default defineComponent({
     <!-- Info -->
     <div class="text-center mt-4">
       <p class="text-lg font-bold">
-        {{ student.name }}
-        <span class="font-normal text-gray-600">({{ student.gender }}, {{ student.age }}y)</span>
+        {{ props.student.name }}
+        <span class="font-normal text-gray-600">
+          ({{ props.student.gender }}, {{ props.student.age }}y)
+        </span>
       </p>
-      <p class="text-gray-700">{{ student.role }}</p>
-      <p class="text-gray-500">{{ student.location }}</p>
+      <p class="text-gray-700">{{ props.student.role }}</p>
+      <p class="text-gray-500">{{ props.student.location }}</p>
     </div>
 
     <!-- Button -->

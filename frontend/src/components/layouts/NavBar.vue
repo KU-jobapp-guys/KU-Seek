@@ -25,6 +25,9 @@ function makeLink(page: string) {
   if (page === 'Dashboard') {
     return `/${role}/dashboard`
   }
+  if (page === 'Announcement') {
+    return `/announcements`
+  }
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 </script>

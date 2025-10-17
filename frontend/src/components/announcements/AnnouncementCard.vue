@@ -19,9 +19,10 @@ defineProps<{ announcement: Announcement }>()
     <div class="flex justify-between items-start">
       <div>
         <!-- Show professor and company distinctly -->
-        <h3 class="font-bold text-green-800">
+        <h3 class="font-bold text-green-700">
           {{ announcement.professor }}
-          <span class="text-gray-800">{{ announcement.company }}</span>
+          <span class="font-bold text-black"> & </span>
+          <span class="font-bold text-blue-700">{{ announcement.company }}</span>
         </h3>
         <p class="text-sm text-gray-500">{{ announcement.role }} · {{ announcement.department }}</p>
       </div>

@@ -173,6 +173,22 @@
                   />
                 </div>
               </template>
+
+              <!-- Shared File Upload Field -->
+              <div>
+                <label class="block text-gray-600 text-sm mb-1">
+                  {{ fileUploadLabel }}
+                </label>
+                <input
+                  type="file"
+                  @change="handleFileUpload"
+                  accept="image/*,.pdf,.doc,.docx"
+                  class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p v-if="form.fileName" class="text-xs text-gray-500 mt-1">
+                  Selected: {{ form.fileName }}
+                </p>
+              </div>
             </form>
           </div>
 
@@ -203,9 +219,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 
 const form_role = ref<'staff' | 'company'>('staff')
+
+const staffFileText = ref('Upload one of the following: Physical/Digital KU ID, Transcript')
+const companyFileText = ref('Upload a business license or equivalent document')
 
 const form = reactive({
   type: form_role,
@@ -214,6 +233,12 @@ const form = reactive({
   lastName: '',
   companyName: '',
   companySize: '',
+  file: null as File | null,
+  fileName: '',
+})
+
+const fileUploadLabel = computed(() => {
+  return form_role.value === 'staff' ? staffFileText.value : companyFileText.value
 })
 
 const isFormValid = computed(() => {
@@ -225,6 +250,19 @@ const isFormValid = computed(() => {
   return form.companyName && form.companySize
 })
 
+// Clear role specific fields when changing tabs
+watch(form_role, (newRole) => {
+  form.file = null
+  form.fileName = ''
+
+  if (newRole === 'staff') {
+    form.companyName = ''
+    form.companySize = ''
+  } else {
+    form.kuId = ''
+  }
+})
+
 function loginWithGoogle() {
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:5173/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 }
@@ -234,5 +272,13 @@ function handleSubmit() {
   localStorage.setItem("userInfo", user_data)
 
   loginWithGoogle()
+}
+
+function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    form.file = target.files[0]
+    form.fileName = target.files[0].name
+  }
 }
 </script>

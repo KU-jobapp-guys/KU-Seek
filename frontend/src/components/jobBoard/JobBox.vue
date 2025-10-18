@@ -1,15 +1,38 @@
 <script setup lang="ts">
-import type { Job } from '@/types/jobType'
-import { Bookmark } from 'lucide-vue-next'
+import { ref, watch } from 'vue'
+import type { Job } from '@/assets/type'
+import { Bookmark, BookmarkCheck } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 
-const props = defineProps<{ job: Job }>()
-const { job } = props
+const props = withDefaults(
+  defineProps<{
+    job: Job
+    bookmarked?: boolean
+    showBookmark?: boolean
+  }>(),
+  { showBookmark: true, bookmarked: false },
+)
 
-const emit = defineEmits<{ (e: 'select', id: string): void }>()
+const emit = defineEmits<{
+  (e: 'select', id: string): void
+  (e: 'bookmark', payload: { id: string; bookmarked: boolean }): void
+}>()
+
+const isBookmarked = ref(props.bookmarked)
+
+// Keep local state in sync with parent
+watch(
+  () => props.bookmarked,
+  (newVal) => (isBookmarked.value = newVal),
+)
 
 function handleJobSelected() {
   emit('select', props.job.jobId)
+}
+
+function toggleBookmark() {
+  isBookmarked.value = !isBookmarked.value
+  emit('bookmark', { id: props.job.jobId, bookmarked: isBookmarked.value })
 }
 </script>
 
@@ -25,8 +48,10 @@ function handleJobSelected() {
       </div>
       <div class="bg-gray-300 w-20 h-20 rounded-full" />
     </div>
+
     <p>{{ job.location }}</p>
     <p>{{ job.salary }}</p>
+
     <ul class="list-disc list-inside mt-2">
       <li v-for="(value, index) in job.highlights" :key="index">
         {{ value }}
@@ -35,7 +60,13 @@ function handleJobSelected() {
 
     <div class="w-full flex justify-between mt-4 text-sm text-gray-500">
       <p>{{ getPostTime(job.postTime) }}</p>
-      <Bookmark class="h-6 w-6 cursor-pointer" />
+
+      <component
+        :is="isBookmarked ? BookmarkCheck : Bookmark"
+        v-if="showBookmark"
+        class="h-6 w-6 cursor-pointer text-blue-500 hover:scale-110 transition-transform"
+        @click.stop="toggleBookmark"
+      />
     </div>
   </div>
 </template>

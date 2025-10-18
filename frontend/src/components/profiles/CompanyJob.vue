@@ -29,7 +29,7 @@ const toggleSkillsExpansion = () => {
       <!-- <h3 class="text-[#636363] text-sm">{{ job.company }}</h3> -->
       <h2 class="text-2xl font-bold">{{ job.role }}</h2>
 
-      <div class="pl-2">
+      <div class="pl-2 text-base">
         <div class="flex items-center mt-2 gap-x-1 gap-x-1.5">
           <MapPin class="w-4 h-4" />
           <span>{{ job.location }}</span>

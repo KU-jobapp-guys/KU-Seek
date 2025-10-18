@@ -4,14 +4,16 @@ import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref } from 'vue'
 
+type UserRole = 'company' | 'student' | 'professor' | 'visitor'
+
 const userRole = ref('visitor')
 </script>
 
 <template>
-  <NavBar v-model:role="userRole" />
+  <NavBar v-model:role="userRole as UserRole" />
 
-  <div class="min-h-screen mt-16">
-    <RouterView v-model:role="userRole" />
+  <div class="min-h-screen mt-8 md:mt-16">
+    <RouterView />
   </div>
 
   <div id="footer">

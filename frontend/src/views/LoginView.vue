@@ -10,7 +10,7 @@ const router = useRouter()
 const route = useRoute()
 
 async function handleURICallback() {
-  let csrf_token:string
+  let csrf_token: string
 
   try {
     const code = route.query.code
@@ -20,8 +20,8 @@ async function handleURICallback() {
       throw new Error('No code found in callback URL')
     }
 
-    const csrf_res = await fetch("http://localhost:8000/api/v1/csrf-token", {
-      method: "GET",
+    const csrf_res = await fetch('http://localhost:8000/api/v1/csrf-token', {
+      method: 'GET',
       credentials: 'include',
     })
     if (csrf_res.ok) {
@@ -46,8 +46,8 @@ async function handleURICallback() {
     const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
       method: "POST",
       credentials: 'include',
-      headers: { 
-        "X-CSRFToken": csrf_token
+      headers: {
+        'X-CSRFToken': csrf_token,
       },
       body: formData
     })

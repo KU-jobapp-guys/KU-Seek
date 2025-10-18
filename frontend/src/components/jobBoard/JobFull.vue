@@ -34,6 +34,12 @@ watch(
     loadJob(newId)
   },
 )
+
+const goToApply = () => {
+  if (job.value) {
+    router.push(`/job/${job.value.jobId}/apply`)
+  }
+}
 </script>
 
 <template>
@@ -79,6 +85,7 @@ watch(
       <div class="mt-4 flex gap-x-2">
         <!-- Action Buttons -->
         <button
+          @click="goToApply"
           class="bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md"
         >
           Apply

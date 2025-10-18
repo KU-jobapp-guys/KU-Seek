@@ -89,6 +89,7 @@ const router = createRouter({
       name: 'job application',
       component: JobApplicationView,
     },
+    {
       path: '/company/job/:id',
       name: 'company job view',
       component: CompanyJobView,

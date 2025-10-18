@@ -57,22 +57,22 @@ const router = createRouter({
     },
     {
       path: '/student/dashboard',
-      name: 'StudentDashboard',
+      name: 'studentDashboard',
       component: StudentDashboardView,
     },
     {
       path: '/company/dashboard',
-      name: 'CompanyDashboard',
+      name: 'companyDashboard',
       component: CompanyDashboardView,
     },
     {
       path: '/staff/dashboard',
-      name: 'StaffDashboard',
+      name: 'staffDashboard',
       component: StaffDashboardView,
     },
     {
       path: '/professor/dashboard',
-      name: 'Professor Dashboard',
+      name: 'professorsDashboard',
       component: StaffDashboardView,
     },
     {

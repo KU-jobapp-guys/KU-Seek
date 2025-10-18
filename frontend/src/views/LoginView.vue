@@ -66,7 +66,7 @@ async function handleURICallback() {
       localStorage.setItem('user_jwt', user_jwt.access_token)
       console.log(user_jwt)
       emit('update:role', user_jwt["type"])
-      router.replace({ name: `${user_jwt["type"]} dashboard` })
+      router.replace({ name: `${user_jwt.type}Dashboard` })
     } else {
       throw new Error(`Login request failed, please try again.`)
     }

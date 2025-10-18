@@ -4,7 +4,7 @@ import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref } from 'vue'
 
-type UserRole = 'company' | 'student' | 'professor' | 'visitor'
+type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
 
 const userRole = ref('visitor')
 </script>

@@ -15,7 +15,11 @@ async function handleURICallback() {
   try {
     const code = route.query.code
     const user_info = localStorage.getItem("userInfo")
+    const user_file = localStorage.getItem("userFile")
+    
     localStorage.removeItem("userInfo")
+    localStorage.removeItem("userFile")
+    
     if (!code) {
       throw new Error('No code found in callback URL')
     }
@@ -36,12 +40,17 @@ async function handleURICallback() {
     formData.append("code", code.toString())
     
     if (user_info) {
-      const user_data = JSON.parse(user_info);
-      for (let key in user_data) {
-        formData.append(key, user_data[key]);
-      }
+      formData.append('user_info', user_info)
     }
 
+    if (user_file) {
+      const fileData = JSON.parse(user_file)
+      // Convert base64 back to File object
+      const base64Response = await fetch(fileData.data)
+      const blob = await base64Response.blob()
+      const file = new File([blob], fileData.name, { type: fileData.type })
+      formData.append('id_doc', file)
+    }
 
     const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
       method: "POST",

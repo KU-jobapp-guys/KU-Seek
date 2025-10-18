@@ -148,6 +148,9 @@
                     placeholder="Enter your KU ID ex: 6610541234"
                     maxlength="10"
                   />
+                  <p v-if="form.kuId && !isKuIdValid" class="text-xs text-red-500 mt-1">
+                    Invalid KU ID. Must contain only numbers and have a length of 10 digits.
+                  </p>
                 </div>
               </template>
 
@@ -237,12 +240,17 @@ const form = reactive({
   fileName: '',
 })
 
+const regex = /^\d{10}$/ // checks if string is all numeric
+
+const isKuIdValid = computed(() => {
+  return regex.test(form.kuId)
+})
+
 const fileUploadLabel = computed(() => {
   return form_role.value === 'staff' ? staffFileText.value : companyFileText.value
 })
 
 const isFormValid = computed(() => {
-  const regex = /^\d+$/ // checks if string is all numeric
   if (!form.firstName || !form.lastName) return false
   if (form_role.value === 'staff') {
     return !!form.kuId && regex.test(form.kuId)
@@ -267,11 +275,29 @@ function loginWithGoogle() {
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:5173/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 }
 
-function handleSubmit() {
-  const user_data = JSON.stringify(form, null)
-  localStorage.setItem("userInfo", user_data)
+async function handleSubmit() {
+  // Store file separately as base64
+  if (form.file) {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      const fileData = {
+        name: form.fileName,
+        type: form.file!.type,
+        data: e.target!.result as string // base64 string
+      }
+      localStorage.setItem("userFile", JSON.stringify(fileData))
+      
+      // Store other form data without file
+      const { file, fileName, ...userDataWithoutFile } = form
+      const user_data = JSON.stringify(userDataWithoutFile)
+      localStorage.setItem("userInfo", user_data)
+      
+      loginWithGoogle()
+    }
+    reader.readAsDataURL(form.file)
+  } else {
 
-  loginWithGoogle()
+  }
 }
 
 function handleFileUpload(event: Event) {

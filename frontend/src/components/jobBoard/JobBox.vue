@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { Job } from '@/assets/type'
+import type { Job } from '@/types/jobType';
 import { Bookmark, BookmarkCheck } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
+import { getStatusColor } from '@/libs/getStatusStyle';
 
 const props = withDefaults(
   defineProps<{
@@ -41,6 +42,14 @@ function toggleBookmark() {
     class="h-full bg-[#F9F9F9] px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
     @click="handleJobSelected"
   >
+    <div :class="job.status ? 'block' : 'hidden'">
+      <span
+        :class="getStatusColor(job.status)"
+        class="px-3 py-1 rounded-full text-sm font-medium border capitalize"
+      >
+        {{ job.status }}
+      </span>
+    </div>
     <div class="flex justify-between items-center mb-4">
       <div>
         <p class="text-xl font-bold">{{ job.role }}</p>

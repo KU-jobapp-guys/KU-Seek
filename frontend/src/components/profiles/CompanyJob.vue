@@ -5,6 +5,7 @@ import { techStackColors } from '@/configs/techStackConfig'
 import { MapPin, Clock, Check, X, CircleDotDashed } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 import { isOwner } from '@/libs/userUtils'
+import { getStatusIcon } from '@/libs/getStatusStyle'
 
 const props = defineProps<{ job: Job }>()
 const { job } = props
@@ -19,15 +20,6 @@ const toggleSkillsExpansion = () => {
   } else {
     displayedSkills.value = job.skills.slice(0, 3)
   }
-}
-
-const getStatusIcon = (status: string) => {
-  if (status === 'approved')
-    return Check // bg-green-500
-  else if (status === 'pending')
-    return CircleDotDashed // bg-gray-500
-  else if (status === 'rejected') return X // bg-red-500
-  return
 }
 </script>
 

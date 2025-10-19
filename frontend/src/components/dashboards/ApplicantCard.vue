@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
-import { getStatusColor } from '@/libs/getStatusColor'
+import { getStatusColor } from '@/libs/getStatusStyle'
 
 const props = defineProps<{
   applicant: JobApplication

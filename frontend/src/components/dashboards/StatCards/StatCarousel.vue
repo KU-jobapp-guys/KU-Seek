@@ -5,22 +5,34 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import StatCard from './StatCard.vue'
 
 interface StatData {
-  totalJobs: number
-  totalApplicants: number
-  pendingReview: number
+  [key: string]: number
 }
 
 const props = defineProps<{
   stats: StatCardConfig[]
   data: StatData
+  isClickable?: boolean
 }>()
+
+const emit = defineEmits<{
+  (e: 'toggleSection', id: string): void
+}>()
+
+const currentBoxIndex = ref(props.stats[0]?.title || '')
+
+function handleCardClick(section: string) {
+  if (props.isClickable) {
+    currentBoxIndex.value = section
+    emit('toggleSection', section)
+  }
+}
 
 const currentIndex = ref(0)
 const windowWidth = ref(window.innerWidth)
 
 const cardsPerView = computed(() => {
-  if (windowWidth.value >= 1024) return 3
-  if (windowWidth.value >= 768) return 2
+  if (windowWidth.value >= 1024) return Math.min(3, props.stats.length)
+  if (windowWidth.value >= 768) return Math.min(2, props.stats.length)
   return 1
 })
 
@@ -70,40 +82,49 @@ onUnmounted(() => {
   <div class="w-full">
     <div class="mx-auto">
       <!-- Cards and Navigation Container -->
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
         <!-- Left Button -->
         <button
           v-if="showNavigation"
           @click="goToPrevious"
-          class="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+          class="shadow-lg flex-shrink-0"
           aria-label="Previous"
         >
-          <ChevronLeft class="w-6 h-6 text-gray-700" />
+          <ChevronLeft class="w-8 h-8 text-gray-200 hover:text-white" />
         </button>
 
         <!-- Stat Cards Grid -->
         <div
           class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all duration-300"
         >
-          <StatCard
+          <div
             v-for="stat in visibleStats"
             :key="stat.field"
-            :title="stat.title"
-            :value="props.data[stat.field as keyof StatData]"
-            :icon="stat.icon"
-            :cardClass="stat.cardClass"
-            :iconClass="stat.iconClass"
-          />
+            @click="handleCardClick(stat.title)"
+            class="transition-all rounded-lg"
+            :class="[
+              isClickable ? 'cursor-pointer' : '',
+              isClickable && currentBoxIndex === stat.title ? 'ring-4 ring-white' : ''
+            ]"
+          >
+            <StatCard
+              :title="stat.title"
+              :value="props.data[stat.field as keyof StatData]"
+              :icon="stat.icon"
+              :cardClass="stat.cardClass"
+              :iconClass="stat.iconClass"
+            />
+          </div>
         </div>
 
         <!-- Right Button -->
         <button
           v-if="showNavigation"
           @click="goToNext"
-          class="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+          class="shadow-lg flex-shrink-0"
           aria-label="Next"
         >
-          <ChevronRight class="w-6 h-6 text-gray-700" />
+          <ChevronRight class="w-8 h-8 text-gray-200 hover:text-white" />
         </button>
       </div>
 
@@ -114,7 +135,7 @@ onUnmounted(() => {
           :key="index - 1"
           @click="currentIndex = index - 1"
           :class="`w-2 h-2 rounded-full transition-all ${
-            index - 1 === currentIndex ? 'bg-gray-700 w-6' : 'bg-gray-300 hover:bg-gray-400'
+            index - 1 === currentIndex ? 'bg-white w-6' : 'bg-gray-400 hover:bg-gray-300'
           }`"
           :aria-label="`Go to position ${index}`"
         />

@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, User, Eye } from 'lucide-vue-next'
+import { BriefcaseBusiness, User, Eye, Bookmark } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 
 export interface StatCardConfig {
@@ -27,6 +27,30 @@ export const CompanyStats: StatCardConfig[] = [
   {
     title: 'Applicants to review',
     field: 'pendingReview',
+    icon: Eye,
+    cardClass: 'border-4 bg-white border-yellow-500 text-yellow-500',
+    iconClass: 'w-16 h-16 p-4 bg-yellow-500/60 rounded-lg text-white',
+  },
+]
+
+export const StudentStats: StatCardConfig[] = [
+  {
+    title: 'Total Jobs Applied',
+    field: 'appliedJobsCount',
+    icon: BriefcaseBusiness,
+    cardClass: 'border-4 bg-white border-blue-500 text-blue-500',
+    iconClass: 'w-16 h-16 p-4 bg-blue-500/60 rounded-lg text-white',
+  },
+  {
+    title: 'Bookmarked',
+    field: 'bookmarkedJobsCount',
+    icon: Bookmark,
+    cardClass: 'border-4 bg-white border-red-500 text-red-500',
+    iconClass: 'w-16 h-16 p-4 bg-red-500/60 rounded-lg text-white',
+  },
+  {
+    title: 'Recently Viewed',
+    field: 'recentlyViewedJobsCount',
     icon: Eye,
     cardClass: 'border-4 bg-white border-yellow-500 text-yellow-500',
     iconClass: 'w-16 h-16 p-4 bg-yellow-500/60 rounded-lg text-white',

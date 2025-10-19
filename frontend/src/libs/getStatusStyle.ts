@@ -1,3 +1,5 @@
+import { Check, CircleDotDashed, X } from 'lucide-vue-next'
+
 export function getStatusColor(status: string) {
   switch (status) {
     case 'pending':
@@ -9,4 +11,13 @@ export function getStatusColor(status: string) {
     default:
       return 'bg-gray-100 text-gray-800 border-gray-300'
   }
+}
+
+export function getStatusIcon(status: string) {
+  if (status === 'approved')
+    return Check // bg-green-500
+  else if (status === 'pending')
+    return CircleDotDashed // bg-gray-500
+  else if (status === 'rejected') return X // bg-red-500
+  return
 }

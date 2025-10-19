@@ -69,12 +69,12 @@ onMounted(() => {
     <!-- Main Dashboard Section -->
     <Header page="companyDashboard" />
 
-    <div class="relative -mt-44 px-[8vw] md:px-[12vw]">
+    <div class="relative -mt-40 px-[8vw] md:px-[12vw]">
       <StatCarousel :stats="CompanyStats" :data="stats" />
     </div>
 
     <!-- Total Job Posts Section -->
-    <section class="relative px-[8vw] md:px-[12vw] mt-24 pb-10 bg-white flex flex-col gap-y-8">
+    <section class="relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>

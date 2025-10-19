@@ -13,7 +13,7 @@ defineProps<{
 <template>
   <div
     :class="
-      'border rounded-lg ring-8 ring-white/10 p-8 flex-1 relative overflow-hidden h-[140px] relative flex justify-between items-center ' +
+      'w-full border rounded-lg ring-8 ring-white/10 p-4 gap-x-2 md:p-8 flex-1 relative overflow-hidden h-[140px] relative flex justify-between items-center ' +
       cardClass
     "
   >

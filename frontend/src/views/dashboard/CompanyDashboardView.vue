@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { mockJobs } from '@/data/mockJobs'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
 import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
-import CompanyJobCard from '@/components/dashboards/CompanyJobCard.vue'
-import { Search, Filter } from 'lucide-vue-next'
-import jobPostIcon from '@/assets/job-post-icon.svg'
-import appliedIcon from '@/assets/applied-icon.svg'
-import searchIcon from '@/assets/search-icon.svg'
+import { Search, Filter, BriefcaseBusiness, User, Eye } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 
 const router = useRouter()
@@ -22,11 +18,9 @@ async function loadJob() {
   jobLists.value = mockJobs
 }
 
-// Computed filtered and sorted jobs
 const filteredJobs = computed(() => {
   let filtered = jobLists.value
 
-  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(job => 
@@ -36,12 +30,10 @@ const filteredJobs = computed(() => {
     )
   }
 
-  // Filter by status
   if (statusFilter.value !== 'all') {
     filtered = filtered.filter(job => job.status === statusFilter.value)
   }
 
-  // Sort by pending applicants
   if (sortBy.value === 'pendingApplicants') {
     filtered = [...filtered].sort((a, b) => {
       const aPending = a.pendingApplicants || 0
@@ -54,7 +46,6 @@ const filteredJobs = computed(() => {
   return filtered
 })
 
-// Stats computed from actual data
 const stats = computed(() => {
   const totalJobs = jobLists.value.length
   const totalApplicants = jobLists.value.reduce((sum, j) => sum + (j.totalApplicants || 0), 0)
@@ -78,29 +69,32 @@ onMounted(() => {
         title="Total Job Posts"
         :value="stats.totalJobs"
         description="Approved Job Posts"
-        :icon="jobPostIcon"
-        cardClass="bg-blue-500"
+        :icon="BriefcaseBusiness"
+        cardClass="border-blue-500 text-blue-700"
+        iconClass="bg-blue-500/60"
       />
       <DashboardStatCard
         title="Total Applicants"
         :value="stats.totalApplicants"
         description="Applicants"
-        :icon="appliedIcon"
-        cardClass="bg-red-500"
+        :icon="User"
+        cardClass="border-red-500 text-red-500"
+        iconClass="bg-red-500/60"
       />
       <DashboardStatCard
         title="Applicants to review"
         :value="stats.pendingReview"
         description="Applicants"
-        :icon="searchIcon"
-        cardClass="bg-yellow-500"
+        :icon="Eye"
+        cardClass="border-yellow-500 text-yellow-500"
+        iconClass="bg-yellow-500/60"
       />
     </div>
 
     <!-- Total Job Posts Section -->
-    <section class="px-[8vw] md:px-[12vw] mt-32 pb-10 bg-white flex flex-col gap-y-8">
+    <section class="px-[8vw] md:px-[12vw] mt-4 pb-10 bg-white flex flex-col gap-y-8">
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
           <p class="px-4 py-1 bg-blue-500 rounded-full text-white">
             {{ filteredJobs.length }} Jobs

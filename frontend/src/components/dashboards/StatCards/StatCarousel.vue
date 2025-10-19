@@ -95,7 +95,8 @@ onUnmounted(() => {
 
         <!-- Stat Cards Grid -->
         <div
-          class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all duration-300"
+          class="flex flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 transition-all duration-300"
+          :class="stats.length > 2 ? 'lg:grid-cols-3' : ''"
         >
           <div
             v-for="stat in visibleStats"

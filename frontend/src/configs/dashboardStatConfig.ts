@@ -56,3 +56,20 @@ export const StudentStats: StatCardConfig[] = [
     iconClass: 'w-16 h-16 p-4 bg-yellow-500/60 rounded-lg text-white',
   },
 ]
+
+export const ProfessorStats: StatCardConfig[] = [
+  {
+    title: 'Bookmarked',
+    field: 'bookmarkedJobsCount',
+    icon: Bookmark,
+    cardClass: 'border-4 bg-white border-red-500 text-red-500',
+    iconClass: 'w-16 h-16 p-4 bg-red-500/60 rounded-lg text-white',
+  },
+  {
+    title: 'Recently Viewed',
+    field: 'recentlyViewedJobsCount',
+    icon: Eye,
+    cardClass: 'border-4 bg-white border-yellow-500 text-yellow-500',
+    iconClass: 'w-16 h-16 p-4 bg-yellow-500/60 rounded-lg text-white',
+  },
+]

@@ -26,7 +26,7 @@ const form = reactive({
 // Validation errors
 const errors = reactive({ phone: '', email: '' })
 
-const validatePhone = (phone: string) => /^[0-9]{10}$/.test(phone)
+const validatePhone = (phone: string) => /^[0-9]{9,10}$/.test(phone)
 const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
 function validatePersonalInfo() {
@@ -34,7 +34,8 @@ function validatePersonalInfo() {
   errors.email = ''
 
   if (form.phone.trim() && !validatePhone(form.phone)) {
-    errors.phone = 'Invalid phone number format.'
+    // Customized message for 9–10 digits only
+    errors.phone = 'Phone number must contain 9–10 number digits.'
   }
 
   if (form.email.trim() && !validateEmail(form.email)) {

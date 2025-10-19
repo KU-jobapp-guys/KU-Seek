@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { FunctionalComponent } from 'vue'
 import { Search } from 'lucide-vue-next'
 
 interface Props {

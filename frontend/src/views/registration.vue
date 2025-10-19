@@ -243,6 +243,9 @@ const form = reactive({
 const regex = /^\d{10}$/ // checks if string is all numeric
 
 const isKuIdValid = computed(() => {
+  // If empty, it's valid (not required)
+  if (!form.kuId) return true
+  // If has value, must match regex
   return regex.test(form.kuId)
 })
 
@@ -251,9 +254,13 @@ const fileUploadLabel = computed(() => {
 })
 
 const isFormValid = computed(() => {
+  // File is mandatory
+  if (!form.file) return false
   if (!form.firstName || !form.lastName) return false
   if (form_role.value === 'staff') {
-    return !!form.kuId && regex.test(form.kuId)
+    // Block submission if KU ID is entered but invalid
+    if (form.kuId && !regex.test(form.kuId)) return false
+    return true
   }
   return form.companyName && form.companySize
 })
@@ -295,8 +302,6 @@ async function handleSubmit() {
       loginWithGoogle()
     }
     reader.readAsDataURL(form.file)
-  } else {
-
   }
 }
 

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import type { Job } from '@/types/jobType'
 import { techStackColors } from '@/configs/techStackConfig'
-import { MapPin, Clock, Check, X, CircleDotDashed } from 'lucide-vue-next'
+import { MapPin, Clock } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 import { isOwner } from '@/libs/userUtils'
 import { getStatusIcon } from '@/libs/getStatusStyle'

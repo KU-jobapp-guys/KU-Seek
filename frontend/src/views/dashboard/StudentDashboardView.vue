@@ -48,15 +48,15 @@ const stats = computed(() => {
 
 const statusCounts = computed(() => {
   return {
-    pending: appliedJobs.value.filter(j => j.status === 'pending').length,
-    approved: appliedJobs.value.filter(j => j.status === 'approved').length,
-    rejected: appliedJobs.value.filter(j => j.status === 'rejected').length
+    pending: appliedJobs.value.filter((j) => j.status === 'pending').length,
+    approved: appliedJobs.value.filter((j) => j.status === 'approved').length,
+    rejected: appliedJobs.value.filter((j) => j.status === 'rejected').length,
   }
 })
 
 const filteredAppliedJobs = computed(() => {
-  return appliedJobs.value.filter(job => 
-    selectedStatuses.value.has(job.status as ApplicationStatus)
+  return appliedJobs.value.filter((job) =>
+    selectedStatuses.value.has(job.status as ApplicationStatus),
   )
 })
 
@@ -106,20 +106,28 @@ onMounted(() => {
 
     <!-- Stat Cards -->
     <div class="relative -mt-44 px-[8vw] md:px-[12vw]">
-      <StatCarousel :stats="StudentStats" :data="stats" :isClickable="true" @toggleSection="toggleSection"  />
+      <StatCarousel
+        :stats="StudentStats"
+        :data="stats"
+        :isClickable="true"
+        @toggleSection="toggleSection"
+      />
     </div>
 
     <div class="px-[8vw] md:px-[12vw] mt-24 rounded-xl flex flex-col gap-y-8">
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
-        
         <!-- Applied Section -->
         <section
           v-if="openSection === 'Total Jobs Applied'"
           class="bg-gray-100 transition-all flex flex-col gap-y-8"
         >
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 gap-y-8">
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 gap-y-8"
+          >
             <div class="flex gap-x-4 items-center">
-              <div class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-blue-500 rounded-lg text-white">
+              <div
+                class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-blue-500 rounded-lg text-white"
+              >
                 <BriefcaseBusiness class="w-full h-full text-white" />
               </div>
               <h1 class="text-4xl font-bold">Jobs Applied</h1>
@@ -128,14 +136,14 @@ onMounted(() => {
             <!-- Status Filter Box -->
             <div class="flex w-full md:w-auto border border-gray-300 rounded-full overflow-hidden">
               <button
-                v-for="(status) in statusOptions"
+                v-for="status in statusOptions"
                 :key="status.key"
                 @click="toggleStatus(status.key as ApplicationStatus)"
                 :class="[
                   'w-full md:w-auto px-4 py-2 text-sm font-medium transition-colors',
                   selectedStatuses.has(status.key as ApplicationStatus)
                     ? status.activeClass
-                    : 'bg-white text-gray-400 hover:bg-gray-50'
+                    : 'bg-white text-gray-400 hover:bg-gray-50',
                 ]"
               >
                 {{ status.label }} ({{ statusCounts[status.key as ApplicationStatus] }})
@@ -144,7 +152,10 @@ onMounted(() => {
           </div>
 
           <div class="min-h-[200px] max-h-[600px] overflow-y-auto pr-2">
-            <div v-if="filteredAppliedJobs.length > 0" class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
+            <div
+              v-if="filteredAppliedJobs.length > 0"
+              class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8"
+            >
               <JobCard
                 v-for="job in filteredAppliedJobs"
                 :key="job.jobId"
@@ -166,7 +177,9 @@ onMounted(() => {
           class="bg-gray-100 transition-all flex flex-col gap-y-8"
         >
           <div class="flex gap-x-4 items-center">
-            <div class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-red-500 rounded-lg text-white">
+            <div
+              class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-red-500 rounded-lg text-white"
+            >
               <Bookmark class="w-full h-full text-white" />
             </div>
             <h1 class="text-4xl font-bold">Bookmarked Jobs</h1>
@@ -193,7 +206,9 @@ onMounted(() => {
           class="bg-gray-100 transition-all flex flex-col gap-y-8"
         >
           <div class="flex gap-x-4 items-center">
-            <div class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-yellow-500 rounded-lg text-white">
+            <div
+              class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-yellow-500 rounded-lg text-white"
+            >
               <Eye class="w-full h-full text-white" />
             </div>
             <h1 class="text-4xl font-bold">Recently Viewed Jobs</h1>

@@ -75,19 +75,25 @@ onMounted(() => {
 
     <!-- Stat Cards -->
     <div class="relative -mt-44 px-[8vw] md:px-[12vw]">
-      <StatCarousel :stats="ProfessorStats" :data="stats" :isClickable="true" @toggleSection="toggleSection"  />
+      <StatCarousel
+        :stats="ProfessorStats"
+        :data="stats"
+        :isClickable="true"
+        @toggleSection="toggleSection"
+      />
     </div>
 
     <div class="px-[8vw] md:px-[12vw] mt-24 rounded-xl flex flex-col gap-y-8">
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
-
         <!-- Bookmarked Section -->
         <section
           v-if="openSection === 'Bookmarked'"
           class="bg-gray-100 transition-all flex flex-col gap-y-8"
         >
           <div class="flex gap-x-4 items-center">
-            <div class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-red-500 rounded-lg text-white">
+            <div
+              class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-red-500 rounded-lg text-white"
+            >
               <Bookmark class="w-full h-full text-white" />
             </div>
             <h1 class="text-4xl font-bold">Bookmarked Jobs</h1>
@@ -114,7 +120,9 @@ onMounted(() => {
           class="bg-gray-100 transition-all flex flex-col gap-y-8"
         >
           <div class="flex gap-x-4 items-center">
-            <div class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-yellow-500 rounded-lg text-white">
+            <div
+              class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-yellow-500 rounded-lg text-white"
+            >
               <Eye class="w-full h-full text-white" />
             </div>
             <h1 class="text-4xl font-bold">Recently Viewed Jobs</h1>

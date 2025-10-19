@@ -105,7 +105,7 @@ onUnmounted(() => {
             class="transition-all rounded-lg"
             :class="[
               isClickable ? 'cursor-pointer' : '',
-              isClickable && currentBoxIndex === stat.title ? 'ring-4 ring-white' : ''
+              isClickable && currentBoxIndex === stat.title ? 'ring-4 ring-white' : '',
             ]"
           >
             <StatCard

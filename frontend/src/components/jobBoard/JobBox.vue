@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { Job } from '@/types/jobType';
+import type { Job } from '@/types/jobType'
 import { Bookmark, BookmarkCheck } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
-import { getStatusColor } from '@/libs/getStatusStyle';
+import { getStatusColor } from '@/libs/getStatusStyle'
 
 const props = withDefaults(
   defineProps<{

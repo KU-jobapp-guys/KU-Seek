@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ProfessorProfile } from '@/types/professorType'
-import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import { Save, X } from 'lucide-vue-next'
+import type { ProfessorProfile } from '@/types/profileType'
+import { useEditableProfile } from '@/libs/profileEditing'
+import { isOwner } from '@/libs/userUtil'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockProfessor } from '@/data/mockProfessor'
-import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import { mockCompany } from '@/data/mockCompany'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
+import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
+import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
-import { Building2Icon } from 'lucide-vue-next'
+import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
 
-const isLoading = ref(false)
+const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+  useEditableProfile<ProfessorProfile>()
 
 const loadProfessor = (id?: string) => {
   if (!id) {
@@ -32,6 +40,23 @@ const renderReady = () => {
   isLoading.value = false
 }
 
+const isNewProfile = computed(() => {
+  const hasNoBasicInfo =
+    (professorData.value && !professorData.value.about?.trim()) || !professorData.value
+  return hasNoBasicInfo
+})
+
+const edit = () => {
+  if (professorData.value) editProfile(professorData.value)
+}
+
+const cancel = () => {
+  cancelEdit()
+}
+const save = () => {
+  saveProfile(professorData)
+}
+
 onMounted(() => {
   loadProfessor(route.params.id as string)
 })
@@ -48,12 +73,36 @@ const switchTab = (tab: string) => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
-    <ProfessorBanner :professorData="professorData" @loaded="renderReady" />
+    <ProfessorBanner
+      v-if="!isEditing"
+      v-model="professorData"
+      :professorData="professorData"
+      @loaded="renderReady"
+      @edit="edit"
+      :isEditing
+    />
+    <ProfessorBanner
+      v-else-if="editData"
+      v-model="editData"
+      :professorData="editData"
+      @loaded="renderReady"
+      :isEditing
+    />
+
+    <!-- No Profile Data -->
+    <NoProfile
+      v-if="isNewProfile && !isEditing"
+      :isOwner="isOwner(professorData.id)"
+      @edit="edit"
+    />
 
     <!-- Content Part -->
-    <section class="data mt-8">
+    <section v-else class="data mt-8">
       <div
-        class="bg-gradient-to-b from-orange-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12"
+        :class="[
+          'bg-gradient-to-b to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',
+          isEditing ? 'from-gray-800/10' : 'from-orange-800/10',
+        ]"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
@@ -76,39 +125,8 @@ const switchTab = (tab: string) => {
         <div class="py-8">
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
-            <div
-              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12 gap-y-4 rounded-xl shadow-md"
-            >
-              <div class="flex items-center gap-x-2">
-                <div
-                  class="w-12 h-12 flex items-center justify-center bg-green-600 rounded-full text-white"
-                >
-                  <Building2Icon />
-                </div>
-                <h2 class="font-bold text-2xl">Overview</h2>
-              </div>
-
-              <div class="flex flex-col md:pl-4 gap-y-1">
-                <p>
-                  <span class="font-medium block md:inline">Department: </span>
-                  {{ professorData.department }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Academic Position: </span>
-                  {{ professorData.position }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Office Location:</span>
-                  {{ professorData.office_location }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Research Interest:</span>
-                  {{ professorData.research_interest }}
-                </p>
-              </div>
-
-              <p>{{ professorData.about }}</p>
-            </div>
+            <ProfessorView v-if="!isEditing" :professorData="professorData" />
+            <ProfessorEdit v-else-if="editData" v-model="editData" />
           </div>
 
           <!-- Connection Tab -->
@@ -120,5 +138,15 @@ const switchTab = (tab: string) => {
         </div>
       </div>
     </section>
+
+    <!-- Save/Cancel Buttons -->
+    <div v-if="isEditing" class="flex justify-end gap-3 my-8">
+      <button @click="cancel" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
+        <X class="w-5 h-5" /> Cancel
+      </button>
+      <button @click="save" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+        <Save class="w-5 h-5" /> Save
+      </button>
+    </div>
   </div>
 </template>

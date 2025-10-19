@@ -1,21 +1,30 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { Company } from '@/types/companyType'
+import { Save, X } from 'lucide-vue-next'
+import type { Job } from '@/types/jobType'
+import type { CompanyProfile } from '@/types/profileType'
+import { useEditableProfile } from '@/libs/profileEditing'
+import { isOwner } from '@/libs/userUtil'
+import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockCompany } from '@/data/mockCompany'
+import { mockJobs } from '@/data/mockJobs'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import CompanyEdit from '@/components/profiles/edits/CompanyEdit.vue'
+import CompanyView from '@/components/profiles/views/CompanyView.vue'
 import CompanyBanner from '@/components/profiles/banners/CompanyBanner.vue'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
-import { mockJobs } from '@/data/mockJobs'
-import type { Job } from '@/types/jobType'
-import { Building2Icon } from 'lucide-vue-next'
-import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const isLoading = ref(true)
-const companyData = ref<Company | null>(null)
+const companyData = ref<CompanyProfile | null>(null)
 const companyJobs = ref<Job[]>([])
+
+const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+  useEditableProfile<CompanyProfile>()
 
 const loadCompany = (id?: string) => {
   if (!id) {
@@ -30,6 +39,22 @@ const loadCompany = (id?: string) => {
   }
 
   companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
+}
+
+const isNewProfile = computed(() => {
+  const hasNoBasicInfo = companyData.value && !companyData.value.about?.trim()
+  return hasNoBasicInfo
+})
+
+const edit = () => {
+  if (companyData.value) editProfile(companyData.value)
+}
+
+const cancel = () => {
+  cancelEdit()
+}
+const save = () => {
+  saveProfile(companyData)
 }
 
 const renderReady = () => {
@@ -68,12 +93,37 @@ const displayedJobs = computed(() => {
   <LoadingScreen v-if="isLoading" />
 
   <div v-if="companyData" class="px-[6vw] md:px-[12vw] py-16">
-    <CompanyBanner :companyData="companyData" @loaded="renderReady" />
+    <CompanyBanner
+      v-if="!isEditing"
+      v-model="companyData"
+      :companyData="companyData"
+      @loaded="renderReady"
+      @edit="edit"
+      :isEditing
+    />
+    <CompanyBanner
+      v-else-if="editData"
+      v-model="editData"
+      :companyData="editData"
+      @loaded="renderReady"
+      :isEditing
+    />
+
+    <!-- No Profile Data -->
+    <NoProfile
+      v-if="isNewProfile && !isEditing"
+      :isEditing="isEditing"
+      :isOwner="isOwner(companyData.id)"
+      @edit="edit"
+    />
 
     <!-- Content Part -->
-    <section class="data mt-8">
+    <section v-else class="data mt-8">
       <div
-        class="bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12"
+        :class="[
+          'bg-gradient-to-b from-blue-800/10 to-white rounded-xl ring-1 ring-[#B1B1B1] ring-inset w-[100%] p-8 md:p-12',
+          isEditing ? 'from-gray-800/10' : 'from-blue-800/10',
+        ]"
       >
         <!-- Switch Tab Button IS HEREEEEE -->
         <div class="p-2 py-4 md:pl-8 flex w-full max-w-[500px] items-center gap-x-8">
@@ -96,42 +146,8 @@ const displayedJobs = computed(() => {
         <div class="py-4 md:py-8">
           <!-- Overview Tab Content -->
           <div v-if="activeTab === 'Overview'" class="space-y-6">
-            <div
-              class="bg-white flex flex-col ring-1 ring-[#B1B1B1] ring-inset p-8 md:p-12 gap-y-4 rounded-xl shadow-md"
-            >
-              <div class="flex items-center gap-x-2">
-                <div
-                  class="w-12 h-12 shrink-0 flex items-center justify-center bg-orange-500 rounded-full text-white"
-                >
-                  <Building2Icon />
-                </div>
-                <h2 class="font-bold text-2xl">Company Overview</h2>
-              </div>
-
-              <div class="flex flex-col md:pl-4 gap-y-1">
-                <p>
-                  <span class="font-medium block md:inline">Website: </span>
-                  <a :href="companyData.website.url" class="underline">{{
-                    companyData.website.name
-                  }}</a>
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Industry: </span>
-                  {{ companyData.industry }}
-                </p>
-                <p>
-                  <span class="font-medium block md:inline">Specialities: </span>
-                  {{ companyData.workFields.join(', ') }}
-                </p>
-                <p><span class="font-medium">Company Size:</span> {{ companyData.size }}</p>
-                <p>
-                  <span class="font-medium block md:inline">Primary Location:</span>
-                  {{ companyData.fullLocation }}
-                </p>
-              </div>
-
-              <p>{{ companyData.about }}</p>
-            </div>
+            <CompanyView v-if="!isEditing" :companyData="companyData" />
+            <CompanyEdit v-else-if="editData" v-model="editData" />
           </div>
 
           <!-- Jobs Tab Content -->
@@ -168,5 +184,15 @@ const displayedJobs = computed(() => {
         </div>
       </div>
     </section>
+
+    <!-- Save/Cancel Buttons -->
+    <div v-if="isEditing" class="flex justify-end gap-3 my-8">
+      <button @click="cancel" :class="['bg-gray-400 hover:bg-gray-500', ProfileStyle.actionButton]">
+        <X class="w-5 h-5" /> Cancel
+      </button>
+      <button @click="save" :class="['bg-green-600 hover:bg-green-700', ProfileStyle.actionButton]">
+        <Save class="w-5 h-5" /> Save
+      </button>
+    </div>
   </div>
 </template>

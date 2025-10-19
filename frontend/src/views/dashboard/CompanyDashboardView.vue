@@ -46,6 +46,11 @@ const filteredJobs = computed(() => {
   return filtered
 })
 
+function clearFilters() {
+  searchQuery.value = ''
+  statusFilter.value = 'all'
+}
+
 const stats = computed(() => {
   const totalJobs = jobLists.value.length
   const totalApplicants = jobLists.value.reduce((sum, j) => sum + (j.totalApplicants || 0), 0)
@@ -152,10 +157,7 @@ onMounted(() => {
           <h3 class="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
           <p class="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
           <button
-            @click="
-              searchQuery = ''
-              statusFilter = 'all'
-            "
+            @click="clearFilters"
             class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             Clear Filters

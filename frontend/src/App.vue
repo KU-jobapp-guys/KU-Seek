@@ -6,7 +6,7 @@ import { ref } from 'vue'
 
 type UserRole = 'company' | 'student' | 'professor'
 
-const userRole = ref('student')
+const userRole = ref('company')
 </script>
 
 <template>

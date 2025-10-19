@@ -4,7 +4,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 1,
     job_id: 'techcorp-frontend-1a2b',
-    student_id: 1001,
+    student_id: 1,
     resume: '/uploads/resumes/prima_resume.pdf',
     letter_of_application: '/uploads/letters/prima_letter.pdf',
     phone_number: '0812345678',
@@ -19,7 +19,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 2,
     job_id: 'datasolutions-analyst-3c4d',
-    student_id: 1002,
+    student_id: 2,
     resume: '/uploads/resumes/mink_resume.pdf',
     letter_of_application: '/uploads/letters/mink_letter.pdf',
     phone_number: '0811112233',
@@ -34,7 +34,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 3,
     job_id: 'fintech-backend-5e6f',
-    student_id: 1003,
+    student_id: 3,
     resume: '/uploads/resumes/tan_resume.pdf',
     letter_of_application: '/uploads/letters/tan_letter.pdf',
     phone_number: '0892223344',
@@ -49,7 +49,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 4,
     job_id: 'creative-uiux-7g8h',
-    student_id: 1004,
+    student_id: 1,
     resume: '/uploads/resumes/bella_resume.pdf',
     letter_of_application: '/uploads/letters/bella_letter.pdf',
     phone_number: '0865556677',
@@ -64,7 +64,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 5,
     job_id: 'greenenergy-devops-9i0j',
-    student_id: 1005,
+    student_id: 1,
     resume: '/uploads/resumes/pong_resume.pdf',
     letter_of_application: '/uploads/letters/pong_letter.pdf',
     phone_number: '0809991122',
@@ -79,7 +79,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 6,
     job_id: 'meditech-data-1k2l',
-    student_id: 1006,
+    student_id: 2,
     resume: '/uploads/resumes/mai_resume.pdf',
     letter_of_application: '/uploads/letters/mai_letter.pdf',
     phone_number: '0827778899',
@@ -94,7 +94,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 7,
     job_id: 'logistics-qa-3m4n',
-    student_id: 1007,
+    student_id: 3,
     resume: '/uploads/resumes/aof_resume.pdf',
     letter_of_application: '/uploads/letters/aof_letter.pdf',
     phone_number: '0833334455',
@@ -109,7 +109,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 8,
     job_id: 'techcorp-backend-2b3c',
-    student_id: 1008,
+    student_id: 2,
     resume: '/uploads/resumes/nam_resume.pdf',
     letter_of_application: '/uploads/letters/nam_letter.pdf',
     phone_number: '0894445566',
@@ -124,7 +124,7 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 9,
     job_id: 'techcorp-pm-6f7g',
-    student_id: 1009,
+    student_id: 1,
     resume: '/uploads/resumes/boom_resume.pdf',
     letter_of_application: '/uploads/letters/boom_letter.pdf',
     phone_number: '0899992233',
@@ -139,11 +139,11 @@ export const mockJobApplications: JobApplication[] = [
   {
     id: 10,
     job_id: 'techcorp-datasci-5e6f',
-    student_id: 1010,
+    student_id: 1,
     resume: '/uploads/resumes/fah_resume.pdf',
     letter_of_application: '/uploads/letters/fah_letter.pdf',
     phone_number: '0815556677',
-    status: 'approved',
+    status: 'pending',
     applied_at: new Date('2025-08-25T10:00:00'),
     first_name: 'Napatsawan',
     last_name: 'Saejai',

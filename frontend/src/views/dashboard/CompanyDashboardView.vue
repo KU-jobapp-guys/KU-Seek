@@ -75,18 +75,18 @@ onMounted(() => {
     </div>
 
     <!-- Total Job Posts Section -->
-    <section class="relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
+    <section class="text-base relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
           <p class="px-4 py-1 bg-blue-500 rounded-full text-white">
-            {{ filteredJobs.length }} Jobs
+            {{ filteredJobs.length }} <span class="hidden md:block">Jobs</span>
           </p>
         </div>
 
         <!-- Filter Section -->
-        <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
-          <div class="flex gap-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-4 space">
+          <div class="flex flex-col md:flex-row gap-4">
             <!-- Search Input -->
             <div class="w-full space-y-2">
               <label class="text-sm font-semibold text-gray-700">Search Jobs</label>
@@ -96,12 +96,12 @@ onMounted(() => {
                   v-model="searchQuery"
                   type="text"
                   placeholder="Search by job title, location..."
-                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="text-sm w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
 
-            <div class="w-full flex gap-4">
+            <div class="w-full flex flex-col md:flex-row gap-x-4 gap-y-2">
               <!-- Status Filter -->
               <div class="w-full space-y-2">
                 <label class="text-sm font-semibold text-gray-700">Job Status</label>

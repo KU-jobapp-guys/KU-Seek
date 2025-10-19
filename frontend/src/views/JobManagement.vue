@@ -148,7 +148,7 @@ onMounted(() => {
               <MapPin class="h-5 w-5" />
               {{ jobDetail.location }}
             </div>
-            <div class="flex items-center gap-2">
+            <div v-if="jobDetail.salary" class="flex items-center gap-2">
               <Banknote class="h-5 w-5" />
               {{ jobDetail.salary }}
             </div>

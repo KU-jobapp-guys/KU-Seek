@@ -9,7 +9,7 @@ import { getStatusIcon } from '@/libs/getStatusStyle'
 
 const props = defineProps<{ job: Job }>()
 const { job } = props
-const isCompanyOwner = isOwner(job.company)
+const isCompanyOwner = isOwner(job.company) || true
 const displayedSkills = ref(job.skills.slice(0, 3))
 const isExpandedSkill = ref(false)
 

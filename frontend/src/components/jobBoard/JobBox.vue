@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Job } from '@/types/jobType'
-import { Bookmark, BookmarkCheck } from 'lucide-vue-next'
+import { Banknote, Bookmark, BookmarkCheck, MapPin,  } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 import { getStatusColor } from '@/libs/getStatusStyle'
 
@@ -39,10 +39,10 @@ function toggleBookmark() {
 
 <template>
   <div
-    class="h-full bg-[#F9F9F9] px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
+    class="h-full text-base bg-[#F9F9F9] px-6 md:px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
     @click="handleJobSelected"
   >
-    <div :class="job.status ? 'block' : 'hidden'">
+    <div :class="job.status ? 'block' : 'hidden'" class="mb-4">
       <span
         :class="getStatusColor(job.status)"
         class="px-3 py-1 rounded-full text-sm font-medium border capitalize"
@@ -50,22 +50,21 @@ function toggleBookmark() {
         {{ job.status }}
       </span>
     </div>
-    <div class="flex justify-between items-center mb-4">
+
+    <div class="flex justify-between items-start mb-2">
       <div>
         <p class="text-xl font-bold">{{ job.role }}</p>
         <p>{{ job.company }}</p>
       </div>
-      <div class="bg-gray-300 w-20 h-20 rounded-full" />
+      <div class="shrink-0 bg-gray-300  h-12 w-12 md:w-20 md:h-20 rounded-full" />
     </div>
 
-    <p>{{ job.location }}</p>
-    <p>{{ job.salary }}</p>
+    <div class="text-sm">
+      <p class="flex gap-1"><span><MapPin class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.location }}</p>
+      <p class="flex gap-1"><span><Banknote class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.salary }}</p>
+    </div>
 
-    <ul class="list-disc list-inside mt-2">
-      <li v-for="(value, index) in job.highlights" :key="index">
-        {{ value }}
-      </li>
-    </ul>
+    <p class="mt-4">{{ job.description }}</p>
 
     <div class="w-full flex justify-between mt-4 text-sm text-gray-500">
       <p>{{ getPostTime(job.postTime) }}</p>

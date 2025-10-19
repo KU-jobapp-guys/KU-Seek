@@ -111,7 +111,7 @@ watch(
       <div class="flex flex-col md:flex-row gap-3 pt-4 border-t text-base border-gray-200">
         <router-link
           :to="`/student/profile/${applicant.student_id}`"
-          class="flex-1 sm:flex-none px-4 py-2 bg-[#6495ED] hover:bg-[#6495ED]/40 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+          class="flex-1 sm:flex-none px-4 py-2 bg-[#6495ED] hover:bg-[#6495ED]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <User class="w-5 h-5" />
           View Profile
@@ -121,7 +121,7 @@ watch(
           v-if="applicant.resume"
           :href="applicant.resume"
           target="_blank"
-          class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+          class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <File class="w-5 h-5" />
           Resume
@@ -129,7 +129,7 @@ watch(
 
         <button
           v-if="applicant.letter_of_application"
-          class="px-4 py-2 bg-[#4682B4] hover:bg-[#4682B4]/40 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+          class="px-4 py-2 bg-[#4682B4] hover:bg-[#4682B4]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <FileText class="w-5 h-5" />
           Application Letter

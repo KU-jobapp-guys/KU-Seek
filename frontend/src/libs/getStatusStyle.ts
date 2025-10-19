@@ -15,9 +15,8 @@ export function getStatusColor(status: string) {
 
 export function getStatusIcon(status: string) {
   if (status === 'approved')
-    return Check // bg-green-500
+    return Check
   else if (status === 'pending')
-    return CircleDotDashed // bg-gray-500
-  else if (status === 'rejected') return X // bg-red-500
-  return
+    return CircleDotDashed
+  else if (status === 'rejected') return X
 }

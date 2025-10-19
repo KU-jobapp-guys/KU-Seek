@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { FunctionalComponent } from 'vue'
+
 defineProps<{
   title: string
   value: number | string
   description: string
-  icon: string
+  icon: FunctionalComponent
   cardClass?: string
   iconClass?: string
 }>()

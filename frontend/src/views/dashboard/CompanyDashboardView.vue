@@ -8,7 +8,6 @@ import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
 import { Search, Filter, BriefcaseBusiness, User, Eye } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 
-const router = useRouter()
 const jobLists = ref<Job[]>([])
 const searchQuery = ref('')
 const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
@@ -164,7 +163,7 @@ onMounted(() => {
         </div>
 
         <!-- Jobs Grid -->
-        <div v-if="filteredJobs.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-h-[480px] overflow-y-auto pr-2">
+        <div v-if="filteredJobs.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-h-[540px] overflow-y-auto pr-2">
           <CompanyJob 
             v-for="j in filteredJobs" 
             :key="j.jobId" 

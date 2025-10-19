@@ -4,16 +4,12 @@ import { useRouter } from 'vue-router'
 import Header from '@/components/layouts/AppHeader.vue'
 import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
-import appliedIcon from '@/assets/applied-icon.svg'
-import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'
-import searchIcon from '@/assets/search-icon.svg'
 import { statusOptions } from '@/configs/statusOption'
 
 import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
 import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
 
-type Section = 'Total Jobs Applied' | 'Bookmarked' | 'Recently Viewed'
 type ApplicationStatus = 'pending' | 'approved' | 'rejected'
 
 const openSection = ref<string>('Total Jobs Applied')

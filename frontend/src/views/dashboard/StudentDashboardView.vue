@@ -5,6 +5,7 @@ import Header from '@/components/layouts/AppHeader.vue'
 import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
 import { statusOptions } from '@/configs/statusOption'
+import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
 import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
@@ -30,8 +31,11 @@ const toggleStatus = (status: ApplicationStatus) => {
   } else {
     selectedStatuses.value.add(status)
   }
-  // Trigger reactivity
   selectedStatuses.value = new Set(selectedStatuses.value)
+}
+
+function clearFilters() {
+  selectedStatuses.value = new Set(['pending', 'approved', 'rejected'])
 }
 
 const handleSelect = (id: string) => {
@@ -165,8 +169,9 @@ onMounted(() => {
                 @bookmark="handleBookmark"
               />
             </div>
-            <div v-else class="text-center py-12 text-gray-500">
-              <p class="text-lg">No jobs match the selected filters</p>
+
+            <div v-else class="flex flex-col items-center justify-center py-16 text-center">
+              <EmptyFilter :clearFilters="clearFilters" />
             </div>
           </div>
         </section>

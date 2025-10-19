@@ -22,15 +22,16 @@ const filteredJobs = computed(() => {
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(job => 
-      job.role?.toLowerCase().includes(query) ||
-      job.company?.toLowerCase().includes(query) ||
-      job.location?.toLowerCase().includes(query)
+    filtered = filtered.filter(
+      (job) =>
+        job.role?.toLowerCase().includes(query) ||
+        job.company?.toLowerCase().includes(query) ||
+        job.location?.toLowerCase().includes(query),
     )
   }
 
   if (statusFilter.value !== 'all') {
-    filtered = filtered.filter(job => job.status === statusFilter.value)
+    filtered = filtered.filter((job) => job.status === statusFilter.value)
   }
 
   if (sortBy.value === 'pendingApplicants') {
@@ -49,7 +50,7 @@ const stats = computed(() => {
   const totalJobs = jobLists.value.length
   const totalApplicants = jobLists.value.reduce((sum, j) => sum + (j.totalApplicants || 0), 0)
   const pendingReview = jobLists.value.reduce((sum, j) => sum + (j.pendingApplicants || 0), 0)
-  
+
   return { totalJobs, totalApplicants, pendingReview }
 })
 
@@ -62,7 +63,7 @@ onMounted(() => {
   <div class="min-h-screen">
     <!-- Main Dashboard Section -->
     <Header page="companyDashboard" />
-    
+
     <div class="relative -mt-44 px-[8vw] md:px-[12vw]">
       <StatCarousel :stats="CompanyStats" :data="stats" />
     </div>
@@ -136,12 +137,11 @@ onMounted(() => {
         </div>
 
         <!-- Jobs Grid -->
-        <div v-if="filteredJobs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2">
-          <CompanyJob 
-            v-for="j in filteredJobs" 
-            :key="j.jobId" 
-            :job="j"
-          />
+        <div
+          v-if="filteredJobs.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2"
+        >
+          <CompanyJob v-for="j in filteredJobs" :key="j.jobId" :job="j" />
         </div>
 
         <!-- Empty State -->
@@ -151,8 +151,11 @@ onMounted(() => {
           </div>
           <h3 class="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
           <p class="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
-          <button 
-            @click="searchQuery = ''; statusFilter = 'all'"
+          <button
+            @click="
+              searchQuery = ''
+              statusFilter = 'all'
+            "
             class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             Clear Filters

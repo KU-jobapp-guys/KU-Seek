@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import type { JobApplication } from '@/types/applicationType'
-import { Mail, Phone, BriefcaseBusiness, Banknote, User, File, FileText, Check, X } from 'lucide-vue-next';
+import {
+  Mail,
+  Phone,
+  BriefcaseBusiness,
+  Banknote,
+  User,
+  File,
+  FileText,
+  Check,
+  X,
+} from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { getStatusColor } from '@/libs/getStatusColor'
 
@@ -23,13 +33,16 @@ function formatDate(date: Date) {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 
-watch(() => props.applicant.status, (newStatus) => {
-  localStatus.value = newStatus
-})
+watch(
+  () => props.applicant.status,
+  (newStatus) => {
+    localStatus.value = newStatus
+  },
+)
 </script>
 
 <template>
@@ -38,7 +51,7 @@ watch(() => props.applicant.status, (newStatus) => {
       <!-- Header -->
       <div class="flex items-start justify-between mb-4">
         <div>
-          <span 
+          <span
             :class="getStatusColor(localStatus)"
             class="px-3 py-1 rounded-full text-sm font-medium border capitalize"
           >

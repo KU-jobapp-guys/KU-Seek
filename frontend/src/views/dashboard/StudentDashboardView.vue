@@ -2,7 +2,7 @@
 import Header from '@/components/layouts/AppHeader.vue'
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import StudentJobCard from '@/components/dashboards/StudentJobCard.vue'
-
+import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
 import appliedIcon from '@/assets/applied-icon.svg'
 import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'
 import searchIcon from '@/assets/search-icon.svg'
@@ -18,21 +18,21 @@ import searchIcon from '@/assets/search-icon.svg'
         title="Applied Jobs"
         :value="6"
         description="Jobs you've applied"
-        :icon="appliedIcon"
+        :icon="BriefcaseBusiness"
         cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
       />
       <DashboardStatCard
         title="Bookmarked Jobs"
         :value="6"
         description="Jobs saved for later"
-        :icon="bigBookmarkIcon"
+        :icon="Bookmark"
         cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
       />
       <DashboardStatCard
         title="Recently Viewed Jobs"
         :value="7"
         description="Jobs you've explored today"
-        :icon="searchIcon"
+        :icon="Eye"
         cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
       />
     </div>

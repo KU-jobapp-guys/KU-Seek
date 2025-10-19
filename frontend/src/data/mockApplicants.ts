@@ -1,4 +1,4 @@
-import type { JobApplication } from "@/types/applicationType"
+import type { JobApplication } from '@/types/applicationType'
 
 export const mockJobApplications: JobApplication[] = [
   {
@@ -152,4 +152,3 @@ export const mockJobApplications: JobApplication[] = [
     expected_salary: '65,000 THB/month',
   },
 ]
-  

@@ -20,7 +20,7 @@ export const mockJobs: Job[] = [
     salary: '50,000 THB/month',
     status: 'approved',
     pendingApplicants: 2,
-    totalApplicants: 5
+    totalApplicants: 5,
   },
   {
     jobId: 'datasolutions-analyst-3c4d',
@@ -37,7 +37,7 @@ export const mockJobs: Job[] = [
     salary: '40,000 THB/month',
     status: 'approved',
     pendingApplicants: 3,
-    totalApplicants: 4
+    totalApplicants: 4,
   },
   {
     jobId: 'fintech-backend-5e6f',
@@ -58,7 +58,7 @@ export const mockJobs: Job[] = [
     salary: '60,000 THB/month',
     status: 'approved',
     pendingApplicants: 4,
-    totalApplicants: 6
+    totalApplicants: 6,
   },
   {
     jobId: 'creative-uiux-7g8h',
@@ -79,7 +79,7 @@ export const mockJobs: Job[] = [
     salary: '45,000 THB/month',
     status: 'approved',
     pendingApplicants: 4,
-    totalApplicants: 6
+    totalApplicants: 6,
   },
   {
     jobId: 'greenenergy-devops-9i0j',
@@ -96,7 +96,7 @@ export const mockJobs: Job[] = [
     salary: '70,000 THB/month',
     status: 'pending',
     pendingApplicants: 0,
-    totalApplicants: 0
+    totalApplicants: 0,
   },
   {
     jobId: 'meditech-data-1k2l',
@@ -112,7 +112,7 @@ export const mockJobs: Job[] = [
     skills: ['Python', 'TensorFlow', 'PyTorch', 'Data Science'],
     status: 'approved',
     pendingApplicants: 20,
-    totalApplicants: 30
+    totalApplicants: 30,
   },
   {
     jobId: 'logistics-qa-3m4n',
@@ -133,7 +133,7 @@ export const mockJobs: Job[] = [
     salary: '35,000 THB/month',
     status: 'approved',
     pendingApplicants: 14,
-    totalApplicants: 16
+    totalApplicants: 16,
   },
   {
     jobId: 'fintech-qa-5o6p',
@@ -149,7 +149,7 @@ export const mockJobs: Job[] = [
     salary: '40,000 THB/month',
     status: 'pending',
     pendingApplicants: 0,
-    totalApplicants: 0
+    totalApplicants: 0,
   },
   {
     jobId: 'edutech-frontend-7q8r',
@@ -166,7 +166,7 @@ export const mockJobs: Job[] = [
     salary: '50,000 THB/month',
     status: 'approved',
     pendingApplicants: 40,
-    totalApplicants: 60
+    totalApplicants: 60,
   },
   {
     jobId: 'marketing-creative-9s0t',
@@ -183,7 +183,7 @@ export const mockJobs: Job[] = [
     salary: '45,000 THB/month',
     status: 'pending',
     pendingApplicants: 0,
-    totalApplicants: 0
+    totalApplicants: 0,
   },
   {
     jobId: 'techcorp-frontend-1a2b',
@@ -204,7 +204,7 @@ export const mockJobs: Job[] = [
     salary: '50,000 THB/month',
     status: 'approved',
     pendingApplicants: 4,
-    totalApplicants: 6
+    totalApplicants: 6,
   },
   {
     jobId: 'techcorp-backend-2b3c',
@@ -225,7 +225,7 @@ export const mockJobs: Job[] = [
     salary: '70,000 THB/month',
     status: 'approved',
     pendingApplicants: 4,
-    totalApplicants: 6
+    totalApplicants: 6,
   },
   {
     jobId: 'techcorp-uiux-3c4d',
@@ -246,7 +246,7 @@ export const mockJobs: Job[] = [
     salary: '30,000 THB/month',
     status: 'approved',
     pendingApplicants: 20,
-    totalApplicants: 24
+    totalApplicants: 24,
   },
   {
     jobId: 'techcorp-devops-4d5e',
@@ -266,7 +266,7 @@ export const mockJobs: Job[] = [
     salary: '80,000 THB/month',
     status: 'pending',
     pendingApplicants: 0,
-    totalApplicants: 0
+    totalApplicants: 0,
   },
   {
     jobId: 'techcorp-datasci-5e6f',
@@ -286,7 +286,7 @@ export const mockJobs: Job[] = [
     salary: '65,000 THB/month',
     status: 'approved',
     pendingApplicants: 40,
-    totalApplicants: 60
+    totalApplicants: 60,
   },
   {
     jobId: 'techcorp-pm-6f7g',
@@ -307,6 +307,6 @@ export const mockJobs: Job[] = [
     salary: '75,000 THB/month',
     status: 'rejected',
     pendingApplicants: 0,
-    totalApplicants: 0
+    totalApplicants: 0,
   },
 ]

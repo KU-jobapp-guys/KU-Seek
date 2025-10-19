@@ -1,3 +1,5 @@
 export function isOwner(userId: string) {
-    return true
+  const thisId = userId
+  const storedUserId = localStorage.getItem('userId')
+  return storedUserId === thisId
 }

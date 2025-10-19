@@ -74,7 +74,7 @@ const router = createRouter({
     {
       path: '/company/manage-job/:id',
       name: 'job management',
-      component: JobManagement
+      component: JobManagement,
     },
     {
       path: '/login',

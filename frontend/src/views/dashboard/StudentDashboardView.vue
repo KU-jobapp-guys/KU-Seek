@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from '@/components/layouts/AppHeader.vue'
-import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
+import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import StudentJobCard from '@/components/dashboards/StudentJobCard.vue'
 
 import appliedIcon from '@/assets/applied-icon.svg'

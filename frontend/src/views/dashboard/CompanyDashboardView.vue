@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { mockJobs } from '@/data/mockJobs'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
-import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
-import { Search, Filter, BriefcaseBusiness, User, Eye } from 'lucide-vue-next'
+import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
+import { Search, Filter, ChevronDown } from 'lucide-vue-next'
+import { CompanyStats } from '@/configs/dashboardStatConfig.ts'
 import type { Job } from '@/types/jobType'
 
 const jobLists = ref<Job[]>([])
@@ -59,39 +59,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen pb-0">
+  <div class="min-h-screen">
     <!-- Main Dashboard Section -->
     <Header page="companyDashboard" />
     
-    <div class="relative -mt-24 md:-mt-40 h-[200px] px-[8vw] md:px-[12vw] flex gap-x-16">
-      <DashboardStatCard
-        title="Total Job Posts"
-        :value="stats.totalJobs"
-        description="Approved Job Posts"
-        :icon="BriefcaseBusiness"
-        cardClass="border-blue-500 text-blue-700"
-        iconClass="bg-blue-500/60"
-      />
-      <DashboardStatCard
-        title="Total Applicants"
-        :value="stats.totalApplicants"
-        description="Applicants"
-        :icon="User"
-        cardClass="border-red-500 text-red-500"
-        iconClass="bg-red-500/60"
-      />
-      <DashboardStatCard
-        title="Applicants to review"
-        :value="stats.pendingReview"
-        description="Applicants"
-        :icon="Eye"
-        cardClass="border-yellow-500 text-yellow-500"
-        iconClass="bg-yellow-500/60"
-      />
+    <div class="relative -mt-44 px-[8vw] md:px-[12vw]">
+      <StatCarousel :stats="CompanyStats" :data="stats" />
     </div>
 
     <!-- Total Job Posts Section -->
-    <section class="px-[8vw] md:px-[12vw] mt-4 pb-10 bg-white flex flex-col gap-y-8">
+    <section class="relative px-[8vw] md:px-[12vw] mt-24 pb-10 bg-white flex flex-col gap-y-8">
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
@@ -125,36 +102,32 @@ onMounted(() => {
                   <Filter class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <select
                     v-model="statusFilter"
-                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
                   >
                     <option value="all">All Status</option>
                     <option value="approved">Approved</option>
-                    <option value="pending">Pending Approval</option>
+                    <option value="pending">Pending</option>
                     <option value="rejected">Rejected</option>
                   </select>
                   <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <ChevronDown class="h-4 w-4 text-gray-400" />
                   </div>
                 </div>
               </div>
 
               <!-- Sort By -->
-              <div class="w-full space-y-2">
+              <div class="w-full space-y-2 hover:cursor-pointer">
                 <label class="text-sm font-semibold text-gray-700">Sort By</label>
                 <div class="relative">
                   <select
                     v-model="sortBy"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
                   >
                     <option value="pendingApplicants">Most Pending Reviews</option>
                     <option value="postTime">Recently posted</option>
                   </select>
                   <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
+                    <ChevronDown class="h-4 w-4 text-gray-400" />
                   </div>
                 </div>
               </div>
@@ -163,7 +136,7 @@ onMounted(() => {
         </div>
 
         <!-- Jobs Grid -->
-        <div v-if="filteredJobs.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-h-[540px] overflow-y-auto pr-2">
+        <div v-if="filteredJobs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2">
           <CompanyJob 
             v-for="j in filteredJobs" 
             :key="j.jobId" 

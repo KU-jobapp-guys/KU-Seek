@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
+import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import StaffJobCard from '@/components/dashboards/StaffJobCard.vue'
 
 import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'

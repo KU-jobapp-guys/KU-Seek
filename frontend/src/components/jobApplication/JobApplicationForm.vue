@@ -26,7 +26,7 @@ const form = reactive({
 // Validation errors
 const errors = reactive({ phone: '', email: '' })
 
-const validatePhone = (phone: string) => /^[+]?[0-9\s\-()]{7,15}$/.test(phone)
+const validatePhone = (phone: string) => /^[0-9]{10}$/.test(phone)
 const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
 function validatePersonalInfo() {
@@ -44,12 +44,14 @@ function validatePersonalInfo() {
 
 function onPhoneInput(event: Event) {
   const input = event.target as HTMLInputElement
-  input.value = input.value.replace(/\D/g, '')
+  input.value = input.value.replace(/[^0-9]/g, '')
+  if (input.value.length > 10) {
+    input.value = input.value.slice(0, 10)
+  }
   form.phone = input.value
   validatePersonalInfo()
 }
 
-// File input refs
 const resumeInput = ref<HTMLInputElement | null>(null)
 const letterInput = ref<HTMLInputElement | null>(null)
 

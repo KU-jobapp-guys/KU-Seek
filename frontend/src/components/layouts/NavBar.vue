@@ -9,7 +9,7 @@ import { mockStudents } from '@/data/mockStudent'
 import { mockProfessor } from '@/data/mockProfessor'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 
-type UserRole = 'company' | 'student' | 'professor'
+type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
 
 const props = defineProps<{
   role: UserRole
@@ -26,7 +26,7 @@ const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
   if (props.role === 'company') return companyList
-  if (props.role && ['student', 'professor'].includes(props.role)) return kuList
+  if (props.role && ['student', 'professor', 'staff'].includes(props.role)) return kuList
   return defaultList
 })
 
@@ -52,7 +52,7 @@ function makeLink(page: string) {
 
 onMounted(() => {
   const role = props.role
-  if (role) {
+  if (role && role !== 'visitor' && role !== 'staff') {
     userData.value = mockData[role].find((u) => u.id === userId) || null
     console.log('data: ', userData)
   }

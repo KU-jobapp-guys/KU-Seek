@@ -13,7 +13,7 @@ import JobView from '@/views/JobView.vue'
 import CompanyJobView from '@/views/CompanyJobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
-import Registration from '@/views/Registration.vue'
+import Registration from '@/views/RegistrationView.vue'
 
 
 const router = createRouter({

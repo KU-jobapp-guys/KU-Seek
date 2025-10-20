@@ -13,10 +13,6 @@ const router = useRouter()
 const job = ref<Job | null>(null)
 const userRole = getUserRole()
 
-const emit = defineEmits<{
-  (e: 'edit'): void
-}>()
-
 const loadJob = (id?: string) => {
   if (!id) {
     job.value = null
@@ -43,6 +39,7 @@ watch(
 </script>
 
 <template>
+	<h1 class="text-3xl font-bold">Editing the Job Posting</h1>
   <div v-if="job" class="h-full w-full shadow-xl relative overflow-y-auto">
     <div class="relative w-full h-[240px] bg-gray-600 rounded-t-md"></div>
 
@@ -59,7 +56,6 @@ watch(
         <router-link :to="`/job/${job.jobId}`" class="text-2xl font-bold underline cursor-pointer">{{
           job.role
         }}</router-link>
-        <PenBox class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer" @click="emit('edit')" v-if="isOwner(job.company) || true" />
       </div>
       <p class="text-gray-600">{{ job.company }}</p>
 

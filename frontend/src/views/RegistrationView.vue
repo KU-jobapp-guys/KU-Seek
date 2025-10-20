@@ -295,7 +295,7 @@ async function handleSubmit() {
       localStorage.setItem("userFile", JSON.stringify(fileData))
       
       // Store other form data without file
-      const { file, fileName, ...userDataWithoutFile } = form
+      const {...userDataWithoutFile } = form
       const user_data = JSON.stringify(userDataWithoutFile)
       localStorage.setItem("userInfo", user_data)
       

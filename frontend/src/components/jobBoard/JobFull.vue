@@ -59,7 +59,7 @@ watch(
         <router-link :to="`/job/${job.jobId}`" class="text-2xl font-bold underline cursor-pointer">{{
           job.role
         }}</router-link>
-        <PenBox class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer" @click="emit('edit')" v-if="isOwner(job.company) || true" />
+        <PenBox stroke-width=1.5 class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer" @click="emit('edit')" v-if="(isOwner(job.company) || true) && job.status === 'rejected'" />
       </div>
       <p class="text-gray-600">{{ job.company }}</p>
 

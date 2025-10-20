@@ -8,6 +8,9 @@ export interface Job {
   jobType: string
   jobLevel: string
   skills: string[]
+  workfields?: string[]
+  contacts?: { type: string; link: string }[]
+  tags?: string[]
   salary_min: number
   salary_max: number
   status: string

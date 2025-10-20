@@ -5,7 +5,7 @@ export function isOwner(userId: string) {
 }
 
 export function getUserId() {
-  return localStorage.getItem('userId') || ''
+  return localStorage.getItem('userId') || '1'
 }
 
 export function getUserRole() {

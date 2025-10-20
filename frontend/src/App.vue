@@ -13,7 +13,7 @@ const userRole = ref('visitor')
   <NavBar v-model:role="userRole as UserRole" />
 
   <div class="min-h-screen mt-8 md:mt-16">
-    <RouterView />
+    <RouterView v-model:role="userRole"/>
   </div>
 
   <div id="footer">

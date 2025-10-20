@@ -61,7 +61,7 @@ function toggleBookmark() {
 
     <div class="text-sm">
       <p class="flex gap-1"><span><MapPin class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.location }}</p>
-      <p class="flex gap-1"><span><Banknote class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.salary }}</p>
+      <p class="flex gap-1"><span><Banknote class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.salary_min }} - {{ job.salary_max }} THB/month</p>
     </div>
 
     <p class="mt-4">{{ job.description }}</p>

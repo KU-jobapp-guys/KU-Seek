@@ -79,9 +79,9 @@ watch(
           <p>{{ job.jobLevel }}</p>
         </div>
 
-        <div v-if="job.salary" class="flex gap-x-2 items-center text-gray-600">
+        <div class="flex gap-x-2 items-center text-gray-600">
           <Banknote class="w-4 h-4" />
-          <p>{{ job.salary }}</p>
+          <p>{{ job.salary_min }} - {{ job.salary_max }} THB/month</p>
         </div>
       </div>
 
@@ -98,10 +98,6 @@ watch(
       </div>
 
       <p class="mt-12">{{ job.description }}</p>
-
-      <ul class="list-disc list-inside mt-4">
-        <li v-for="(item, i) in job.highlights" :key="i">{{ item }}</li>
-      </ul>
 
       <div class="mb-20">
         <p class="font-bold mt-12">Skills</p>

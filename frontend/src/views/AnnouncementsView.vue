@@ -11,7 +11,7 @@ const announcements = ref([
     professorPosition: 'Assistant Professor',
     department: 'Agricultural Engineering',
     company: 'EcoFarm Innovation Ltd.',
-    companyIndustry: 'IoT, Smart Farming',
+    companyIndustry: 'IoT & Smart Farming',
     tags: ['IoT', 'Smart Farming', 'Workshop'],
   },
   {
@@ -20,7 +20,7 @@ const announcements = ref([
     professorPosition: 'Lecturer',
     department: 'Food Science',
     company: 'GreenTaste Co., Ltd.',
-    companyIndustry: 'AgroTech, Sustainable Food',
+    companyIndustry: 'AgroTech & Sustainable Food',
     tags: ['FoodTech', 'Sustainability', 'Workshop'],
   },
   {
@@ -38,7 +38,7 @@ const announcements = ref([
     professorPosition: 'Assistant Professor',
     department: 'Computer Engineering',
     company: 'AIWorks Thailand',
-    companyIndustry: 'AI, Software Development',
+    companyIndustry: 'AI & Software Development',
     tags: ['AI', 'Machine Learning', 'Hackathon'],
   },
   {
@@ -47,7 +47,7 @@ const announcements = ref([
     professorPosition: 'Lecturer',
     department: 'Chemical Engineering',
     company: 'BioChem Lab Co., Ltd.',
-    companyIndustry: 'Biotech, Research',
+    companyIndustry: 'Biotech & Research',
     tags: ['Biotech', 'Research', 'Seminar'],
   },
   {
@@ -65,7 +65,7 @@ const announcements = ref([
     professorPosition: 'Lecturer',
     department: 'Civil Engineering',
     company: 'BuildSmart Co., Ltd.',
-    companyIndustry: 'Construction, Structural Design',
+    companyIndustry: 'Construction & Structural Design',
     tags: ['BIM', 'Smart Construction', 'Workshop'],
   },
   {
@@ -74,7 +74,7 @@ const announcements = ref([
     professorPosition: 'Professor',
     department: 'Information Technology',
     company: 'CyberSafe Solutions',
-    companyIndustry: 'Cybersecurity, Cloud Services',
+    companyIndustry: 'Cybersecurity & Cloud Services',
     tags: ['Cybersecurity', 'Cloud', 'Conference'],
   },
   {
@@ -92,7 +92,7 @@ const announcements = ref([
     professorPosition: 'Associate Professor',
     department: 'Architecture',
     company: 'UrbanFuture Design',
-    companyIndustry: 'Architecture, Smart City',
+    companyIndustry: 'Architecture & Smart City',
     tags: ['Design', 'Urban Planning', 'Exhibition'],
   },
 ])

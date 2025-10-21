@@ -35,7 +35,7 @@ function clearFilters() {
     class="relative max-w-5xl mx-auto -mt-24 md:-mt-36 z-20 bg-gradient-to-br from-white via-gray-50 to-blue-50/70 backdrop-blur-sm shadow-2xl overflow-hidden"
   >
     <!-- Top gradient bar -->
-    <div class="h-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
+    <div class="h-4 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
 
     <!-- Inner content -->
     <div class="p-6 md:p-8 flex flex-col gap-6">
@@ -73,6 +73,16 @@ function clearFilters() {
             class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
           />
         </div>
+      </div>
+
+      <!-- Reset Button -->
+      <div class="flex justify-end items-end">
+        <button
+          @click="clearFilters"
+          class="bg-white hover:bg-gray-50 text-gray-700 hover:text-gray-900 font-semibold py-2 px-6 rounded-2xl border-2 border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all"
+        >
+          Reset
+        </button>
       </div>
     </div>
   </div>

@@ -54,9 +54,8 @@ const headerConfigs: Record<string, HeaderConfig> = {
     deco: companyDashboardDeco,
   },
   announcements: {
-    title: 'KU Announcements',
-    detail:
-      'Stay connected with the latest collaborations between KU professors and industry leaders.',
+    title: 'Announcements',
+    detail: 'Stay connected with the collaborations between KU professors and companies.',
     background: companyBoardBg,
     icon: building,
     deco: companyBoardDeco,

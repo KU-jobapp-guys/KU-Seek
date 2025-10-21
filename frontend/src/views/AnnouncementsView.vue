@@ -110,37 +110,38 @@ const filteredAnnouncements = computed(() =>
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen">
     <Header page="announcements" />
 
-    <!-- Filters -->
-    <section class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw]">
-      <FilterTabs v-model:selectedProf="selectedProf" v-model:selectedCompany="selectedCompany" />
-    </section>
+    <!-- Filters + Announcements share the same width container -->
+    <section class="relative -mt-24 md:-mt-40">
+      <div class="max-w-5xl mx-auto px-4 md:px-6">
+        <FilterTabs v-model:selectedProf="selectedProf" v-model:selectedCompany="selectedCompany" />
 
-    <!-- Announcements -->
-    <main class="max-w-5xl mx-auto mt-8">
-      <h2 class="font-semibold text-lg mb-3">
-        Recent Collaborations
-        <span class="text-gray-500 text-sm">({{ filteredAnnouncements.length }} found)</span>
-      </h2>
+        <main class="mt-8">
+          <h2 class="font-semibold text-lg mb-3">
+            Collaborations
+            <span class="text-gray-500 text-sm">({{ filteredAnnouncements.length }} found)</span>
+          </h2>
 
-      <!-- Scrollable box -->
-      <div
-        class="space-y-4 overflow-y-auto rounded-xl p-4 bg-white shadow-inner border border-gray-200"
-        style="max-height: 600px; scroll-behavior: smooth"
-      >
-        <AnnouncementCard
-          v-for="a in filteredAnnouncements"
-          :key="a.id"
-          :professor="a.professor"
-          :professorPosition="a.professorPosition"
-          :department="a.department"
-          :company="a.company"
-          :companyIndustry="a.companyIndustry"
-          :tags="a.tags"
-        />
+          <!-- Scrollable box -->
+          <div
+            class="space-y-4 overflow-y-auto rounded-xl p-4 bg-white shadow-inner border border-gray-200"
+            style="max-height: 600px; scroll-behavior: smooth"
+          >
+            <AnnouncementCard
+              v-for="a in filteredAnnouncements"
+              :key="a.id"
+              :professor="a.professor"
+              :professorPosition="a.professorPosition"
+              :department="a.department"
+              :company="a.company"
+              :companyIndustry="a.companyIndustry"
+              :tags="a.tags"
+            />
+          </div>
+        </main>
       </div>
-    </main>
+    </section>
   </div>
 </template>

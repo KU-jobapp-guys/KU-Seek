@@ -8,7 +8,7 @@ const props = defineProps({
 })
 
 const companyList = ['Dashboard', 'Profile']
-const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Profile']
+const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard', 'Profile']
 
 const pageList = computed(() => {
   if (props.role === 'company') return companyList
@@ -25,7 +25,7 @@ function makeLink(page: string) {
   if (page === 'Dashboard') {
     return `/${role}/dashboard`
   }
-  if (page === 'Announcement') {
+  if (page === 'Announcements') {
     return `/announcements`
   }
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`

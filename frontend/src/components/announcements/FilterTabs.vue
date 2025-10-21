@@ -1,67 +1,51 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+
 const props = defineProps<{
-  professors: string[]
-  companies: string[]
+  selectedProf: string
+  selectedCompany: string
 }>()
 
-const model = defineModel<string>()
+const emits = defineEmits(['update:selectedProf', 'update:selectedCompany'])
+
+const localProf = ref(props.selectedProf)
+const localCompany = ref(props.selectedCompany)
+
+// keep inputs in sync if parent resets them
+watch(
+  () => props.selectedProf,
+  (v) => (localProf.value = v),
+)
+watch(
+  () => props.selectedCompany,
+  (v) => (localCompany.value = v),
+)
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 mt-4">
-    <!-- All button -->
-    <div class="flex flex-wrap gap-2">
-      <button
-        @click="model = 'All'"
-        class="px-4 py-1 rounded-full border transition"
-        :class="
-          model === 'All'
-            ? 'bg-green-600 text-white border-green-600'
-            : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-green-50'
-        "
-      >
-        All
-      </button>
+  <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl shadow-sm flex flex-col gap-4">
+    <!-- Professor search -->
+    <div>
+      <h3 class="text-sm font-semibold text-gray-700 mb-2">Search Professor</h3>
+      <input
+        type="text"
+        placeholder="Type professor name..."
+        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+        v-model="localProf"
+        @input="$emit('update:selectedProf', localProf)"
+      />
     </div>
 
-    <!-- Professor filters -->
+    <!-- Company search -->
     <div>
-      <h3 class="font-semibold text-gray-700 mb-1">Professors</h3>
-      <div class="flex flex-wrap gap-2">
-        <button
-          v-for="p in props.professors"
-          :key="p"
-          @click="model = p"
-          class="px-4 py-1 rounded-full border transition text-sm"
-          :class="
-            model === p
-              ? 'bg-green-600 text-white border-green-600'
-              : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-green-50'
-          "
-        >
-          {{ p }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Company filters -->
-    <div>
-      <h3 class="font-semibold text-gray-700 mb-1">Companies</h3>
-      <div class="flex flex-wrap gap-2">
-        <button
-          v-for="c in props.companies"
-          :key="c"
-          @click="model = c"
-          class="px-4 py-1 rounded-full border transition text-sm"
-          :class="
-            model === c
-              ? 'bg-green-600 text-white border-green-600'
-              : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-green-50'
-          "
-        >
-          {{ c }}
-        </button>
-      </div>
+      <h3 class="text-sm font-semibold text-gray-700 mb-2">Search Company</h3>
+      <input
+        type="text"
+        placeholder="Type company name..."
+        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+        v-model="localCompany"
+        @input="$emit('update:selectedCompany', localCompany)"
+      />
     </div>
   </div>
 </template>

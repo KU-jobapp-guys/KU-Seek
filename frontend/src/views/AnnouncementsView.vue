@@ -1,94 +1,72 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import SearchBar from '@/components/announcements/SearchBar.vue'
 import FilterTabs from '@/components/announcements/FilterTabs.vue'
 import AnnouncementCard from '@/components/announcements/AnnouncementCard.vue'
 
-type Announcement = {
-  id: number
-  professor: string
-  company: string
-  title: string
-  description: string
-  role: string
-  department: string
-  tags: string[]
-}
-
-const allAnnouncements = ref<Announcement[]>([
+const announcements = ref([
   {
     id: 1,
-    professor: 'Asst. Prof. Somchai Prasert',
-    company: 'Green Junimo Co., Ltd.',
-    title: 'New Research Partnership with Tech Industry Leaders',
-    description:
-      'Kasetsart University announces a collaboration with Green Junimo to advance AI and sustainable agriculture research.',
-    role: 'Associate Professor',
-    department: 'Computer Engineering',
-    tags: ['AI', 'Research', 'Industry', 'Partnership'],
+    professor: 'Assoc. Prof. Nattawut Meechai',
+    professorPosition: 'Assistant Professor',
+    department: 'Agricultural Engineering',
+    company: 'EcoFarm Innovation Ltd.',
+    companyIndustry: 'IoT · Smart Farming',
+    tags: ['IoT', 'Smart Farming', 'Workshop'],
   },
   {
     id: 2,
-    professor: 'Assoc. Prof. Nattawut Meechai',
-    company: 'EcoFarm Innovation Ltd.',
-    title: 'Workshop: Smart Farming Technology 2025',
-    description:
-      'Join us for a practical session on integrating IoT and machine learning into smart farming.',
-    role: 'Assistant Professor',
-    department: 'Agricultural Engineering',
-    tags: ['IoT', 'Smart Farming', 'Workshop'],
+    professor: 'Dr. Supansa Thongdee',
+    professorPosition: 'Lecturer',
+    department: 'Food Science',
+    company: 'GreenTaste Co., Ltd.',
+    companyIndustry: 'AgroTech · Sustainable Food',
+    tags: ['FoodTech', 'Sustainability', 'Workshop'],
   },
-  // ... keep others (no category field needed)
+  {
+    id: 3,
+    professor: 'Prof. Dr. Preecha Thanapong',
+    professorPosition: 'Professor',
+    department: 'Environmental Science',
+    company: 'EcoPower Co., Ltd.',
+    companyIndustry: 'Renewable Energy',
+    tags: ['Renewable', 'GreenTech', 'Conference'],
+  },
 ])
 
-// Extract unique lists
-const professors = computed(() =>
-  Array.from(new Set(allAnnouncements.value.map((a) => a.professor))),
-)
-
-const companies = computed(() => Array.from(new Set(allAnnouncements.value.map((a) => a.company))))
-
-const query = ref('')
-const activeFilter = ref('All')
+const selectedProf = ref('')
+const selectedCompany = ref('')
 
 const filteredAnnouncements = computed(() =>
-  allAnnouncements.value.filter((a) => {
-    const matchesFilter =
-      activeFilter.value === 'All' ||
-      a.professor === activeFilter.value ||
-      a.company === activeFilter.value
-
-    const matchesQuery =
-      a.title.toLowerCase().includes(query.value.toLowerCase()) ||
-      a.professor.toLowerCase().includes(query.value.toLowerCase()) ||
-      a.company.toLowerCase().includes(query.value.toLowerCase())
-
-    return matchesFilter && matchesQuery
+  announcements.value.filter((a) => {
+    const profMatch = a.professor.toLowerCase().includes(selectedProf.value.toLowerCase())
+    const companyMatch = a.company.toLowerCase().includes(selectedCompany.value.toLowerCase())
+    return profMatch && companyMatch
   }),
 )
 </script>
 
 <template>
   <div class="min-h-screen">
+    <!-- Header -->
     <header class="bg-gradient-to-b from-green-700 to-green-400 text-white text-center py-16">
       <h1 class="text-5xl font-extrabold">KU Announcements</h1>
       <p class="mt-3 text-lg max-w-2xl mx-auto">
-        Stay connected with the latest news and updates from Kasetsart University Staff and
-        Instructors
+        Stay connected with the latest collaborations between KU professors and industry leaders
       </p>
       <p class="mt-2 opacity-90 text-sm">
-        Connecting our academic community through shared knowledge and collaboration
+        Empowering innovation through academic and industrial synergy
       </p>
     </header>
 
+    <!-- Filters -->
     <section class="max-w-4xl mx-auto mt-6 px-4">
-      <SearchBar v-model="query" />
-      <FilterTabs v-model="activeFilter" :professors="professors" :companies="companies" />
+      <FilterTabs v-model:selectedProf="selectedProf" v-model:selectedCompany="selectedCompany" />
     </section>
 
+    <!-- Announcements -->
     <main class="max-w-4xl mx-auto mt-8 px-4">
       <h2 class="font-semibold text-lg mb-3">
-        Announcements
+        Recent Collaborations
         <span class="text-gray-500 text-sm">({{ filteredAnnouncements.length }} found)</span>
       </h2>
 
@@ -96,7 +74,16 @@ const filteredAnnouncements = computed(() =>
         class="space-y-4 overflow-y-auto rounded-xl p-3 bg-white shadow-inner border border-gray-200"
         style="max-height: 550px; scroll-behavior: smooth"
       >
-        <AnnouncementCard v-for="a in filteredAnnouncements" :key="a.id" :announcement="a" />
+        <AnnouncementCard
+          v-for="a in filteredAnnouncements"
+          :key="a.id"
+          :professor="a.professor"
+          :professorPosition="a.professorPosition"
+          :department="a.department"
+          :company="a.company"
+          :companyIndustry="a.companyIndustry"
+          :tags="a.tags"
+        />
       </div>
     </main>
   </div>

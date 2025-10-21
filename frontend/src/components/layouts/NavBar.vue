@@ -19,7 +19,7 @@ const userId = getUserId()
 const userData = ref<Profile | null>(null)
 
 const companyList = ['Dashboard']
-const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard']
+const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard']
 const profileList = ['Profile', 'Setting', 'Logout']
 
 const openMenu = ref<'page' | 'profile' | null>(null)
@@ -43,6 +43,9 @@ function makeLink(page: string) {
   }
   if (page === 'Dashboard') {
     return `/${role}/dashboard`
+  }
+  if (page === 'Announcements') {
+    return `/announcements`
   }
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }

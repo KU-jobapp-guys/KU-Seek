@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import FilterTabs from '@/components/announcements/FilterTabs.vue'
 import AnnouncementCard from '@/components/announcements/AnnouncementCard.vue'
+import Header from '@/components/layouts/AppHeader.vue'
 
 const announcements = ref([
   {
@@ -10,7 +11,7 @@ const announcements = ref([
     professorPosition: 'Assistant Professor',
     department: 'Agricultural Engineering',
     company: 'EcoFarm Innovation Ltd.',
-    companyIndustry: 'IoT · Smart Farming',
+    companyIndustry: 'IoT, Smart Farming',
     tags: ['IoT', 'Smart Farming', 'Workshop'],
   },
   {
@@ -19,7 +20,7 @@ const announcements = ref([
     professorPosition: 'Lecturer',
     department: 'Food Science',
     company: 'GreenTaste Co., Ltd.',
-    companyIndustry: 'AgroTech · Sustainable Food',
+    companyIndustry: 'AgroTech, Sustainable Food',
     tags: ['FoodTech', 'Sustainability', 'Workshop'],
   },
   {
@@ -30,6 +31,69 @@ const announcements = ref([
     company: 'EcoPower Co., Ltd.',
     companyIndustry: 'Renewable Energy',
     tags: ['Renewable', 'GreenTech', 'Conference'],
+  },
+  {
+    id: 4,
+    professor: 'Asst. Prof. Kittipong Rattanawong',
+    professorPosition: 'Assistant Professor',
+    department: 'Computer Engineering',
+    company: 'AIWorks Thailand',
+    companyIndustry: 'AI, Software Development',
+    tags: ['AI', 'Machine Learning', 'Hackathon'],
+  },
+  {
+    id: 5,
+    professor: 'Dr. Ratchanee Limsakul',
+    professorPosition: 'Lecturer',
+    department: 'Chemical Engineering',
+    company: 'BioChem Lab Co., Ltd.',
+    companyIndustry: 'Biotech, Research',
+    tags: ['Biotech', 'Research', 'Seminar'],
+  },
+  {
+    id: 6,
+    professor: 'Assoc. Prof. Pongsathorn Chaiwong',
+    professorPosition: 'Associate Professor',
+    department: 'Mechanical Engineering',
+    company: 'AutoNext Manufacturing',
+    companyIndustry: 'Robotics',
+    tags: ['Robotics', 'Automation', 'Internship'],
+  },
+  {
+    id: 7,
+    professor: 'Dr. Jirapat Wongchai',
+    professorPosition: 'Lecturer',
+    department: 'Civil Engineering',
+    company: 'BuildSmart Co., Ltd.',
+    companyIndustry: 'Construction, Structural Design',
+    tags: ['BIM', 'Smart Construction', 'Workshop'],
+  },
+  {
+    id: 8,
+    professor: 'Prof. Dr. Chalida Boonmee',
+    professorPosition: 'Professor',
+    department: 'Information Technology',
+    company: 'CyberSafe Solutions',
+    companyIndustry: 'Cybersecurity, Cloud Services',
+    tags: ['Cybersecurity', 'Cloud', 'Conference'],
+  },
+  {
+    id: 9,
+    professor: 'Dr. Thanawat Inthanon',
+    professorPosition: 'Lecturer',
+    department: 'Electrical Engineering',
+    company: 'PowerGrid Tech',
+    companyIndustry: 'Energy',
+    tags: ['Smart Grid', 'Renewable', 'Research'],
+  },
+  {
+    id: 10,
+    professor: 'Assoc. Prof. Naruemon Chantarasri',
+    professorPosition: 'Associate Professor',
+    department: 'Architecture',
+    company: 'UrbanFuture Design',
+    companyIndustry: 'Architecture, Smart City',
+    tags: ['Design', 'Urban Planning', 'Exhibition'],
   },
 ])
 
@@ -46,33 +110,25 @@ const filteredAnnouncements = computed(() =>
 </script>
 
 <template>
-  <div class="min-h-screen">
-    <!-- Header -->
-    <header class="bg-gradient-to-b from-green-700 to-green-400 text-white text-center py-16">
-      <h1 class="text-5xl font-extrabold">KU Announcements</h1>
-      <p class="mt-3 text-lg max-w-2xl mx-auto">
-        Stay connected with the latest collaborations between KU professors and industry leaders
-      </p>
-      <p class="mt-2 opacity-90 text-sm">
-        Empowering innovation through academic and industrial synergy
-      </p>
-    </header>
+  <div class="min-h-screen bg-gray-50">
+    <Header page="announcements" />
 
     <!-- Filters -->
-    <section class="max-w-4xl mx-auto mt-6 px-4">
+    <section class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw]">
       <FilterTabs v-model:selectedProf="selectedProf" v-model:selectedCompany="selectedCompany" />
     </section>
 
     <!-- Announcements -->
-    <main class="max-w-4xl mx-auto mt-8 px-4">
+    <main class="max-w-5xl mx-auto mt-8">
       <h2 class="font-semibold text-lg mb-3">
         Recent Collaborations
         <span class="text-gray-500 text-sm">({{ filteredAnnouncements.length }} found)</span>
       </h2>
 
+      <!-- Scrollable box -->
       <div
-        class="space-y-4 overflow-y-auto rounded-xl p-3 bg-white shadow-inner border border-gray-200"
-        style="max-height: 550px; scroll-behavior: smooth"
+        class="space-y-4 overflow-y-auto rounded-xl p-4 bg-white shadow-inner border border-gray-200"
+        style="max-height: 600px; scroll-behavior: smooth"
       >
         <AnnouncementCard
           v-for="a in filteredAnnouncements"

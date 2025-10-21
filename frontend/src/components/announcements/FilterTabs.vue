@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { SearchIcon } from 'lucide-vue-next'
 
 const props = defineProps<{
   selectedProf: string
@@ -11,7 +12,6 @@ const emits = defineEmits(['update:selectedProf', 'update:selectedCompany'])
 const localProf = ref(props.selectedProf)
 const localCompany = ref(props.selectedCompany)
 
-// keep inputs in sync if parent resets them
 watch(
   () => props.selectedProf,
   (v) => (localProf.value = v),
@@ -20,32 +20,60 @@ watch(
   () => props.selectedCompany,
   (v) => (localCompany.value = v),
 )
+
+function clearFilters() {
+  localProf.value = ''
+  localCompany.value = ''
+  emits('update:selectedProf', '')
+  emits('update:selectedCompany', '')
+}
 </script>
 
 <template>
-  <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl shadow-sm flex flex-col gap-4">
-    <!-- Professor search -->
-    <div>
-      <h3 class="text-sm font-semibold text-gray-700 mb-2">Search Professor</h3>
-      <input
-        type="text"
-        placeholder="Type professor name..."
-        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-        v-model="localProf"
-        @input="$emit('update:selectedProf', localProf)"
-      />
-    </div>
+  <!-- Container -->
+  <div
+    class="relative max-w-5xl mx-auto -mt-24 md:-mt-36 z-20 bg-gradient-to-br from-white via-gray-50 to-blue-50/70 backdrop-blur-sm shadow-2xl overflow-hidden"
+  >
+    <!-- Top gradient bar -->
+    <div class="h-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
 
-    <!-- Company search -->
-    <div>
-      <h3 class="text-sm font-semibold text-gray-700 mb-2">Search Company</h3>
-      <input
-        type="text"
-        placeholder="Type company name..."
-        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-        v-model="localCompany"
-        @input="$emit('update:selectedCompany', localCompany)"
-      />
+    <!-- Inner content -->
+    <div class="p-6 md:p-8 flex flex-col gap-6">
+      <!-- Professor Search -->
+      <div class="flex-1">
+        <label class="block text-sm font-semibold text-gray-700 mb-1 ml-2">
+          Search Professor
+        </label>
+        <div class="relative">
+          <input
+            v-model="localProf"
+            type="text"
+            placeholder="Type professor name..."
+            @input="$emit('update:selectedProf', localProf)"
+            class="w-full px-4 py-2 bg-white/90 border-2 border-gray-200 rounded-2xl shadow-sm hover:shadow-lg focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 placeholder-gray-400 text-gray-700"
+          />
+          <SearchIcon
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+          />
+        </div>
+      </div>
+
+      <!-- Company Search -->
+      <div class="flex-1">
+        <label class="block text-sm font-semibold text-gray-700 mb-1 ml-2"> Search Company </label>
+        <div class="relative">
+          <input
+            v-model="localCompany"
+            type="text"
+            placeholder="Type company name..."
+            @input="$emit('update:selectedCompany', localCompany)"
+            class="w-full px-4 py-2 bg-white/90 border-2 border-gray-200 rounded-2xl shadow-sm hover:shadow-lg focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 placeholder-gray-400 text-gray-700"
+          />
+          <SearchIcon
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>

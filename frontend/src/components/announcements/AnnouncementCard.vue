@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Building2, GraduationCap } from 'lucide-vue-next'
+
 defineProps<{
   professor: string
   professorPosition: string
@@ -10,25 +12,41 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    class="bg-white shadow-md rounded-2xl p-5 border border-gray-100 hover:shadow-lg transition-all duration-200"
+  <article
+    class="bg-white border border-gray-200 shadow-sm rounded-2xl p-5 hover:shadow-md transition-all duration-200"
   >
-    <div class="space-y-2">
-      <h2 class="text-lg font-semibold text-gray-800">{{ professor }} &amp; {{ company }}</h2>
+    <!-- Top section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <h2 class="text-lg font-semibold text-green-700">
+        {{ professor }}
+        <span class="text-gray-700 font-normal">&amp;&nbsp;</span>
+        <span class="text-blue-700 font-semibold">{{ company }}</span>
+      </h2>
+    </div>
 
-      <p class="text-sm text-gray-600">
-        {{ professorPosition }} ({{ department }}) · {{ companyIndustry }}
+    <!-- Middle details -->
+    <div class="mt-2 text-sm text-gray-700 flex flex-col gap-1">
+      <p class="flex items-center gap-2">
+        <GraduationCap class="w-4 h-4 text-green-600" />
+        <span class="font-medium">{{ professorPosition }}</span>
+        <span class="text-gray-500">({{ department }})</span>
       </p>
 
-      <div class="flex flex-wrap gap-2 mt-2">
-        <span
-          v-for="tag in tags"
-          :key="tag"
-          class="bg-green-100 text-green-700 text-xs font-medium px-2.5 py-1 rounded-full"
-        >
-          {{ tag }}
-        </span>
-      </div>
+      <p class="flex items-center gap-2">
+        <Building2 class="w-4 h-4 text-blue-600" />
+        <span>{{ companyIndustry }}</span>
+      </p>
     </div>
-  </div>
+
+    <!-- Tags -->
+    <div class="flex flex-wrap gap-2 mt-3">
+      <span
+        v-for="tag in tags"
+        :key="tag"
+        class="text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 font-medium"
+      >
+        {{ tag }}
+      </span>
+    </div>
+  </article>
 </template>

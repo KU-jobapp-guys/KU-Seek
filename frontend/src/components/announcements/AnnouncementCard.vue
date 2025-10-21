@@ -26,18 +26,6 @@ defineProps<{ announcement: Announcement }>()
         </h3>
         <p class="text-sm text-gray-500">{{ announcement.role }} · {{ announcement.department }}</p>
       </div>
-
-      <span
-        class="px-3 py-1 text-sm rounded-full"
-        :class="{
-          'bg-green-100 text-green-700': announcement.category === 'Connections',
-          'bg-blue-100 text-blue-700': announcement.category === 'Meetings',
-          'bg-orange-100 text-orange-700': announcement.category === 'Events',
-          'bg-gray-100 text-gray-700': announcement.category === 'General',
-        }"
-      >
-        {{ announcement.category }}
-      </span>
     </div>
 
     <h4 class="mt-3 font-semibold text-lg">{{ announcement.title }}</h4>

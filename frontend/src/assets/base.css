@@ -54,6 +54,13 @@
   }
 }
 
+@layer base {
+  p, li {
+    @apply text-base;
+  }
+}
+
+
 *,
 *::before,
 *::after {

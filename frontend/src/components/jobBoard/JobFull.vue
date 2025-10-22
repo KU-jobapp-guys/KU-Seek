@@ -57,10 +57,17 @@ watch(
 
     <div class="px-12 mt-24">
       <div class="flex justify-between items-center">
-        <router-link :to="`/job/${job.jobId}`" class="text-2xl font-bold underline cursor-pointer">{{
-          job.role
-        }}</router-link>
-        <PenBox stroke-width=1.5 class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer" @click="emit('edit')" v-if="(isOwner(job.company) || true) && job.status === 'rejected'" />
+        <router-link
+          :to="`/job/${job.jobId}`"
+          class="text-2xl font-bold underline cursor-pointer"
+          >{{ job.role }}</router-link
+        >
+        <PenBox
+          :stroke-width="1.5"
+          class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer"
+          @click="emit('edit')"
+          v-if="(isOwner(job.company) || true) && job.status === 'rejected'"
+        />
       </div>
       <p class="text-gray-600">{{ job.company }}</p>
 
@@ -86,8 +93,8 @@ watch(
         </div>
       </div>
 
-      <div v-if="userRole === 'student'"class="mt-4 flex gap-x-2">
-        <!-- Action Buttons -->
+      <!-- Action Buttons -->
+      <div v-if="userRole === 'student'" class="mt-4 flex gap-x-2">
         <button
           class="bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md"
         >
@@ -130,11 +137,7 @@ watch(
       <div v-if="job.contacts && job.contacts.length > 0" class="mb-20">
         <p class="font-bold">Contact Information</p>
         <div class="flex flex-col gap-y-2 mt-2">
-          <div
-            v-for="(contact, i) in job.contacts"
-            :key="i"
-            class="flex gap-x-2 items-center"
-          >
+          <div v-for="(contact, i) in job.contacts" :key="i" class="flex gap-x-2 items-center">
             <component :is="IconMap[contact.type]" class="text-gray-500 w-4 h-4" />
             <p>{{ contact.link }}</p>
           </div>

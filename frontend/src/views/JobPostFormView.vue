@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import JobPostForm from '@/components/jobPostForm/JobPostForm.vue';
+import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 
 // Form state
 const jobPost = ref({
@@ -41,5 +41,5 @@ const handleSubmit = (): void => {
 </script>
 
 <template>
-  <JobPostForm @submit="handleSubmit"/>
+  <JobPostForm @submit="handleSubmit" />
 </template>

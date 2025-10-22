@@ -56,7 +56,6 @@ const initializeForm = () => {
 const isSalaryValid = ref(true)
 
 const isFormValid = computed(() => {
-
   return (
     jobPost.value.company.trim() !== '' &&
     jobPost.value.role.trim() !== '' &&
@@ -91,7 +90,7 @@ const handleSubmit = (): void => {
     salary_min: Number(jobPost.value.salary_min),
     salary_max: Number(jobPost.value.salary_max),
   }
-  
+
   emit('submit', payload)
 }
 

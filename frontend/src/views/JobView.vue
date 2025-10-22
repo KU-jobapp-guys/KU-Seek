@@ -6,7 +6,6 @@ import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
 
-
 const route = useRoute()
 const isEditing = ref(false)
 const initialData = ref<Job | null>()
@@ -22,7 +21,7 @@ const cancelEditing = () => {
 
 const updateEditing = (payload: Partial<Job>) => {
   isEditing.value = false
-  console.log("update job posting with data: ", payload)
+  console.log('update job posting with data: ', payload)
 }
 
 onMounted(() => {
@@ -35,5 +34,10 @@ onMounted(() => {
     <JobFull :jobId="route.params.id as string" @edit="startEditing" />
   </div>
 
-  <JobPostForm v-else-if="initialData" :initialData="initialData" @submit="updateEditing" @cancel="cancelEditing"/>
+  <JobPostForm
+    v-else-if="initialData"
+    :initialData="initialData"
+    @submit="updateEditing"
+    @cancel="cancelEditing"
+  />
 </template>

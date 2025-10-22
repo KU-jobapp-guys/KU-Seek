@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Job } from '@/types/jobType'
-import { Banknote, Bookmark, BookmarkCheck, MapPin,  } from 'lucide-vue-next'
+import { Banknote, Bookmark, BookmarkCheck, MapPin } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 import { getStatusColor } from '@/libs/getStatusStyle'
 
@@ -56,12 +56,17 @@ function toggleBookmark() {
         <p class="text-xl font-bold">{{ job.role }}</p>
         <p>{{ job.company }}</p>
       </div>
-      <div class="shrink-0 bg-gray-300  h-12 w-12 md:w-20 md:h-20 rounded-full" />
+      <div class="shrink-0 bg-gray-300 h-12 w-12 md:w-20 md:h-20 rounded-full" />
     </div>
 
     <div class="text-sm">
-      <p class="flex gap-1"><span><MapPin class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.location }}</p>
-      <p class="flex gap-1"><span><Banknote class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.salary_min }} - {{ job.salary_max }} THB/month</p>
+      <p class="flex gap-1">
+        <span><MapPin class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.location }}
+      </p>
+      <p class="flex gap-1">
+        <span><Banknote class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.salary_min }} -
+        {{ job.salary_max }} THB/month
+      </p>
     </div>
 
     <p class="mt-4">{{ job.description }}</p>

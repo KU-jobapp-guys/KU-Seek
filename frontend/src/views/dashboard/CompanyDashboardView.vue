@@ -76,7 +76,7 @@ onMounted(() => {
 
     <!-- Total Job Posts Section -->
     <section class="text-base relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
-      <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
+      <div class="rounded-xl bg-gray-100 px-4 md:px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
           <p class="px-4 py-1 bg-blue-500 rounded-full text-white flex gap-x-1">
@@ -96,7 +96,7 @@ onMounted(() => {
                   v-model="searchQuery"
                   type="text"
                   placeholder="Search by job title, location..."
-                  class="text-sm w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>

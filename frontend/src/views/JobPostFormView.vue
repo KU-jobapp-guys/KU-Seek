@@ -17,8 +17,8 @@ const jobPost = ref({
   postTime: '',
   description: '',
   jobType: '',
-  workFields: [] as string[],
-  tags: [] as string[],
+  skill_names: [] as string[],
+  tag_names: [] as string[],
   salaryMin: '',
   salaryMax: '',
   contacts: [] as { type: string; link: string }[],
@@ -38,7 +38,7 @@ const isFormValid = computed(() => {
     jobPost.value.location.trim() !== '' &&
     jobPost.value.description.trim() !== '' &&
     jobPost.value.jobType.trim() !== '' &&
-    jobPost.value.workFields.length > 0 &&
+    jobPost.value.skill_names.length > 0 &&
     jobPost.value.salaryMin.trim() !== '' &&
     jobPost.value.salaryMax.trim() !== '' &&
     min > 0 &&
@@ -64,37 +64,66 @@ const handleSubmit = async (): Promise<void> => {
   try {
     // Fetch CSRF token
     const csrfResponse = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1/csrf-token`
+      `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1/csrf-token`,
+      {
+        credentials: 'include'  // <-- ADD THIS
+      }
     )
     const csrfData = await csrfResponse.json()
     const csrf_token = csrfData.csrf_token
 
+    // SET THE DEFAULT DELTA YOU NEED TO ADD THEEEEESEEE FIELD OKKKKK!??!?!?!?!?!?
+    const defaults = {
+      work_hours: '9:00 AM - 5:00 PM',
+      job_level: 'Mid-level',
+      capacity: 1,
+      end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    }
+
     const payload = {
-      ...jobPost.value,
-      salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
+      title: jobPost.value.role,
+      description: jobPost.value.description,
+      location: jobPost.value.location,
+      work_hours: defaults.work_hours,
+      job_type: (jobPost.value.jobType || '').toLowerCase(),
+      job_level: defaults.job_level,
+      capacity: defaults.capacity,
+      end_date: defaults.end_date,
+      salary_min: Number(jobPost.value.salaryMin) || 0,
+      salary_max: Number(jobPost.value.salaryMax) || 0,
+      skill_names: Array.isArray(jobPost.value.skill_names) ? jobPost.value.skill_names : [],
+      tag_names: Array.isArray(jobPost.value.tag_names) ? jobPost.value.tag_names : [],
     }
     
-    // Submit job post
-    const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1/jobs`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrf_token,
-        },
-        body: JSON.stringify(payload),
-      }
-    )
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    if (csrf_token) headers['X-CSRFToken'] = csrf_token
+
+    const accessToken =
+      (typeof window !== 'undefined' && localStorage.getItem('user_jwt'))
+    if (accessToken) {
+      headers['access_token'] = accessToken
+    }
+
+    const bodyString = JSON.stringify(payload)
+ 
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1/jobs`, {
+      method: 'POST',
+      headers,
+      body: bodyString,
+      credentials: 'include' 
+  })
 
     const data = await response.json()
+
 
     if (!response.ok) {
       throw new Error(data.message || 'Failed to submit job post')
     }
-
-    console.log('Job Post submitted:', data)
+    
     alert('Job Post submitted successfully!')
+    
   } catch (err) {
     console.error('Error submitting job post:', err)
     alert('Failed to submit job post.')
@@ -216,7 +245,7 @@ onMounted(() => {
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Required Skills</h2>
         <SearchableTagInput
-          v-model="jobPost.workFields"
+          v-model="jobPost.skill_names"
           :suggestions="skillSuggestions"
           placeholder="Search or add a skill..."
         />
@@ -225,7 +254,7 @@ onMounted(() => {
       <!-- Tags -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Tags</h2>
-        <TagInput v-model="jobPost.tags" placeholder="e.g. Urgent, Remote, Internship" />
+        <TagInput v-model="jobPost.tag_names" placeholder="e.g. Urgent, Remote, Internship" />
       </section>
 
       <!-- Contacts -->

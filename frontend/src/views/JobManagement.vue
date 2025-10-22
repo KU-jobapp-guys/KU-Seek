@@ -13,7 +13,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  Inbox
+  Inbox,
 } from 'lucide-vue-next'
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import ApplicantCard from '@/components/dashboards/ApplicantCard.vue'
@@ -111,10 +111,8 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-white">
     <section v-if="jobDetail" class="bg-gray-100 shadow-sm border-b px-[8vw] md:px-[12vw]">
-      
       <!-- Job Detail Section -->
       <div class="w-full mx-auto py-8">
-
         <!-- Job information -->
         <div>
           <button

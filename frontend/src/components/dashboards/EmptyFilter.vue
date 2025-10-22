@@ -7,7 +7,6 @@ interface Props {
 const { clearFilters } = defineProps<Props>()
 </script>
 
-
 <template>
   <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
     <Search class="h-8 w-8 text-gray-400" />

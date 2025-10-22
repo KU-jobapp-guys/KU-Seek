@@ -79,7 +79,7 @@ onMounted(() => {
       <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
-          <p class="px-4 py-1 bg-blue-500 rounded-full text-white">
+          <p class="px-4 py-1 bg-blue-500 rounded-full text-white flex gap-x-1">
             {{ filteredJobs.length }} <span class="hidden md:block">Jobs</span>
           </p>
         </div>

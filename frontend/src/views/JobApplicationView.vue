@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { mockJobs } from '@/data/mockJobs'
-import JobApplicationForm from '@/components/JobApplication/JobApplicationForm.vue'
+import JobApplicationForm from '@/components/jobApplication/JobApplicationForm.vue'
 
 const route = useRoute()
 const job = mockJobs.find((j) => j.jobId === route.params.id)

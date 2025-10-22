@@ -1,27 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { Job } from '@/types/jobType'
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 
-// Form state
-const jobPost = ref({
-  company: '',
-  role: '',
-  location: '',
-  postTime: '',
-  description: '',
-  jobType: '',
-  skills: [] as string[],
-  tags: [] as string[],
-  salaryMin: '',
-  salaryMax: '',
-  contacts: [] as { type: string; link: string }[],
-})
 
-const handleSubmit = (): void => {
-  const payload = {
-    ...jobPost.value,
-    salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
-  }
+const handleSubmit = (payload: Partial<Job>): void => {
+  console.log('Submitting Job Post:', payload)
 
   fetch('http://localhost:5000/api/jobposts', {
     method: 'POST',

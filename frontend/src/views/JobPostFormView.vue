@@ -24,6 +24,8 @@ const jobPost = ref({
   contacts: [] as { type: string; link: string }[],
 })
 
+const skillSuggestions = ref<string[]>([])
+
 const isSalaryValid = ref(true)
 
 const isFormValid = computed(() => {
@@ -45,7 +47,7 @@ const isFormValid = computed(() => {
   )
 })
 
-const handleSubmit = (): void => {
+const handleSubmit = async (): Promise<void> => {
   const min = Number(jobPost.value.salaryMin)
   const max = Number(jobPost.value.salaryMax)
 
@@ -59,25 +61,44 @@ const handleSubmit = (): void => {
     return
   }
 
-  const payload = {
-    ...jobPost.value,
-    salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
-  }
+  try {
+    // Fetch CSRF token
+    const csrfResponse = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1/csrf-token`
+    )
+    const csrfData = await csrfResponse.json()
+    const csrf_token = csrfData.csrf_token
 
-  fetch('http://localhost:5000/api/jobposts', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log('Job Post submitted:', data)
-      alert('Job Post submitted successfully!')
-    })
-    .catch((err) => {
-      console.error('Error submitting job post:', err)
-      alert('Failed to submit job post.')
-    })
+    const payload = {
+      ...jobPost.value,
+      salary: `${jobPost.value.salaryMin} - ${jobPost.value.salaryMax}`,
+    }
+    
+    // Submit job post
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1/jobs`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrf_token,
+        },
+        body: JSON.stringify(payload),
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to submit job post')
+    }
+
+    console.log('Job Post submitted:', data)
+    alert('Job Post submitted successfully!')
+  } catch (err) {
+    console.error('Error submitting job post:', err)
+    alert('Failed to submit job post.')
+  }
 }
 
 // Prevent accidental submit via Enter/Return
@@ -94,6 +115,38 @@ onMounted(() => {
       }
     })
   }
+
+  // Fetch skill/term suggestions from backend and replace defaults
+  ;(async () => {
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+    try {
+      const res = await fetch(`${base}/api/v1/terms`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (!res.ok) {
+        console.warn('Failed to load terms suggestions:', res.status)
+        return
+      }
+      const json = await res.json()
+
+      if (Array.isArray(json)) {
+        const mapped = json
+          .map((it: unknown) => {
+            if (it && typeof it === 'object') {
+              const obj = it as Record<string, unknown>
+              const name = obj.name ?? obj['name']
+              return typeof name === 'string' ? name : String(name ?? '')
+            }
+            return ''
+          })
+          .filter((s: string) => s.trim() !== '')
+        skillSuggestions.value = mapped
+      }
+    } catch (err) {
+      console.error('Error fetching term suggestions:', err)
+    }
+  })()
 })
 </script>
 
@@ -164,17 +217,7 @@ onMounted(() => {
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Required Skills</h2>
         <SearchableTagInput
           v-model="jobPost.workFields"
-          :suggestions="[
-            'React',
-            'Vue',
-            'Angular',
-            'Node.js',
-            'Python',
-            'Django',
-            'Machine Learning',
-            'AWS',
-            'SQL',
-          ]"
+          :suggestions="skillSuggestions"
           placeholder="Search or add a skill..."
         />
       </section>

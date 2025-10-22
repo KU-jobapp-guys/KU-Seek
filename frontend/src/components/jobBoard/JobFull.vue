@@ -41,6 +41,12 @@ watch(
     loadJob(newId)
   },
 )
+
+const goToApply = () => {
+  if (job.value) {
+    router.push(`/job/${job.value.jobId}/apply`)
+  }
+}
 </script>
 
 <template>
@@ -96,6 +102,7 @@ watch(
       <!-- Action Buttons -->
       <div v-if="userRole === 'student'" class="mt-4 flex gap-x-2">
         <button
+          @click="goToApply"
           class="bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md"
         >
           Apply

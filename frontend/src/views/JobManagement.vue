@@ -13,6 +13,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  Inbox
 } from 'lucide-vue-next'
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import ApplicantCard from '@/components/dashboards/ApplicantCard.vue'
@@ -23,9 +24,8 @@ const router = useRouter()
 const jobDetail = ref<Job>()
 const applicantsList = ref<JobApplication[]>([])
 const statusFilter = ref<'all' | 'pending' | 'approved' | 'rejected'>('all')
-const pendingChanges = ref<Map<number, 'pending' | 'approved' | 'rejected'>>(new Map())
+const pendingChanges = ref<Map<string, 'pending' | 'approved' | 'rejected'>>(new Map())
 
-// Statistics computed properties
 const stats = computed(() => {
   const total = applicantsList.value.length
   const pending = applicantsList.value.filter((a) => {
@@ -76,7 +76,7 @@ async function loadApplicants(id?: string) {
   applicantsList.value = mockJobApplications.filter((a) => a.job_id === id)
 }
 
-function updateStatus(applicationId: number, newStatus: 'pending' | 'approved' | 'rejected') {
+function updateStatus(applicationId: string, newStatus: 'pending' | 'approved' | 'rejected') {
   pendingChanges.value.set(applicationId, newStatus)
 }
 
@@ -100,18 +100,6 @@ function cancelChanges() {
   pendingChanges.value.clear()
 }
 
-function viewProfile(studentId: number) {
-  router.push(`/student/profile/${studentId}`)
-}
-
-function viewLetter(applicationId: number) {
-  const application = applicantsList.value.find((a) => a.id === applicationId)
-  if (application?.letter_of_application) {
-    // You can implement a modal or navigate to a separate page
-    alert(application.letter_of_application)
-  }
-}
-
 onMounted(() => {
   const jobId = route.params.id as string
   loadJob(jobId)
@@ -122,9 +110,12 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-white">
-    <!-- Job Detail Section -->
     <section v-if="jobDetail" class="bg-gray-100 shadow-sm border-b px-[8vw] md:px-[12vw]">
+      
+      <!-- Job Detail Section -->
       <div class="w-full mx-auto py-8">
+
+        <!-- Job information -->
         <div>
           <button
             @click="router.back()"
@@ -159,7 +150,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Statistics Cards with Click to Filter -->
+        <!-- Statistics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           <div @click="setStatusFilter('all')" class="cursor-pointer">
             <DashboardStatCard
@@ -246,19 +237,7 @@ onMounted(() => {
         v-if="filteredApplicants.length === 0"
         class="text-center py-12 bg-white rounded-lg shadow-sm"
       >
-        <svg
-          class="w-16 h-16 mx-auto text-gray-400 mb-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-          />
-        </svg>
+        <Inbox class="w-12 h-12 mx-auto text-gray-400 mb-4" />
         <p class="text-gray-500 text-lg">No applicants in this category</p>
       </div>
 
@@ -270,9 +249,7 @@ onMounted(() => {
             ...applicant,
             status: pendingChanges.get(applicant.id) || applicant.status,
           }"
-          @update-status="updateStatus"
-          @view-profile="viewProfile"
-          @view-letter="viewLetter"
+          @updateStatus="updateStatus"
         />
       </div>
     </section>

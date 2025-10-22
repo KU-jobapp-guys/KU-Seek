@@ -9,6 +9,7 @@ import {
   File,
   FileText,
   Check,
+  MapPin,
   X,
 } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
@@ -19,7 +20,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  updateStatus: [id: number, status: 'pending' | 'approved' | 'rejected']
+  updateStatus: [id: string, status: 'pending' | 'approved' | 'rejected']
 }>()
 
 const localStatus = ref(props.applicant.status)
@@ -104,6 +105,11 @@ watch(
         <div class="flex items-center gap-2">
           <Banknote class="w-5 h-5 text-gray-400" />
           <span class="text-gray-700">Expected: {{ applicant.expected_salary }}</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <MapPin class="w-5 h-5 text-gray-400" />
+          <span class="text-gray-700">Location: {{ applicant.location }}</span>
         </div>
       </div>
 

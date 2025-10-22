@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 import { onMounted, ref } from 'vue'
-import JobPostForm from '@/components/job-post-form/JobPostForm.vue'
+import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
 

@@ -3,12 +3,12 @@ import { ref, computed, onMounted, watch } from 'vue'
 import type { Job } from '@/types/jobType'
 
 // Import components
-import BaseInput from '@/components/job-post-form/BaseInput.vue'
-import BaseTextarea from '@/components/job-post-form/BaseTextarea.vue'
-import TagInput from '@/components/job-post-form/TagInput.vue'
-import ContactField from '@/components/job-post-form/ContactField.vue'
-import SalaryInput from '@/components/job-post-form/SalaryInput.vue'
-import SearchableTagInput from '@/components/job-post-form/SearchableTagInput.vue'
+import BaseInput from './inputs/BaseInput.vue'
+import BaseTextarea from './inputs/BaseTextarea.vue'
+import TagInput from './inputs/TagInput.vue'
+import ContactField from './inputs/ContactField.vue'
+import SalaryInput from './inputs/SalaryInput.vue'
+import SearchableTagInput from './inputs/SearchableTagInput.vue'
 
 const props = defineProps<{
   initialData?: Job

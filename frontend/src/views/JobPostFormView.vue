@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import JobPostForm from '@/components/job-post-form/JobPostForm.vue'
+import JobPostForm from '@/components/jobPostForm/JobPostForm.vue';
 
 // Form state
 const jobPost = ref({

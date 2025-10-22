@@ -7,6 +7,7 @@ import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-n
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
 import { getUserRole, isOwner } from '@/libs/userUtils'
+import { IconMap } from '@/configs/contactConfig'
 
 const props = defineProps<{ jobId: string }>()
 const router = useRouter()
@@ -99,7 +100,7 @@ watch(
 
       <p class="mt-12">{{ job.description }}</p>
 
-      <div class="mb-20">
+      <div class="mb-12">
         <p class="font-bold mt-12">Skills</p>
         <div class="flex flex-wrap gap-2 mt-2">
           <p
@@ -110,6 +111,33 @@ watch(
           >
             {{ skill }}
           </p>
+        </div>
+      </div>
+
+      <div v-if="job.tags && job.tags.length > 0" class="mb-12">
+        <p class="font-bold">Tags</p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <p
+            v-for="(tag, i) in job.tags"
+            :key="i"
+            class="text-white px-4 py-1 rounded-3xl bg-blue-500"
+          >
+            {{ tag }}
+          </p>
+        </div>
+      </div>
+
+      <div v-if="job.contacts && job.contacts.length > 0" class="mb-20">
+        <p class="font-bold">Contact Information</p>
+        <div class="flex flex-col gap-y-2 mt-2">
+          <div
+            v-for="(contact, i) in job.contacts"
+            :key="i"
+            class="flex gap-x-2 items-center"
+          >
+            <component :is="IconMap[contact.type]" class="text-gray-500 w-4 h-4" />
+            <p>{{ contact.link }}</p>
+          </div>
         </div>
       </div>
 

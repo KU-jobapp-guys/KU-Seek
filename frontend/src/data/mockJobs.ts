@@ -17,6 +17,10 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 2,
     totalApplicants: 5,
+    contacts: [{
+      type: 'email',
+      link: 'info@urbanmobilitytech.com'
+    }]
   },
   {
     jobId: 'datasolutions-analyst-3c4d',
@@ -267,6 +271,17 @@ export const mockJobs: Job[] = [
       'Define product strategy, prioritize features, and work with cross-functional teams.',
     jobType: 'Full-time',
     skills: ['Product Strategy', 'Agile', 'Leadership', 'Analytics'],
+    tags: ['Remote Work'],
+    contacts: [
+      {
+        type: 'email',
+      link: 'info@urbanmobilitytech.com',
+      },
+      {
+        type: 'phone',
+        link: '1234567890',
+      },
+    ],
     salary_min: 75000,
     salary_max: 75000,
     status: 'rejected',

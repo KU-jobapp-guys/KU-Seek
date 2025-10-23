@@ -11,7 +11,6 @@ import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
-import CompanyJobView from '@/views/CompanyJobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 
@@ -88,11 +87,6 @@ const router = createRouter({
       path: '/job/:id/apply',
       name: 'job application',
       component: JobApplicationView,
-    },
-    {
-      path: '/company/job/:id',
-      name: 'company job view',
-      component: CompanyJobView,
     },
     {
       path: '/login',

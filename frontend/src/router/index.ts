@@ -14,6 +14,7 @@ import JobView from '@/views/JobView.vue'
 import CompanyJobView from '@/views/CompanyJobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
+import Example from '@/views/ExampleView.vue'
 
 
 const router = createRouter({
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/',
       name: 'landing',
       component: LandingView,
+    },
+    {
+      path: '/example',
+      name: 'example',
+      component: Example,
     },
     {
       path: '/student/profile/:id',

@@ -47,12 +47,18 @@ const stats = computed(() => {
   return { total, pending, approved, rejected }
 })
 
+function sortApplicant(list: JobApplication[]) {
+  const statusPriority = { pending: 1, approved: 2, rejected: 3 }
+
+  return [...list].sort((a, b) => {
+    return statusPriority[a.status] - statusPriority[b.status]
+  })
+}
+
 const filteredApplicants = computed(() => {
-  if (statusFilter.value === 'all') {
-    return applicantsList.value
-  }
   return applicantsList.value.filter((a) => {
     const currentStatus = pendingChanges.value.get(a.id) || a.status
+    if (statusFilter.value === 'all') return true
     return currentStatus === statusFilter.value
   })
 })
@@ -76,15 +82,15 @@ async function loadApplicants(id?: string) {
     router.replace({ name: 'not found' })
     return
   }
-  applicantsList.value = mockJobApplications.filter((a) => a.job_id === id)
-}
-
-function updateStatus(applicationId: number, newStatus: 'pending' | 'approved' | 'rejected') {
-  pendingChanges.value.set(applicationId, newStatus)
+  applicantsList.value = sortApplicant(mockJobApplications.filter((a) => a.job_id === id))
 }
 
 function setStatusFilter(status: 'all' | 'pending' | 'approved' | 'rejected') {
   statusFilter.value = status
+}
+
+function updateStatus(applicationId: number, newStatus: 'pending' | 'approved' | 'rejected') {
+  pendingChanges.value.set(applicationId, newStatus)
 }
 
 function saveButtonClick() {

@@ -8,7 +8,7 @@ export const mockJobApplications: JobApplication[] = [
     resume: '/uploads/resumes/prima_resume.pdf',
     letter_of_application: '/uploads/letters/prima_letter.pdf',
     phone_number: '0812345678',
-    status: 'pending',
+    status: 'approved',
     applied_at: new Date('2025-08-10T09:00:00'),
     first_name: 'Prima',
     last_name: 'Chantira',

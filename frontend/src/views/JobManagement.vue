@@ -257,10 +257,8 @@ onMounted(() => {
         <ApplicantCard
           v-for="applicant in filteredApplicants"
           :key="applicant.id"
-          :applicant="{
-            ...applicant,
-            status: applicant.status,
-          }"
+          :applicant="applicant"
+          :pending-status="pendingChanges.get(applicant.id)"
           @updateStatus="updateStatus"
         />
       </div>

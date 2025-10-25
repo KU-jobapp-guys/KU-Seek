@@ -24,6 +24,7 @@ const emit = defineEmits<{
 }>()
 
 const localStatus = ref(props.applicant.status)
+const canModify = ref(props.applicant.status === 'pending')
 
 function handleStatusChange(newStatus: 'approved' | 'rejected') {
   localStatus.value = newStatus
@@ -41,7 +42,9 @@ function formatDate(date: Date) {
 watch(
   () => props.applicant.status,
   (newStatus) => {
+    console.log('Applicant status updated from parent:', newStatus)
     localStatus.value = newStatus
+    canModify.value = newStatus === 'pending'
   },
 )
 </script>
@@ -66,8 +69,9 @@ watch(
           </div>
         </div>
 
-        <div v-if="localStatus === 'pending'" class="flex gap-x-2">
+        <div class="flex gap-x-2" v-if="canModify">
           <button
+            v-if="!(localStatus === 'approved')"
             @click="handleStatusChange('approved')"
             class="p-2 shrink-0 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2 font-medium"
           >
@@ -76,6 +80,7 @@ watch(
           </button>
 
           <button
+            v-if="!(localStatus === 'rejected')"
             @click="handleStatusChange('rejected')"
             class="p-2 shrink-0 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 font-medium"
           >
@@ -126,7 +131,6 @@ watch(
         <a
           v-if="applicant.resume"
           :href="applicant.resume"
-          target="_blank"
           class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <File class="w-5 h-5" />

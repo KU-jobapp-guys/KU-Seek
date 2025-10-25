@@ -16,7 +16,9 @@ import {
   Inbox,
 } from 'lucide-vue-next'
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
-import ApplicantCard from '@/components/dashboards/ApplicantCard.vue'
+import ApplicantCard from '@/components/jobManagement/ApplicantCard.vue'
+import ConfirmSaveModal from '@/components/jobManagement/ConfirmSaveModal.vue'
+
 
 const route = useRoute()
 const router = useRouter()
@@ -25,6 +27,7 @@ const jobDetail = ref<Job>()
 const applicantsList = ref<JobApplication[]>([])
 const statusFilter = ref<'all' | 'pending' | 'approved' | 'rejected'>('all')
 const pendingChanges = ref<Map<number, 'pending' | 'approved' | 'rejected'>>(new Map())
+const isModalOpen = ref(false)
 
 // Statistics computed properties
 const stats = computed(() => {
@@ -85,32 +88,30 @@ function setStatusFilter(status: 'all' | 'pending' | 'approved' | 'rejected') {
   statusFilter.value = status
 }
 
-async function saveChanges() {
-  for (const [id, status] of pendingChanges.value.entries()) {
-    const application = applicantsList.value.find((a) => a.id === id)
-    if (application) {
-      application.status = status
-      console.log(`Saved application ${id} with status ${status}`)
-    }
-  }
+function saveButtonClick() {
+  isModalOpen.value = true
+}
 
+function handleModalClick(status: 'save' | 'cancel') {
+  if (status === 'save') {
+    saveChanges()
+  }
+  isModalOpen.value = false
+}
+
+async function saveChanges() {
+  applicantsList.value = applicantsList.value.map((applicant) => {
+    const newStatus = pendingChanges.value.get(applicant.id)
+    if (newStatus) {
+      return { ...applicant, status: newStatus }
+    }
+    return applicant
+  })
   pendingChanges.value.clear()
 }
 
 function cancelChanges() {
   pendingChanges.value.clear()
-}
-
-function viewProfile(studentId: number) {
-  router.push(`/student/profile/${studentId}`)
-}
-
-function viewLetter(applicationId: number) {
-  const application = applicantsList.value.find((a) => a.id === applicationId)
-  if (application?.letter_of_application) {
-    // You can implement a modal or navigate to a separate page
-    alert(application.letter_of_application)
-  }
 }
 
 onMounted(() => {
@@ -236,7 +237,7 @@ onMounted(() => {
             Cancel Changes
           </button>
           <button
-            @click="saveChanges"
+            @click="saveButtonClick"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
           >
             Save Changes ({{ pendingChanges.size }})
@@ -258,11 +259,22 @@ onMounted(() => {
           :key="applicant.id"
           :applicant="{
             ...applicant,
-            status: pendingChanges.get(applicant.id) || applicant.status,
+            status: applicant.status,
           }"
           @updateStatus="updateStatus"
         />
       </div>
     </section>
   </div>
+
+  <section v-if="isModalOpen">
+    <ConfirmSaveModal
+      :changes="pendingChanges"
+      :applicants="applicantsList.reduce((map, applicant) => {
+        map.set(applicant.id, { name: `${applicant.first_name} ${applicant.last_name}` })
+        return map
+      }, new Map<number, { name: string }>())"
+      @handleModalClick="handleModalClick"
+    />
+  </section>
 </template>

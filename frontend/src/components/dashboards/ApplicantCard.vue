@@ -1,0 +1,140 @@
+<script setup lang="ts">
+import type { JobApplication } from '@/types/applicationType'
+import {
+  Mail,
+  Phone,
+  BriefcaseBusiness,
+  Banknote,
+  User,
+  File,
+  FileText,
+  Check,
+  X,
+} from 'lucide-vue-next'
+import { ref, watch } from 'vue'
+import { getStatusColor } from '@/libs/getStatusStyle'
+
+const props = defineProps<{
+  applicant: JobApplication
+}>()
+
+const emit = defineEmits<{
+  updateStatus: [id: number, status: 'pending' | 'approved' | 'rejected']
+}>()
+
+const localStatus = ref(props.applicant.status)
+
+function handleStatusChange(newStatus: 'approved' | 'rejected') {
+  localStatus.value = newStatus
+  emit('updateStatus', props.applicant.id, newStatus)
+}
+
+function formatDate(date: Date) {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+watch(
+  () => props.applicant.status,
+  (newStatus) => {
+    localStatus.value = newStatus
+  },
+)
+</script>
+
+<template>
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 shadow-lg">
+    <div class="p-6">
+      <!-- Header -->
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <span
+            :class="getStatusColor(localStatus)"
+            class="px-3 py-1 rounded-full text-sm font-medium border capitalize"
+          >
+            {{ localStatus }}
+          </span>
+          <div class="flex-1 mt-2">
+            <h3 class="text-2xl font-semibold text-gray-900">
+              {{ applicant.first_name }} {{ applicant.last_name }}
+            </h3>
+            <p class="text-gray-600 text-sm">Applied on {{ formatDate(applicant.applied_at) }}</p>
+          </div>
+        </div>
+
+        <div v-if="localStatus === 'pending'" class="flex gap-x-2">
+          <button
+            @click="handleStatusChange('approved')"
+            class="p-2 shrink-0 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2 font-medium"
+          >
+            <Check class="w-5 h-5 md:w-full md:h-full" />
+            <span class="hidden md:block">Approve</span>
+          </button>
+
+          <button
+            @click="handleStatusChange('rejected')"
+            class="p-2 shrink-0 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 font-medium"
+          >
+            <X class="w-5 h-5" />
+            <span class="hidden md:block">Reject</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Details Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
+        <div class="flex items-center gap-2">
+          <Mail class="w-5 h-5 text-gray-400" />
+          <span class="text-gray-700">{{ applicant.contact_email }}</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <Phone class="w-5 h-5 text-gray-400" />
+          <span class="text-gray-700">{{ applicant.phone_number }}</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <BriefcaseBusiness class="w-5 h-5 text-gray-400" />
+          <span class="text-gray-700">{{ applicant.years_of_experience }} years experience</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <Banknote class="w-5 h-5 text-gray-400" />
+          <span class="text-gray-700">Expected: {{ applicant.expected_salary }}</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col md:flex-row gap-3 pt-4 border-t text-base border-gray-200">
+        <router-link
+          :to="`/student/profile/${applicant.student_id}`"
+          class="flex-1 sm:flex-none px-4 py-2 bg-[#6495ED] hover:bg-[#6495ED]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <User class="w-5 h-5" />
+          View Profile
+        </router-link>
+
+        <a
+          v-if="applicant.resume"
+          :href="applicant.resume"
+          target="_blank"
+          class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <File class="w-5 h-5" />
+          Resume
+        </a>
+
+        <button
+          v-if="applicant.letter_of_application"
+          class="px-4 py-2 bg-[#4682B4] hover:bg-[#4682B4]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <FileText class="w-5 h-5" />
+          Application Letter
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

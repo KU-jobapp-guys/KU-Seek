@@ -13,6 +13,7 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
+import SettingView from '@/views/SettingView.vue'
 
 
 const router = createRouter({
@@ -47,6 +48,11 @@ const router = createRouter({
       path: '/professor/profile/:id',
       name: 'professorProfile',
       component: ProfessorProfile,
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      component: SettingView,
     },
     {
       path: '/student/dashboard',

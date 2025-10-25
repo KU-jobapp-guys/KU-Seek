@@ -80,11 +80,11 @@ onMounted(() => {
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
           <button 
-            class="flex px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2"
+            class="flex items-center px-4 md:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2"
           >
-            <Plus class="h-5 w-5" />
+            <Plus class="w-4 h-4 md:h-5 md:w-5" />
             <span class="hidden md:inline">Create New Job Post</span>
-            <span class="md:hidden">New Job</span>
+            <span class="hidden sm:inline md:hidden">New Job</span>
           </button>
         </div>
 

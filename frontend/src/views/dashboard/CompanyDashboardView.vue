@@ -79,7 +79,7 @@ onMounted(() => {
       <div class="rounded-xl bg-gray-100 px-4 md:px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
-          <button 
+          <button
             class="flex items-center px-4 md:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2"
           >
             <Plus class="w-4 h-4 md:h-5 md:w-5" />

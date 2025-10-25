@@ -19,7 +19,6 @@ import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import ApplicantCard from '@/components/jobManagement/ApplicantCard.vue'
 import ConfirmSaveModal from '@/components/jobManagement/ConfirmSaveModal.vue'
 
-
 const route = useRoute()
 const router = useRouter()
 
@@ -268,10 +267,12 @@ onMounted(() => {
   <section v-if="isModalOpen">
     <ConfirmSaveModal
       :changes="pendingChanges"
-      :applicants="applicantsList.reduce((map, applicant) => {
-        map.set(applicant.id, { name: `${applicant.first_name} ${applicant.last_name}` })
-        return map
-      }, new Map<number, { name: string }>())"
+      :applicants="
+        applicantsList.reduce((map, applicant) => {
+          map.set(applicant.id, { name: `${applicant.first_name} ${applicant.last_name}` })
+          return map
+        }, new Map<number, { name: string }>())
+      "
       @handleModalClick="handleModalClick"
     />
   </section>

@@ -67,7 +67,9 @@ function formatDate(date: Date) {
             :disabled="localStatus === 'approved'"
             :class="[
               'p-2 shrink-0 px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2 font-medium',
-              localStatus === 'approved' ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'
+              localStatus === 'approved'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600',
             ]"
           >
             <Check class="w-5 h-5 md:w-full md:h-full" />
@@ -79,7 +81,9 @@ function formatDate(date: Date) {
             :disabled="localStatus === 'rejected'"
             :class="[
               'p-2 shrink-0 px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2 font-medium',
-              localStatus === 'rejected' ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
+              localStatus === 'rejected'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-red-500 hover:bg-red-600',
             ]"
           >
             <X class="w-5 h-5" />

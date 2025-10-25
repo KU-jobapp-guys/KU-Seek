@@ -114,7 +114,7 @@
           <h2 class="text-3xl font-bold text-center mb-6 flex-shrink-0">Register</h2>
 
           <!-- Scrollable Fields -->
-          <div class="flex-1 overflow-y-auto space-y-4">
+          <div class="flex-1 overflow-y-auto space-y-4 px-2">
             <form @submit.prevent="handleSubmit" class="space-y-4">
               <!-- Shared Fields -->
               <div>
@@ -165,15 +165,16 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-gray-600 text-sm mb-1">Company size</label>
-                  <input
-                    type="number"
-                    step="1"
-                    min="1"
+                  <label class="block text-gray-600 text-sm mb-1">Company Size</label>
+                  <select
                     v-model="form.companySize"
-                    class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your company size"
-                  />
+                    class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  >
+                    <option value="" disabled selected>Select company size</option>
+                    <option v-for="size in companySizeOptions" :key="size" :value="size">
+                      {{ size }}
+                    </option>
+                  </select>
                 </div>
               </template>
 
@@ -228,6 +229,13 @@ const form_role = ref<'staff' | 'company'>('staff')
 
 const staffFileText = ref('Upload one of the following: Physical/Digital KU ID, Transcript')
 const companyFileText = ref('Upload a business license or equivalent document')
+
+const companySizeOptions = [
+  'less than 100',
+  '101 - 1,000',
+  '1,001 - 10,000',
+  'more than 10,000'
+]
 
 const form = reactive({
   type: form_role,

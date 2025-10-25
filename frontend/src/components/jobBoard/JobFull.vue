@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import type { Job } from '@/types/jobType'
-import { mockJobs } from '@/data/mockJobs'
+import { fetchJobs } from '@/services/jobService'
 import { useRouter } from 'vue-router'
 import { MapPin, Clock, Banknote, BriefcaseBusiness } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
@@ -11,13 +11,14 @@ const props = defineProps<{ jobId: string }>()
 const router = useRouter()
 const job = ref<Job | null>(null)
 
-const loadJob = (id?: string) => {
+const loadJob = async (id?: string) => {
   if (!id) {
     job.value = null
     return
   }
 
-  job.value = mockJobs.find((j) => j.jobId === id) || null
+  const list = await fetchJobs()
+  job.value = list.find((j) => j.jobId === id) || null
 
   if (!job.value) {
     router.replace({ name: 'not found' })
@@ -90,7 +91,7 @@ const goToApply = () => {
         >
           Apply
         </button>
-        <button class="hover:bg-gray-200 border border-2 border-gray-600 px-8 py-1 rounded-md">
+  <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
           Save
         </button>
       </div>

@@ -8,7 +8,7 @@ export const mockJobApplications: JobApplication[] = [
     resume: '/uploads/resumes/prima_resume.pdf',
     letter_of_application: '/uploads/letters/prima_letter.pdf',
     phone_number: '0812345678',
-    status: 'approved',
+    status: 'pending',
     applied_at: new Date('2025-08-10T09:00:00'),
     first_name: 'Prima',
     last_name: 'Chantira',
@@ -67,7 +67,7 @@ export const mockJobApplications: JobApplication[] = [
   },
   {
     id: 5,
-    job_id: 'greenenergy-devops-9i0j',
+    job_id: 'urban-datasci-5e6f',
     student_id: 1,
     resume: '/uploads/resumes/pong_resume.pdf',
     letter_of_application: '/uploads/letters/pong_letter.pdf',
@@ -83,7 +83,7 @@ export const mockJobApplications: JobApplication[] = [
   },
   {
     id: 6,
-    job_id: 'meditech-data-1k2l',
+    job_id: 'urban-datasci-5e6f',
     student_id: 2,
     resume: '/uploads/resumes/mai_resume.pdf',
     letter_of_application: '/uploads/letters/mai_letter.pdf',
@@ -99,7 +99,7 @@ export const mockJobApplications: JobApplication[] = [
   },
   {
     id: 7,
-    job_id: 'logistics-qa-3m4n',
+    job_id: 'urban-datasci-5e6f',
     student_id: 3,
     resume: '/uploads/resumes/aof_resume.pdf',
     letter_of_application: '/uploads/letters/aof_letter.pdf',
@@ -115,7 +115,7 @@ export const mockJobApplications: JobApplication[] = [
   },
   {
     id: 8,
-    job_id: 'techcorp-backend-2b3c',
+    job_id: 'urban-datasci-5e6f',
     student_id: 2,
     resume: '/uploads/resumes/nam_resume.pdf',
     letter_of_application: '/uploads/letters/nam_letter.pdf',
@@ -131,7 +131,7 @@ export const mockJobApplications: JobApplication[] = [
   },
   {
     id: 9,
-    job_id: 'techcorp-pm-6f7g',
+    job_id: 'urban-datasci-5e6f',
     student_id: 1,
     resume: '/uploads/resumes/boom_resume.pdf',
     letter_of_application: '/uploads/letters/boom_letter.pdf',
@@ -147,7 +147,7 @@ export const mockJobApplications: JobApplication[] = [
   },
   {
     id: 10,
-    job_id: 'techcorp-datasci-5e6f',
+    job_id: 'urban-datasci-5e6f',
     student_id: 1,
     resume: '/uploads/resumes/fah_resume.pdf',
     letter_of_application: '/uploads/letters/fah_letter.pdf',

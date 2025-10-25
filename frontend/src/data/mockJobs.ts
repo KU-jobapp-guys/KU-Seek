@@ -15,12 +15,14 @@ export const mockJobs: Job[] = [
     salary_min: 50000,
     salary_max: 50000,
     status: 'approved',
-    pendingApplicants: 2,
-    totalApplicants: 5,
-    contacts: [{
-      type: 'email',
-      link: 'info@urbanmobilitytech.com'
-    }]
+    pendingApplicants: 0,
+    totalApplicants: 0,
+    contacts: [
+      {
+        type: 'email',
+        link: 'info@urbanmobilitytech.com'
+      }
+    ]
   },
   {
     jobId: 'datasolutions-analyst-3c4d',
@@ -36,8 +38,8 @@ export const mockJobs: Job[] = [
     salary_min: 40000,
     salary_max: 40000,
     status: 'approved',
-    pendingApplicants: 3,
-    totalApplicants: 4,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'fintech-backend-5e6f',
@@ -53,8 +55,8 @@ export const mockJobs: Job[] = [
     salary_min: 60000,
     salary_max: 60000,
     status: 'approved',
-    pendingApplicants: 4,
-    totalApplicants: 6,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'creative-uiux-7g8h',
@@ -70,8 +72,8 @@ export const mockJobs: Job[] = [
     salary_min: 45000,
     salary_max: 45000,
     status: 'approved',
-    pendingApplicants: 4,
-    totalApplicants: 6,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'greenenergy-devops-9i0j',
@@ -104,8 +106,8 @@ export const mockJobs: Job[] = [
     salary_min: 60000,
     salary_max: 60000,
     status: 'approved',
-    pendingApplicants: 20,
-    totalApplicants: 30,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'logistics-qa-3m4n',
@@ -121,8 +123,8 @@ export const mockJobs: Job[] = [
     salary_min: 35000,
     salary_max: 35000,
     status: 'approved',
-    pendingApplicants: 14,
-    totalApplicants: 16,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'fintech-qa-5o6p',
@@ -155,8 +157,8 @@ export const mockJobs: Job[] = [
     salary_min: 50000,
     salary_max: 50000,
     status: 'approved',
-    pendingApplicants: 40,
-    totalApplicants: 60,
+    pendingApplicants: 4,
+    totalApplicants: 4,
   },
   {
     jobId: 'marketing-creative-9s0t',
@@ -189,8 +191,8 @@ export const mockJobs: Job[] = [
     salary_min: 50000,
     salary_max: 50000,
     status: 'approved',
-    pendingApplicants: 4,
-    totalApplicants: 6,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'urban-backend-2b3c',
@@ -206,8 +208,8 @@ export const mockJobs: Job[] = [
     salary_min: 70000,
     salary_max: 70000,
     status: 'approved',
-    pendingApplicants: 4,
-    totalApplicants: 6,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'urban-uiux-3c4d',
@@ -223,8 +225,8 @@ export const mockJobs: Job[] = [
     salary_min: 30000,
     salary_max: 30000,
     status: 'approved',
-    pendingApplicants: 20,
-    totalApplicants: 24,
+    pendingApplicants: 0,
+    totalApplicants: 0,
   },
   {
     jobId: 'urban-devops-4d5e',
@@ -257,8 +259,8 @@ export const mockJobs: Job[] = [
     salary_min: 65000,
     salary_max: 65000,
     status: 'approved',
-    pendingApplicants: 40,
-    totalApplicants: 60,
+    pendingApplicants: 3,
+    totalApplicants: 6,
   },
   {
     jobId: 'urban-pm-6f7g',
@@ -275,7 +277,7 @@ export const mockJobs: Job[] = [
     contacts: [
       {
         type: 'email',
-      link: 'info@urbanmobilitytech.com',
+        link: 'info@urbanmobilitytech.com',
       },
       {
         type: 'phone',

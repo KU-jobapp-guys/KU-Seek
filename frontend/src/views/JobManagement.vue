@@ -13,9 +13,11 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  Inbox,
 } from 'lucide-vue-next'
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
-import ApplicantCard from '@/components/dashboards/ApplicantCard.vue'
+import ApplicantCard from '@/components/jobManagement/ApplicantCard.vue'
+import ConfirmSaveModal from '@/components/jobManagement/ConfirmSaveModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +26,7 @@ const jobDetail = ref<Job>()
 const applicantsList = ref<JobApplication[]>([])
 const statusFilter = ref<'all' | 'pending' | 'approved' | 'rejected'>('all')
 const pendingChanges = ref<Map<number, 'pending' | 'approved' | 'rejected'>>(new Map())
+const isModalOpen = ref(false)
 
 // Statistics computed properties
 const stats = computed(() => {
@@ -44,12 +47,18 @@ const stats = computed(() => {
   return { total, pending, approved, rejected }
 })
 
+function sortApplicant(list: JobApplication[]) {
+  const statusPriority = { pending: 1, approved: 2, rejected: 3 }
+
+  return [...list].sort((a, b) => {
+    return statusPriority[a.status] - statusPriority[b.status]
+  })
+}
+
 const filteredApplicants = computed(() => {
-  if (statusFilter.value === 'all') {
-    return applicantsList.value
-  }
   return applicantsList.value.filter((a) => {
     const currentStatus = pendingChanges.value.get(a.id) || a.status
+    if (statusFilter.value === 'all') return true
     return currentStatus === statusFilter.value
   })
 })
@@ -73,43 +82,41 @@ async function loadApplicants(id?: string) {
     router.replace({ name: 'not found' })
     return
   }
-  applicantsList.value = mockJobApplications.filter((a) => a.job_id === id)
-}
-
-function updateStatus(applicationId: number, newStatus: 'pending' | 'approved' | 'rejected') {
-  pendingChanges.value.set(applicationId, newStatus)
+  applicantsList.value = sortApplicant(mockJobApplications.filter((a) => a.job_id === id))
 }
 
 function setStatusFilter(status: 'all' | 'pending' | 'approved' | 'rejected') {
   statusFilter.value = status
 }
 
-async function saveChanges() {
-  for (const [id, status] of pendingChanges.value.entries()) {
-    const application = applicantsList.value.find((a) => a.id === id)
-    if (application) {
-      application.status = status
-      console.log(`Saved application ${id} with status ${status}`)
-    }
-  }
+function updateStatus(applicationId: number, newStatus: 'pending' | 'approved' | 'rejected') {
+  pendingChanges.value.set(applicationId, newStatus)
+}
 
+function saveButtonClick() {
+  isModalOpen.value = true
+}
+
+function handleModalClick(status: 'save' | 'cancel') {
+  if (status === 'save') {
+    saveChanges()
+  }
+  isModalOpen.value = false
+}
+
+async function saveChanges() {
+  applicantsList.value = applicantsList.value.map((applicant) => {
+    const newStatus = pendingChanges.value.get(applicant.id)
+    if (newStatus) {
+      return { ...applicant, status: newStatus }
+    }
+    return applicant
+  })
   pendingChanges.value.clear()
 }
 
 function cancelChanges() {
   pendingChanges.value.clear()
-}
-
-function viewProfile(studentId: number) {
-  router.push(`/student/profile/${studentId}`)
-}
-
-function viewLetter(applicationId: number) {
-  const application = applicantsList.value.find((a) => a.id === applicationId)
-  if (application?.letter_of_application) {
-    // You can implement a modal or navigate to a separate page
-    alert(application.letter_of_application)
-  }
 }
 
 onMounted(() => {
@@ -122,9 +129,10 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-white">
-    <!-- Job Detail Section -->
     <section v-if="jobDetail" class="bg-gray-100 shadow-sm border-b px-[8vw] md:px-[12vw]">
+      <!-- Job Detail Section -->
       <div class="w-full mx-auto py-8">
+        <!-- Job information -->
         <div>
           <button
             @click="router.back()"
@@ -159,7 +167,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Statistics Cards with Click to Filter -->
+        <!-- Statistics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           <div @click="setStatusFilter('all')" class="cursor-pointer">
             <DashboardStatCard
@@ -234,7 +242,7 @@ onMounted(() => {
             Cancel Changes
           </button>
           <button
-            @click="saveChanges"
+            @click="saveButtonClick"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
           >
             Save Changes ({{ pendingChanges.size }})
@@ -246,19 +254,7 @@ onMounted(() => {
         v-if="filteredApplicants.length === 0"
         class="text-center py-12 bg-white rounded-lg shadow-sm"
       >
-        <svg
-          class="w-16 h-16 mx-auto text-gray-400 mb-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-          />
-        </svg>
+        <Inbox class="w-12 h-12 mx-auto text-gray-400 mb-4" />
         <p class="text-gray-500 text-lg">No applicants in this category</p>
       </div>
 
@@ -266,15 +262,24 @@ onMounted(() => {
         <ApplicantCard
           v-for="applicant in filteredApplicants"
           :key="applicant.id"
-          :applicant="{
-            ...applicant,
-            status: pendingChanges.get(applicant.id) || applicant.status,
-          }"
-          @update-status="updateStatus"
-          @view-profile="viewProfile"
-          @view-letter="viewLetter"
+          :applicant="applicant"
+          :pending-status="pendingChanges.get(applicant.id)"
+          @updateStatus="updateStatus"
         />
       </div>
     </section>
   </div>
+
+  <section v-if="isModalOpen">
+    <ConfirmSaveModal
+      :changes="pendingChanges"
+      :applicants="
+        applicantsList.reduce((map, applicant) => {
+          map.set(applicant.id, { name: `${applicant.first_name} ${applicant.last_name}` })
+          return map
+        }, new Map<number, { name: string }>())
+      "
+      @handleModalClick="handleModalClick"
+    />
+  </section>
 </template>

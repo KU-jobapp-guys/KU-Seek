@@ -2,7 +2,6 @@
 import type { Job } from '@/types/jobType'
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 
-
 const handleSubmit = (payload: Partial<Job>): void => {
   console.log('Submitting Job Post:', payload)
 

@@ -5,11 +5,14 @@ export interface Job {
   location: string
   postTime: Date
   description: string
-  highlights: string[]
   jobType: string
   jobLevel: string
   skills: string[]
-  salary?: string
+  workfields?: string[]
+  contacts?: { type: string; link: string }[]
+  tags?: string[]
+  salary_min: number
+  salary_max: number
   status: string
   totalApplicants: number
   pendingApplicants: number

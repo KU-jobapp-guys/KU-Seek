@@ -20,7 +20,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  updateStatus: [id: string, status: 'pending' | 'approved' | 'rejected']
+  updateStatus: [id: number, status: 'pending' | 'approved' | 'rejected']
 }>()
 
 const localStatus = ref(props.applicant.status)

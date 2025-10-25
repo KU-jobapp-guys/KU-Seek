@@ -85,7 +85,7 @@ const toggleSkillsExpansion = () => {
         <!-- Skill Toggle Button -->
         <div v-if="job.skills.length > 3">
           <button
-            @click="toggleSkillsExpansion"
+            @click.stop.prevent="toggleSkillsExpansion"
             class="rounded-full bg-gray-200 text-gray-600 py-1 px-3 text-xs hover:bg-gray-300 transition-colors duration-200 whitespace-nowrap"
           >
             {{ isExpandedSkill ? 'Show less' : `+ ${job.skills.length - 3} more` }}

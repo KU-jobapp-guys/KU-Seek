@@ -24,8 +24,9 @@ const router = useRouter()
 const jobDetail = ref<Job>()
 const applicantsList = ref<JobApplication[]>([])
 const statusFilter = ref<'all' | 'pending' | 'approved' | 'rejected'>('all')
-const pendingChanges = ref<Map<string, 'pending' | 'approved' | 'rejected'>>(new Map())
+const pendingChanges = ref<Map<number, 'pending' | 'approved' | 'rejected'>>(new Map())
 
+// Statistics computed properties
 const stats = computed(() => {
   const total = applicantsList.value.length
   const pending = applicantsList.value.filter((a) => {
@@ -76,7 +77,7 @@ async function loadApplicants(id?: string) {
   applicantsList.value = mockJobApplications.filter((a) => a.job_id === id)
 }
 
-function updateStatus(applicationId: string, newStatus: 'pending' | 'approved' | 'rejected') {
+function updateStatus(applicationId: number, newStatus: 'pending' | 'approved' | 'rejected') {
   pendingChanges.value.set(applicationId, newStatus)
 }
 
@@ -98,6 +99,18 @@ async function saveChanges() {
 
 function cancelChanges() {
   pendingChanges.value.clear()
+}
+
+function viewProfile(studentId: number) {
+  router.push(`/student/profile/${studentId}`)
+}
+
+function viewLetter(applicationId: number) {
+  const application = applicantsList.value.find((a) => a.id === applicationId)
+  if (application?.letter_of_application) {
+    // You can implement a modal or navigate to a separate page
+    alert(application.letter_of_application)
+  }
 }
 
 onMounted(() => {
@@ -137,9 +150,9 @@ onMounted(() => {
               <MapPin class="h-5 w-5" />
               {{ jobDetail.location }}
             </div>
-            <div v-if="jobDetail.salary" class="flex items-center gap-2">
+            <div class="flex items-center gap-2">
               <Banknote class="h-5 w-5" />
-              {{ jobDetail.salary }}
+              {{ jobDetail.salary_min }} - {{ jobDetail.salary_max }} THB/month
             </div>
             <div class="flex items-center gap-2">
               <BriefcaseBusiness class="h-5 w-5" />

@@ -18,8 +18,8 @@ const props = defineProps<{
 const userId = getUserId()
 const userData = ref<Profile | null>(null)
 
-const companyList = ['Dashboard']
-const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard']
+const companyList = ['Dashboard', 'Logout']
+const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Logout']
 const profileList = ['Profile', 'Setting', 'Logout']
 const defaultList = ['Register', 'Login']
 const openMenu = ref<'page' | 'profile' | null>(null)

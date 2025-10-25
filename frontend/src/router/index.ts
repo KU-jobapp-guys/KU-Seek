@@ -13,6 +13,8 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
+import Registration from '@/views/RegistrationView.vue'
+
 import JobManagement from '@/views/JobManagement.vue'
 
 const router = createRouter({
@@ -22,6 +24,12 @@ const router = createRouter({
       path: '/',
       name: 'landing',
       component: LandingView,
+    },
+    {
+      path: '/registration',
+      name: 'registration',
+      component: Registration,
+      meta: {noFooter: true}
     },
     {
       path: '/student/profile/:id',
@@ -50,7 +58,7 @@ const router = createRouter({
     },
     {
       path: '/student/dashboard',
-      name: 'StudentDashboard',
+      name: 'studentDashboard',
       component: StudentDashboardView,
     },
     {

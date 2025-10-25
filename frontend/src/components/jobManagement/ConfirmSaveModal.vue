@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Save, X } from 'lucide-vue-next'
+import { CheckCircle, XCircle, X } from 'lucide-vue-next'
 
 const { changes, applicants } = defineProps<{
   changes: Map<number, 'pending' | 'approved' | 'rejected'>
-  applicants: Map<number, { name: string }> // Add applicants map with id -> name
+  applicants: Map<number, { name: string }>
 }>()
 
 const groupedChanges = computed(() => {
@@ -25,77 +25,109 @@ const groupedChanges = computed(() => {
   return { approved, rejected }
 })
 
+const totalChanges = computed(
+  () => groupedChanges.value.approved.length + groupedChanges.value.rejected.length,
+)
+
 const emit = defineEmits<{
   (e: 'handleModalClick', status: 'save' | 'cancel'): void
 }>()
 </script>
 
 <template>
-  <div class="fixed inset-0 flex items-center justify-center z-50">
-    <div class="absolute inset-0 bg-black opacity-50"></div>
-    <div class="relative bg-white rounded-lg overflow-y-auto shadow-lg z-50 max-w-2xl w-full mx-4">
+  <div class="fixed inset-0 flex items-center justify-center z-50 p-4">
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+      @click="emit('handleModalClick', 'cancel')"
+    ></div>
+
+    <!-- Modal -->
+    <div
+      class="relative bg-white rounded-2xl shadow-2xl z-50 max-w-2xl w-full max-h-[90vh] flex flex-col"
+    >
       <X
-        class="absolute text-gray-500 top-4 right-4 cursor-pointer hover:text-gray-600"
         @click="emit('handleModalClick', 'cancel')"
+        class="absolute top-4 right-4 w-5 h-5 rounded-full text-gray-500 hover:text-gray-400 z-10"
       />
 
-      <!-- Modal Header -->
-      <div class="flex flex-col items-center p-4 border-b gap-y-4 mt-8">
-        <div class="h-24 w-24 shrink-0 bg-gray-400 rounded-full p-4">
-          <Save stroke-width="1.5" class="inline-block w-full h-full text-white" />
-        </div>
-        <h3 class="text-2xl font-semibold">Are you sure you want to save these changes?</h3>
+      <!-- Header -->
+      <div class="px-6 pt-6 pb-4 border-b border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-900 pr-8">Confirm Changes</h3>
+        <p class="text-gray-600 mt-1">
+          You're about to update {{ totalChanges }} applicant{{ totalChanges !== 1 ? 's' : '' }}
+        </p>
       </div>
 
-      <!-- Modal Content -->
-      <div class="p-4 max-h-96 overflow-y-auto max-h-[30vh]">
-        <!-- Approved Applicants -->
-        <div v-if="groupedChanges.approved.length > 0" class="mb-4">
-          <h4 class="font-medium mb-2 gap-x-2 flex items-center text-green-700">
-            Approved ({{ groupedChanges.approved.length }})
-          </h4>
-          <ul class="space-y-1">
-            <li
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <!-- Approved Section -->
+        <div v-if="groupedChanges.approved.length > 0">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="p-1.5 bg-green-100 rounded-lg">
+              <CheckCircle class="w-5 h-5 text-green-600" />
+            </div>
+            <h4 class="font-semibold text-gray-900">
+              Approved
+              <span class="text-sm font-normal text-gray-500 ml-1">
+                ({{ groupedChanges.approved.length }})
+              </span>
+            </h4>
+          </div>
+          <div class="space-y-2 max-h-[20vh]">
+            <div
               v-for="applicant in groupedChanges.approved"
               :key="applicant.id"
-              class="text-sm border-2 border-green-500 rounded-md px-3 py-2"
+              class="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-gray-700"
             >
               {{ applicant.name }}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
 
-        <!-- Rejected Applicants -->
-        <div v-if="groupedChanges.rejected.length > 0" class="mb-4">
-          <h4 class="font-medium mb-2 text-red-700">
-            Rejected ({{ groupedChanges.rejected.length }})
-          </h4>
-          <ul class="space-y-1">
-            <li
+        <!-- Rejected Section -->
+        <div v-if="groupedChanges.rejected.length > 0">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="p-1.5 bg-red-100 rounded-lg">
+              <XCircle class="w-5 h-5 text-red-600" />
+            </div>
+            <h4 class="font-semibold text-gray-900">
+              Rejected
+              <span class="text-sm font-normal text-gray-500 ml-1">
+                ({{ groupedChanges.rejected.length }})
+              </span>
+            </h4>
+          </div>
+
+          <div class="space-y-2 max-h-[20vh] overflow-y-auto">
+            <div
               v-for="applicant in groupedChanges.rejected"
               :key="applicant.id"
-              class="text-sm border-2 border-red-300 rounded-md px-3 py-2"
+              class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-gray-700"
             >
               {{ applicant.name }}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="p-4 border-t flex justify-center gap-2">
-        <button
-          class="bg-gray-400 rounded-lg px-4 py-2 text-white hover:cursor-pointer hover:bg-gray-500"
-          @click="emit('handleModalClick', 'cancel')"
-        >
-          Cancel
-        </button>
-        <button
-          class="bg-blue-500 rounded-lg px-4 py-2 text-white hover:cursor-pointer hover:bg-blue-600"
-          @click="emit('handleModalClick', 'save')"
-        >
-          Confirm
-        </button>
+      <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <div class="flex gap-3 justify-end">
+          <button
+            class="px-5 py-2.5 text-gray-700 font-medium rounded-lg bg-gray-200 hover:bg-gray-100 transition-colors"
+            @click="emit('handleModalClick', 'cancel')"
+          >
+            Cancel
+          </button>
+
+          <button
+            class="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            @click="emit('handleModalClick', 'save')"
+          >
+            Save Changes
+          </button>
+        </div>
       </div>
     </div>
   </div>

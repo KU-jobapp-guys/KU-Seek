@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
+import { onMounted } from 'vue'
 
 const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
@@ -114,6 +115,10 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
     alert('Failed to submit job post.')
   }
 }
+
+onMounted(() => {
+  scrollTo(0, 0)
+})
 </script>
 
 <template>

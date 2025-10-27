@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import type { Job } from '@/types/jobType'
+import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 
-// Import components
-import BaseInput from '@/components/job-post-form/BaseInput.vue'
-import BaseTextarea from '@/components/job-post-form/BaseTextarea.vue'
-import TagInput from '@/components/job-post-form/TagInput.vue'
-import ContactField from '@/components/job-post-form/ContactField.vue'
-import SalaryInput from '@/components/job-post-form/SalaryInput.vue'
-import SearchableTagInput from '@/components/job-post-form/SearchableTagInput.vue'
 
+<<<<<<< HEAD
 // Form state
 const jobPost = ref({
   company: '',
@@ -71,6 +66,10 @@ const handleSubmit = async (): Promise<void> => {
     )
     const csrfData = await csrfResponse.json()
     const csrf_token = csrfData.csrf_token
+=======
+const handleSubmit = (payload: Partial<Job>): void => {
+  console.log('Submitting Job Post:', payload)
+>>>>>>> main
 
     // SET THE DEFAULT DELTA YOU NEED TO ADD THEEEEESEEE FIELD OKKKKK!??!?!?!?!?!?
     const defaults = {
@@ -129,6 +128,7 @@ const handleSubmit = async (): Promise<void> => {
     alert('Failed to submit job post.')
   }
 }
+<<<<<<< HEAD
 
 // Prevent accidental submit via Enter/Return
 onMounted(() => {
@@ -276,3 +276,10 @@ onMounted(() => {
     </form>
   </div>
 </template>
+=======
+</script>
+
+<template>
+  <JobPostForm @submit="handleSubmit" />
+</template>
+>>>>>>> main

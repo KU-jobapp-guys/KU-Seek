@@ -1,148 +1,158 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref, computed } from 'vue'
+import { mockJobs } from '@/data/mockJobs'
+import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
-import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
-import JobCard from '@/components/jobBoard/JobBox.vue'
+import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
+import { Search, Filter, ChevronDown } from 'lucide-vue-next'
+import { CompanyStats } from '@/configs/dashboardStatConfig.ts'
+import type { Job } from '@/types/jobType'
+import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
-import jobPostIcon from '@/assets/job-post-icon.svg'
-import appliedIcon from '@/assets/applied-icon.svg'
+const jobLists = ref<Job[]>([])
+const searchQuery = ref('')
+const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
+const sortBy = ref<'default' | 'pendingApplicants'>('pendingApplicants')
 
-import type { Job } from '@/assets/type'
-// import your API function instead of mockJobs
-// import { getTotalJobs, getApplicationJobs, getProfileView} from '@/api/jobs'
-
-type Section = 'total' | 'application'
-
-const openSection = ref<Section>('total')
-const router = useRouter()
-const profileView = ref<number>(0)
-
-const totalJobs = ref<Job[]>([])
-const applicationJobs = ref<Job[]>([])
-
-// Toggle section
-const toggleSection = (section: Section) => {
-  openSection.value = section
+async function loadJob() {
+  jobLists.value = mockJobs
 }
 
-// Navigate to job details
-const handleSelect = (id: string) => {
-  router.push(`/company/job/${id}`)
-}
+const filteredJobs = computed(() => {
+  let filtered = jobLists.value
 
-// Fetch jobs from API
-async function fetchJobs() {
-  try {
-    // Replace these with real API calls
-    // totalJobs.value = await getTotalJobs()
-    // applicationJobs.value = await getApplicationJobs()
-    // profileView = await getProfileView()
-
-    // For demo using mockJobs
-    import('@/data/mockJobs').then(({ mockJobs }) => {
-      totalJobs.value = mockJobs.slice(0, 5)
-      applicationJobs.value = mockJobs.slice(5, 10)
-    })
-    profileView.value = 237
-  } catch (error) {
-    console.error('Failed to fetch jobs:', error)
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(
+      (job) =>
+        job.role?.toLowerCase().includes(query) ||
+        job.company?.toLowerCase().includes(query) ||
+        job.location?.toLowerCase().includes(query),
+    )
   }
+
+  if (statusFilter.value !== 'all') {
+    filtered = filtered.filter((job) => job.status === statusFilter.value)
+  }
+
+  if (sortBy.value === 'pendingApplicants') {
+    filtered = [...filtered].sort((a, b) => {
+      const aPending = a.pendingApplicants || 0
+      const bPending = b.pendingApplicants || 0
+      return bPending - aPending
+    })
+  }
+  console.log(filtered)
+
+  return filtered
+})
+
+function clearFilters() {
+  searchQuery.value = ''
+  statusFilter.value = 'all'
 }
+
+const stats = computed(() => {
+  const totalJobs = jobLists.value.length
+  const totalApplicants = jobLists.value.reduce((sum, j) => sum + (j.totalApplicants || 0), 0)
+  const pendingReview = jobLists.value.reduce((sum, j) => sum + (j.pendingApplicants || 0), 0)
+
+  return { totalJobs, totalApplicants, pendingReview }
+})
 
 onMounted(() => {
-  fetchJobs()
+  loadJob()
 })
 </script>
 
 <template>
-  <div class="dashboard-bg min-h-screen pb-0">
-    <Header page="studentDashboard" />
+  <div class="min-h-screen">
+    <!-- Main Dashboard Section -->
+    <Header page="companyDashboard" />
 
-    <!-- Dashboard Stat Cards -->
-    <div
-      class="relative -mt-16 md:-mt-24 px-[6vw] md:px-[10vw] grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-x-10"
-    >
-      <div class="cursor-pointer" @click="toggleSection('total')">
-        <DashboardStatCard
-          title="Total Job Posts"
-          :value="totalJobs.length"
-          description="Approved Job Posts"
-          :icon="jobPostIcon"
-          :cardClass="
-            openSection === 'total'
-              ? 'bg-red-600 rounded-md text-white shadow-md overflow-hidden'
-              : 'bg-red-400 rounded-md text-white shadow-md overflow-hidden'
-          "
-        />
-      </div>
-
-      <div class="cursor-pointer" @click="toggleSection('application')">
-        <DashboardStatCard
-          title="Totel Job Applications"
-          :value="applicationJobs.length"
-          description="Applicants"
-          :icon="appliedIcon"
-          :cardClass="
-            openSection === 'application'
-              ? 'bg-blue-600 rounded-md text-white shadow-md overflow-hidden'
-              : 'bg-blue-400 rounded-md text-white shadow-md overflow-hidden'
-          "
-        />
-      </div>
+    <div class="relative -mt-40 px-[8vw] md:px-[12vw]">
+      <StatCarousel :stats="CompanyStats" :data="stats" />
     </div>
 
-    <!-- Jobs Section -->
-    <section
-      v-if="openSection === 'total'"
-      class="px-[8vw] md:px-[12vw] pt-16 pb-10 bg-white transition-all"
-    >
-      <div class="flex items-center mb-4">
-        <img :src="jobPostIcon" alt="Totel" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-3xl md:text-4xl font-bold">Total Job Posts</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-2 md:p-3 rounded-lg border mb-4 md:mb-8 text-black"
-      />
-
-      <div class="max-h-[600px] overflow-y-auto pr-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-          <JobCard
-            v-for="job in totalJobs"
-            :key="job.jobId"
-            :job="job"
-            :showBookmark="false"
-            @select="handleSelect"
-          />
+    <!-- Total Job Posts Section -->
+    <section class="text-base relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
+      <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
+          <p class="px-4 py-1 bg-blue-500 rounded-full text-white flex gap-x-1">
+            {{ filteredJobs.length }} <span class="hidden md:block">Jobs</span>
+          </p>
         </div>
-      </div>
-    </section>
 
-    <section
-      v-if="openSection === 'application'"
-      class="px-[8vw] md:px-[12vw] pt-16 pb-10 bg-white transition-all"
-    >
-      <div class="flex items-center mb-4">
-        <img :src="appliedIcon" alt="Application" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-3xl md:text-4xl font-bold">Total Job Application</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-2 md:p-3 rounded-lg border mb-4 md:mb-8 text-black"
-      />
+        <!-- Filter Section -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-4 space">
+          <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search Input -->
+            <div class="w-full space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Search Jobs</label>
+              <div class="relative">
+                <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search by job title, location..."
+                  class="text-sm w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
 
-      <div class="max-h-[600px] overflow-y-auto pr-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-          <JobCard
-            v-for="job in applicationJobs"
-            :key="job.jobId"
-            :job="job"
-            :showBookmark="false"
-            @select="handleSelect"
-          />
+            <div class="w-full flex flex-col md:flex-row gap-x-4 gap-y-2">
+              <!-- Status Filter -->
+              <div class="w-full space-y-2">
+                <label class="text-sm font-semibold text-gray-700">Job Status</label>
+                <div class="relative">
+                  <Filter class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <select
+                    v-model="statusFilter"
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <ChevronDown class="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort By -->
+              <div class="w-full space-y-2 hover:cursor-pointer">
+                <label class="text-sm font-semibold text-gray-700">Sort By</label>
+                <div class="relative">
+                  <select
+                    v-model="sortBy"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
+                  >
+                    <option value="pendingApplicants">Most Pending Reviews</option>
+                    <option value="postTime">Recently posted</option>
+                  </select>
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <ChevronDown class="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div
+          v-if="filteredJobs.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2"
+        >
+          <CompanyJob v-for="j in filteredJobs" :key="j.jobId" :job="j" />
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="flex flex-col items-center justify-center py-16 text-center">
+          <EmptyFilter :clearFilters="clearFilters" />
         </div>
       </div>
     </section>

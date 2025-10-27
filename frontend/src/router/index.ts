@@ -11,10 +11,11 @@ import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
-import CompanyJobView from '@/views/CompanyJobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
+import Registration from '@/views/RegistrationView.vue'
 
+import JobManagement from '@/views/JobManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,12 @@ const router = createRouter({
       path: '/',
       name: 'landing',
       component: LandingView,
+    },
+    {
+      path: '/registration',
+      name: 'registration',
+      component: Registration,
+      meta: {noFooter: true}
     },
     {
       path: '/student/profile/:id',
@@ -51,22 +58,22 @@ const router = createRouter({
     },
     {
       path: '/student/dashboard',
-      name: 'StudentDashboard',
+      name: 'studentDashboard',
       component: StudentDashboardView,
     },
     {
       path: '/company/dashboard',
-      name: 'CompanyDashboard',
+      name: 'company dashboard',
       component: CompanyDashboardView,
     },
     {
       path: '/staff/dashboard',
-      name: 'StaffDashboard',
+      name: 'staff dashboard',
       component: StaffDashboardView,
     },
     {
       path: '/professor/dashboard',
-      name: 'Professor Dashboard',
+      name: 'professor dashboard',
       component: StaffDashboardView,
     },
     {
@@ -85,14 +92,14 @@ const router = createRouter({
       component: JobView,
     },
     {
+      path: '/company/manage-job/:id',
+      name: 'job management',
+      component: JobManagement,
+    },
+    {
       path: '/job/:id/apply',
       name: 'job application',
       component: JobApplicationView,
-    },
-    {
-      path: '/company/job/:id',
-      name: 'company job view',
-      component: CompanyJobView,
     },
     {
       path: '/login',

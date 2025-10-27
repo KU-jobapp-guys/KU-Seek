@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { EducationBaseFields } from '@/configs/EditProfileConfig'
-import type { EducationFieldKey } from '@/configs/EditProfileConfig'
+import { EducationBaseFields } from '@/configs/editProfileConfig'
+import type { EducationFieldKey } from '@/configs/editProfileConfig'
 import type { StudentProfile } from '@/types/profileType'
 import { CircleUserRound, Wrench, GraduationCap, Star, X } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'

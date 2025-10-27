@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { PenBoxIcon, Camera } from 'lucide-vue-next'
 import type { Profile } from '@/types/profileType'
-import { isOwner } from '@/libs/userUtil'
+import { isOwner } from '@/libs/userUtils'
 import { profileConfig } from '@/configs/profileRoleConfig'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 import defaultBanner from '@/assets/images/defaultBanner.png'

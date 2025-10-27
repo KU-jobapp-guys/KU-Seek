@@ -9,6 +9,7 @@ import { CompanyStats } from '@/configs/dashboardStatConfig.ts'
 import type { Job } from '@/types/jobType'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
+
 const jobLists = ref<Job[]>([])
 const searchQuery = ref('')
 const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
@@ -79,13 +80,14 @@ onMounted(() => {
       <div class="rounded-xl bg-gray-100 px-4 md:px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
-          <button
+          <router-link
+            to="/company/job-post-form"
             class="flex items-center px-4 md:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2"
           >
             <Plus class="w-4 h-4 md:h-5 md:w-5" />
             <span class="hidden md:inline">Create New Job Post</span>
             <span class="hidden sm:inline md:hidden">New Job</span>
-          </button>
+          </router-link>
         </div>
 
         <!-- Filter Section -->

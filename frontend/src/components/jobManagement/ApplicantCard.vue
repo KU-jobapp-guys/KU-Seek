@@ -9,23 +9,26 @@ import {
   File,
   FileText,
   Check,
+  MapPin,
   X,
 } from 'lucide-vue-next'
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 import { getStatusColor } from '@/libs/getStatusStyle'
 
 const props = defineProps<{
   applicant: JobApplication
+  pendingStatus?: 'pending' | 'approved' | 'rejected'
 }>()
 
 const emit = defineEmits<{
   updateStatus: [id: number, status: 'pending' | 'approved' | 'rejected']
 }>()
 
-const localStatus = ref(props.applicant.status)
+const localStatus = computed(() => props.pendingStatus ?? props.applicant.status)
+
+const canModify = computed(() => props.applicant.status === 'pending')
 
 function handleStatusChange(newStatus: 'approved' | 'rejected') {
-  localStatus.value = newStatus
   emit('updateStatus', props.applicant.id, newStatus)
 }
 
@@ -36,13 +39,6 @@ function formatDate(date: Date) {
     day: 'numeric',
   })
 }
-
-watch(
-  () => props.applicant.status,
-  (newStatus) => {
-    localStatus.value = newStatus
-  },
-)
 </script>
 
 <template>
@@ -65,10 +61,16 @@ watch(
           </div>
         </div>
 
-        <div v-if="localStatus === 'pending'" class="flex gap-x-2">
+        <div class="flex gap-x-2" v-if="canModify">
           <button
             @click="handleStatusChange('approved')"
-            class="p-2 shrink-0 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2 font-medium"
+            :disabled="localStatus === 'approved'"
+            :class="[
+              'p-2 shrink-0 px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2 font-medium',
+              localStatus === 'approved'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600',
+            ]"
           >
             <Check class="w-5 h-5 md:w-full md:h-full" />
             <span class="hidden md:block">Approve</span>
@@ -76,7 +78,13 @@ watch(
 
           <button
             @click="handleStatusChange('rejected')"
-            class="p-2 shrink-0 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 font-medium"
+            :disabled="localStatus === 'rejected'"
+            :class="[
+              'p-2 shrink-0 px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2 font-medium',
+              localStatus === 'rejected'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-red-500 hover:bg-red-600',
+            ]"
           >
             <X class="w-5 h-5" />
             <span class="hidden md:block">Reject</span>
@@ -105,6 +113,11 @@ watch(
           <Banknote class="w-5 h-5 text-gray-400" />
           <span class="text-gray-700">Expected: {{ applicant.expected_salary }}</span>
         </div>
+
+        <div class="flex items-center gap-2">
+          <MapPin class="w-5 h-5 text-gray-400" />
+          <span class="text-gray-700">Location: {{ applicant.location }}</span>
+        </div>
       </div>
 
       <!-- Action Buttons -->
@@ -120,7 +133,6 @@ watch(
         <a
           v-if="applicant.resume"
           :href="applicant.resume"
-          target="_blank"
           class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <File class="w-5 h-5" />

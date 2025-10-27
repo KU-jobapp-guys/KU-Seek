@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Job } from '@/types/jobType'
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
-
+import { onMounted } from 'vue'
 
 const handleSubmit = (payload: Partial<Job>): void => {
   console.log('Submitting Job Post:', payload)
@@ -21,6 +21,10 @@ const handleSubmit = (payload: Partial<Job>): void => {
       alert('Failed to submit job post.')
     })
 }
+
+onMounted(() => {
+  scrollTo(0, 0)
+})
 </script>
 
 <template>

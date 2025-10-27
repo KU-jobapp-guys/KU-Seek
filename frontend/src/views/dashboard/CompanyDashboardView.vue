@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
+import { fetchJobs } from '@/services/jobService'
 import { mockJobs } from '@/data/mockJobs'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
@@ -16,7 +17,9 @@ const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
 const sortBy = ref<'default' | 'pendingApplicants'>('pendingApplicants')
 
 async function loadJob() {
-  jobLists.value = mockJobs
+    const list = await fetchJobs()
+    jobLists.value = mockJobs
+
 }
 
 const filteredJobs = computed(() => {

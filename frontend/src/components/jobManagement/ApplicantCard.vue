@@ -17,18 +17,18 @@ import { getStatusColor } from '@/libs/getStatusStyle'
 
 const props = defineProps<{
   applicant: JobApplication
-  pendingStatus?: 'pending' | 'approved' | 'rejected'
+  pendingStatus?: 'pending' | 'accepted' | 'rejected'
 }>()
 
 const emit = defineEmits<{
-  updateStatus: [id: number, status: 'pending' | 'approved' | 'rejected']
+  updateStatus: [id: number, status: 'pending' | 'accepted' | 'rejected']
 }>()
 
 const localStatus = computed(() => props.pendingStatus ?? props.applicant.status)
 
 const canModify = computed(() => props.applicant.status === 'pending')
 
-function handleStatusChange(newStatus: 'approved' | 'rejected') {
+function handleStatusChange(newStatus: 'accepted' | 'rejected') {
   emit('updateStatus', props.applicant.id, newStatus)
 }
 
@@ -63,17 +63,17 @@ function formatDate(date: Date) {
 
         <div class="flex gap-x-2" v-if="canModify">
           <button
-            @click="handleStatusChange('approved')"
-            :disabled="localStatus === 'approved'"
+            @click="handleStatusChange('accepted')"
+            :disabled="localStatus === 'accepted'"
             :class="[
               'p-2 shrink-0 px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2 font-medium',
-              localStatus === 'approved'
+              localStatus === 'accepted'
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-green-500 hover:bg-green-600',
             ]"
           >
             <Check class="w-5 h-5 md:w-full md:h-full" />
-            <span class="hidden md:block">Approve</span>
+            <span class="hidden md:block">Accept</span>
           </button>
 
           <button

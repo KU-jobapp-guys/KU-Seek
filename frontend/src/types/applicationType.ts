@@ -5,7 +5,7 @@ export interface JobApplication {
   resume: string
   letter_of_application: string
   phone_number: string
-  status: 'pending' | 'approved' | 'rejected'
+  status: 'pending' | 'accepted' | 'rejected'
   applied_at: Date
   location: string
   first_name: string

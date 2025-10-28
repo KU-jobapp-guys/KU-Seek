@@ -171,7 +171,7 @@ async function handleSubmit(e: Event) {
   try {
   await submitApplication(jobId, formData)
     alert('Application submitted successfully!')
-    router.push(`/job/${jobId}`)
+    router.push(`/explore-job`)
   } catch (err) {
     console.error('Error submitting application', err)
     const msg = err instanceof Error ? err.message : String(err)

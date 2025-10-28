@@ -70,12 +70,18 @@
       <div class="bg-[#0068FF]/90 text-white p-10 rounded-l-xl shadow-xl flex flex-col justify-between w-[37.5%] h-[60vh]">
         <div>
           <h1 class="text-5xl font-bold mb-2">Join Us</h1>
-          <p class="text-lg text-blue-100">Find the right job for you</p>
+          <p class="text-lg text-blue-100">{{ joinUsSubtitle }}</p>
         </div>
+
+        <!-- Image container -->
         <div
-          class="flex-1 mt-6 bg-white/10 rounded-lg flex items-center justify-center text-center text-sm font-medium text-blue-100"
+          class="flex-1 mt-6 bg-white/10 rounded-lg flex items-center justify-center text-center text-sm font-medium text-blue-100 overflow-hidden"
         >
-          [ Illustration Image Here ]
+          <img
+            src="@/assets/icons/checklist.svg"
+            alt="checklist"
+            class="max-w-full max-h-full object-contain"
+          />
         </div>
       </div>
 
@@ -259,6 +265,10 @@ const isKuIdValid = computed(() => {
 
 const fileUploadLabel = computed(() => {
   return form_role.value === 'staff' ? staffFileText.value : companyFileText.value
+})
+
+const joinUsSubtitle = computed(() => {
+  return form_role.value === 'staff' ? 'Find the right job for you' : 'Find the right Nisit for you'
 })
 
 const isFormValid = computed(() => {

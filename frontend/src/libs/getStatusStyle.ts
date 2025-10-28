@@ -16,7 +16,7 @@ export function getStatusColor(status: string) {
 }
 
 export function getStatusIcon(status: string) {
-  if (status === 'approved')
+  if (status === 'accepted')
     return Check
   else if (status === 'pending')
     return CircleDotDashed

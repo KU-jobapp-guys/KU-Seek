@@ -45,7 +45,7 @@ const toggleSkillsExpansion = () => {
           :is="getStatusIcon(job.status)"
           class="w-6 h-6 p-1 rounded-full text-white flex-shrink-0"
           :class="{
-            'bg-green-500': job.status === 'approved',
+            'bg-green-500': job.status === 'accepted',
             'bg-gray-500': job.status === 'pending',
             'bg-red-500': job.status === 'rejected',
           }"

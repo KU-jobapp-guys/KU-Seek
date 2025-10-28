@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { mockJobs } from '@/data/mockJobs'
-import { mockJobApplications } from '@/data/mockApplicants'
+import { fetchJobs } from '@/services/jobService'
+import { fetchApplicationsByJob } from '@/services/applicationService'
 import type { Job } from '@/types/jobType'
 import type { JobApplication } from '@/types/applicationType'
 import {
@@ -70,10 +70,17 @@ async function loadJob(id?: string) {
     router.replace({ name: 'not found' })
     return
   }
-  jobDetail.value = mockJobs.find((j) => j.jobId === id)
-  applicantsList.value = mockJobApplications.filter((a) => a.job_id === id)
-  if (!jobDetail.value) {
+  try {
+    const jobs = await fetchJobs()
+    jobDetail.value = jobs.find((j) => j.jobId === id)
+    if (!jobDetail.value) {
+      router.replace({ name: 'not found' })
+      return
+    }
+  } catch (err) {
+    console.error('Error loading job detail', err)
     router.replace({ name: 'not found' })
+    return
   }
 }
 
@@ -82,7 +89,13 @@ async function loadApplicants(id?: string) {
     router.replace({ name: 'not found' })
     return
   }
-  applicantsList.value = sortApplicant(mockJobApplications.filter((a) => a.job_id === id))
+  try {
+    const apps = await fetchApplicationsByJob(id)
+    applicantsList.value = sortApplicant(apps)
+  } catch (err) {
+    console.error('Error loading applicants', err)
+    applicantsList.value = []
+  }
 }
 
 function setStatusFilter(status: 'all' | 'pending' | 'approved' | 'rejected') {

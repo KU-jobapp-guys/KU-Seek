@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { fetchJobs } from '@/services/jobService'
-import { mockJobs } from '@/data/mockJobs'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
@@ -18,7 +17,7 @@ const sortBy = ref<'default' | 'pendingApplicants'>('pendingApplicants')
 
 async function loadJob() {
     const list = await fetchJobs()
-    jobLists.value = mockJobs
+    jobLists.value = list
 
 }
 

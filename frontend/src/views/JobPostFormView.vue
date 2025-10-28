@@ -77,7 +77,6 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
       const accessToken = localStorage.getItem('user_jwt') || localStorage.getItem('access_token')
       if (accessToken) {
         headers['access_token'] = accessToken
-        headers['Authorization'] = `Bearer ${accessToken}`
       }
     }
   } catch {

@@ -43,7 +43,7 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
     })
 
     if (!isInitialLoad.value) {
-      showSuccess('Filters applied successfully!')
+      showSuccess('Applied successfully!')
     }
   } catch (err) {
     console.error('Error fetching jobs:', err)

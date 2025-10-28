@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import type { Job } from '@/types/jobType'
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
-import { onMounted } from 'vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+
+const showSuccess = (msg = 'Action completed successfully!') =>
+  toastRef.value?.addToast(msg, 'success')
+
+const showError = (msg = 'An error occurred, please try again.') =>
+  toastRef.value?.addToast(msg, 'error')
 
 const handleSubmit = (payload: Partial<Job>): void => {
   console.log('Submitting Job Post:', payload)
@@ -14,11 +23,11 @@ const handleSubmit = (payload: Partial<Job>): void => {
     .then((res) => res.json())
     .then((data) => {
       console.log('Job Post submitted:', data)
-      alert('Job Post submitted successfully!')
+      showSuccess('Job Post submitted successfully!')
     })
     .catch((err) => {
       console.error('Error submitting job post:', err)
-      alert('Failed to submit job post.')
+      showError('Failed to submit job post.')
     })
 }
 
@@ -28,5 +37,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <JobPostForm @submit="handleSubmit" />
+  <div>
+    <JobPostForm @submit="handleSubmit" />
+    <ToastContainer ref="toastRef" />
+  </div>
 </template>

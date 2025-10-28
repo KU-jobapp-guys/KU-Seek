@@ -75,11 +75,6 @@ const handleSubmit = (): void => {
   const min = Number(jobPost.value.salary_min)
   const max = Number(jobPost.value.salary_max)
 
-  if (min <= 0 || max <= 0) {
-    alert('Salary cannot be zero or negative.')
-    return
-  }
-
   if (!isFormValid.value) {
     alert('Please complete all fields before submitting.')
     return

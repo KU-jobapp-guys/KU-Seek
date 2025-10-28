@@ -55,7 +55,7 @@ export function normalizeApplications(data: unknown): JobApplication[] {
 
 function getAuthHeader(): Record<string, string> {
   const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
-  return token ? { Authorization: `Bearer ${token}`, access_token: token } : {}
+  return token ? { access_token: token } : {}
 }
 
 async function fetchCsrfToken(base: string): Promise<string> {
@@ -119,11 +119,6 @@ export async function fetchApplicationsByJob(jobId: string): Promise<JobApplicat
   }
 }
 
-/**
- * Submit a new application (multipart/form-data) to /application/{job_id}.
- * If the server rejects multipart and expects JSON, we fall back to sending
- * a JSON payload with files encoded as base64.
- */
 export async function submitApplication(jobId: string, form: FormData): Promise<JobApplication | null> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/application/${encodeURIComponent(jobId)}`)
@@ -133,7 +128,9 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       ...getAuthHeader(),
     }
     if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
-
+    
+    headers['Content-Type'] = 'application/json'
+    
     const res = await fetch(url.toString(), {
       method: 'POST',
       headers,
@@ -141,7 +138,21 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       credentials: 'include',
     })
 
-    const data = await res.json()
+    const text = await res.text()
+    let data: unknown = null
+    try {
+      data = text ? JSON.parse(text) : null
+    } catch {
+      data = text
+    }
+
+    if (!res.ok) {
+      const msg = typeof data === 'object' && data !== null
+        ? JSON.stringify(data)
+        : String(data)
+      throw new Error(`Failed to submit application: ${res.status} ${msg}`)
+    }
+
     if (Array.isArray(data)) {
       return mapBackendApplication(data[0] ?? null)
     }

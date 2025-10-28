@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { fetchJobs as fetchJobsService } from '@/services/jobService'
+import { fetchUserApplications } from '@/services/applicationService'
 import Header from '@/components/layouts/AppHeader.vue'
 import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
@@ -9,6 +10,7 @@ import { statusOptions } from '@/configs/statusOption'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
 import type { Job } from '@/types/jobType'
+import type { JobApplication } from '@/types/applicationType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
 import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
 
@@ -67,8 +69,30 @@ const filteredAppliedJobs = computed(() => {
 
 async function fetchJobs() {
   try {
-    const jobs = await fetchJobsService()
-    appliedJobs.value = jobs.slice(0, 5)
+    const [applications, jobs] = await Promise.all([fetchUserApplications(), fetchJobsService()])
+    appliedJobs.value = applications.map((app) => {
+      const a = app as JobApplication
+      const jobId = String(a.job_id ?? '')
+      return ({
+        jobId,
+        company: '',
+        role: '',
+        jobLevel: '',
+        location: String(a.location ?? ''),
+        postTime: a.applied_at instanceof Date ? a.applied_at : new Date(String(a.applied_at)),
+        description: '',
+        jobType: '',
+        skills: [],
+        tags: [],
+        contacts: [],
+        salary_min: 0,
+        salary_max: 0,
+        status: String(a.status ?? 'pending'),
+        pendingApplicants: 0,
+        totalApplicants: 0,
+      } as unknown as Job)
+    })
+
     recentlyViewedJobs.value = jobs.slice(7, 10)
 
     const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')

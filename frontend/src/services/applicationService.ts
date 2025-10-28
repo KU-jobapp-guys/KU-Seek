@@ -141,73 +141,7 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       credentials: 'include',
     })
 
-    const text = await res.text()
-    let data: unknown = null
-    try {
-      data = text ? JSON.parse(text) : null
-    } catch {
-      data = text
-    }
-
-    if (!res.ok) {
-      const msg = typeof data === 'object' && data !== null ? JSON.stringify(data) : String(data)
-      console.error('Failed to submit application', res.status, msg)
-
-      if (typeof msg === 'string' && msg.includes('Did not attempt to load JSON data')) {
-        const jsonPayload: Record<string, unknown> = {}
-        for (const [k, v] of form.entries()) {
-          if (v instanceof File) {
-            try {
-              const arrayBuffer = await v.arrayBuffer()
-              const bytes = new Uint8Array(arrayBuffer)
-              let binary = ''
-              const chunk = 0x8000
-              for (let i = 0; i < bytes.length; i += chunk) {
-                binary += String.fromCharCode.apply(null, Array.prototype.slice.call(bytes.subarray(i, i + chunk)))
-              }
-              const b64 = btoa(binary)
-              jsonPayload[k] = { filename: v.name, content_base64: b64, content_type: v.type }
-            } catch (e) {
-              console.error('Failed to convert file to base64 for fallback', e)
-            }
-          } else {
-            jsonPayload[k] = v
-          }
-        }
-
-        const headersJson: Record<string, string> = {
-          ...getAuthHeader(),
-          'Content-Type': 'application/json',
-        }
-        const csrfToken2 = await fetchCsrfToken(base)
-        if (csrfToken2) headersJson['X-CSRFToken'] = String(csrfToken2)
-
-        const res2 = await fetch(url.toString(), {
-          method: 'POST',
-          headers: headersJson,
-          body: JSON.stringify(jsonPayload),
-          credentials: 'include',
-        })
-
-        const txt2 = await res2.text()
-        let data2: unknown = null
-        try {
-          data2 = txt2 ? JSON.parse(txt2) : null
-        } catch {
-          data2 = txt2
-        }
-        if (!res2.ok) {
-          const msg2 = typeof data2 === 'object' && data2 !== null ? JSON.stringify(data2) : String(data2)
-          console.error('JSON fallback failed', res2.status, msg2)
-          throw new Error(`Failed to submit application (json fallback): ${res2.status} ${msg2}`)
-        }
-        if (Array.isArray(data2)) return mapBackendApplication(data2[0] ?? null)
-        return mapBackendApplication(data2)
-      }
-
-      throw new Error(`Failed to submit application: ${res.status} ${msg}`)
-    }
-
+    const data = await res.json()
     if (Array.isArray(data)) {
       return mapBackendApplication(data[0] ?? null)
     }

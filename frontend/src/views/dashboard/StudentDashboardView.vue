@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { fetchJobs as fetchJobsService } from '@/services/jobService'
 import Header from '@/components/layouts/AppHeader.vue'
 import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
@@ -66,14 +67,12 @@ const filteredAppliedJobs = computed(() => {
 
 async function fetchJobs() {
   try {
-    import('@/data/mockJobs').then(({ mockJobs }) => {
-      appliedJobs.value = mockJobs.slice(0, 5)
-      recentlyViewedJobs.value = mockJobs.slice(7, 10)
+    const jobs = await fetchJobsService()
+    appliedJobs.value = jobs.slice(0, 5)
+    recentlyViewedJobs.value = jobs.slice(7, 10)
 
-      // Restore bookmarked jobs from localStorage
-      const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
-      bookmarkedJobs.value = mockJobs.filter((job) => saved.includes(job.jobId))
-    })
+    const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
+    bookmarkedJobs.value = jobs.filter((job) => saved.includes(job.jobId))
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
   }

@@ -1,4 +1,5 @@
 import type { JobApplication } from '@/types/applicationType'
+import type { Job } from '@/types/jobType'
 
 function toNumber(v: unknown, fallback = 0): number {
   if (typeof v === 'number') return v
@@ -69,7 +70,8 @@ async function fetchCsrfToken(base: string): Promise<string> {
   }
 }
 
-export async function fetchUserApplications(): Promise<JobApplication[]> {
+
+export async function fetchUserAppliedJobs(): Promise<Job[]> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/application`)
   try {
@@ -83,14 +85,39 @@ export async function fetchUserApplications(): Promise<JobApplication[]> {
       },
       credentials: 'include',
     })
+
     if (!res.ok) {
-      console.error('Failed to fetch user applications', res.status)
+      console.error('Failed to fetch user applied jobs', res.status)
       return []
     }
+
     const data = await res.json()
-    return normalizeApplications(data)
+    const list = Array.isArray(data) ? (data as unknown[]) : []
+    console.log(list)
+    return list.map((it) => {
+      const raw = it as Record<string, unknown>
+      const nestedJob = raw.job as Record<string, unknown> | undefined
+      const jobObj = nestedJob && typeof nestedJob === 'object' ? { ...nestedJob } : { ...raw }
+
+      if (raw.status) jobObj.status = raw.status
+      if (raw.applied_at && !jobObj.applied_at) jobObj.postTime = raw.applied_at
+
+      if (jobObj.postTime && typeof jobObj.postTime === 'string') {
+        try {
+          jobObj.postTime = new Date(jobObj.postTime as string)
+        } catch {
+          // ignore
+        }
+      }
+
+      // Ensure numeric salary fields exist
+      if (jobObj.salary_min == null) jobObj.salary_min = 0
+      if (jobObj.salary_max == null) jobObj.salary_max = 0
+
+      return (jobObj as unknown) as Job
+    })
   } catch (err) {
-    console.error('Error fetching user applications', err)
+    console.error('Error fetching user applied jobs', err)
     return []
   }
 }
@@ -128,9 +155,7 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       ...getAuthHeader(),
     }
     if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
-    
-    headers['Content-Type'] = 'application/json'
-    
+        
     const res = await fetch(url.toString(), {
       method: 'POST',
       headers,

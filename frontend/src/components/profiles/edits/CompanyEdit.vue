@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import type { CompanyProfile } from '@/types/profileType'
 import { Building2Icon, X, ChevronDown } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { industryOptions, companySizeOptions } from '@/configs/EditProfileConfig'
+import { industryOptions, companySizeOptions } from '@/configs/editProfileConfig'
 
 const props = defineProps<{ modelValue: CompanyProfile }>()
 const emit = defineEmits<{

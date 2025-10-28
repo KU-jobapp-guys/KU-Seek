@@ -3,13 +3,16 @@ import { computed, onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import type { Profile } from '@/types/profileType'
-import { getUserId } from '@/libs/userUtil'
+import { getUserId } from '@/libs/userUtils'
 import { mockCompany } from '@/data/mockCompany'
 import { mockStudents } from '@/data/mockStudent'
 import { mockProfessor } from '@/data/mockProfessor'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 
-type UserRole = 'company' | 'student' | 'professor'
+type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
+type Page = {'name': string ,'route': string}
+
+const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:5173/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 
 const props = defineProps<{
   role: UserRole
@@ -18,16 +21,16 @@ const props = defineProps<{
 const userId = getUserId()
 const userData = ref<Profile | null>(null)
 
-const companyList = ['Dashboard']
-const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard']
+const companyList = ['Dashboard', 'Logout']
+const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard', 'Logout']
 const profileList = ['Profile', 'Setting', 'Logout']
-
+const defaultList = ['Register', {name:'Login', route:`${oauth_url}`}]
 const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
   if (props.role === 'company') return companyList
-  if (props.role && ['student', 'professor'].includes(props.role)) return kuList
-  return []
+  if (props.role && ['student', 'professor', 'staff'].includes(props.role)) return kuList
+  return defaultList
 })
 
 const mockData = {
@@ -36,8 +39,11 @@ const mockData = {
   professor: mockProfessor,
 }
 
-function makeLink(page: string) {
+function makeLink(page: string | Page) {
   const role = props.role
+  if (typeof(page) === 'object'){
+    return page.route
+  }
   if (page === 'Profile') {
     return `/${role}/profile/${userId}`
   }
@@ -47,12 +53,15 @@ function makeLink(page: string) {
   if (page === 'Announcements') {
     return `/announcements`
   }
+  if (page === 'Register') {
+    return `/registration`
+  }
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 
 onMounted(() => {
   const role = props.role
-  if (role) {
+  if (role && role !== 'visitor' && role !== 'staff') {
     userData.value = mockData[role].find((u) => u.id === userId) || null
     console.log('data: ', userData)
   }
@@ -68,8 +77,9 @@ onMounted(() => {
     <div class="flex gap-x-4 md:gap-x-8 items-center">
       <!-- Desktop Menu List -->
       <ul class="hidden md:flex items-center gap-8">
-        <li v-for="page in pageList" :key="page" class="text-base hover:text-green-300">
-          <a :href="makeLink(page)">{{ page }}</a>
+        <li v-for="page in pageList" :key="typeof page === 'string' ? page : page.name" class="text-base hover:text-green-300">
+          <a v-if="typeof(page) === 'object'" :href="page.route">{{ page.name }}</a>
+          <a v-else :href="makeLink(page)">{{ page }}</a>
         </li>
       </ul>
 
@@ -114,9 +124,20 @@ onMounted(() => {
               static
               class="fixed right-0 top-16 z-[50] py-6 w-[54vw] h-screen bg-gray-200 shadow-lg"
             >
-              <div v-for="page in pageList" :key="page">
+              <div v-for="page in pageList" :key="typeof page === 'string' ? page : page.name">
                 <MenuItem v-slot="{ active }">
                   <a
+                    v-if="typeof(page) === 'object'"
+                    :href="page.route"
+                    :class="[
+                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                      'block px-8 py-3 text-lg focus:outline-none hover:bg-gray-50',
+                    ]"
+                  >
+                    {{ page.name }}
+                  </a>
+                  <a
+                    v-else
                     :href="makeLink(page)"
                     :class="[
                       active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',

@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import type { Job } from '@/types/jobType'
 import { ref, reactive, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { submitApplication } from '@/services/applicationService'
 
 // Props
-const props = defineProps<{ job: Job }>()
+const props = defineProps<{ job?: Job }>()
+const job = props.job
+const route = useRoute()
+const router = useRouter()
 
 // Step control
 const step = ref(1)
@@ -133,7 +138,7 @@ function getMissingFields() {
 }
 
 // Submit handler
-function handleSubmit(e: Event) {
+async function handleSubmit(e: Event) {
   e.preventDefault()
   validatePersonalInfo()
 
@@ -143,22 +148,35 @@ function handleSubmit(e: Event) {
     return
   }
 
-  // If valid
+  const jobId = job?.jobId ?? (route.params.id as string | undefined)
+  if (!jobId) {
+    alert('Cannot determine job id for this application.')
+    return
+  }
+
+  // Build FormData
   const formData = new FormData()
+  // Backend expects specific field names; use those here
   formData.append('first_name', form.first_name)
   formData.append('last_name', form.last_name)
   formData.append('email', form.email)
-  formData.append('phone', form.phone)
-  formData.append('address', form.address)
-  formData.append('experience', form.experience)
+  formData.append('phone_number', form.phone)
+  formData.append('years_of_experience', form.experience)
   formData.append('expected_salary', form.expected_salary)
-  formData.append('confirm', form.confirm ? 'true' : 'false')
-  formData.append('resume_option', resumeOption.value)
 
+  // Files
   if (form.resume) formData.append('resume', form.resume)
   if (form.application_letter) formData.append('application_letter', form.application_letter)
 
-  alert(`Form submitted for ${props.job.role}! (Replace this with your API call.)`)
+  try {
+  await submitApplication(jobId, formData)
+    alert('Application submitted successfully!')
+    router.push(`/job/${jobId}`)
+  } catch (err) {
+    console.error('Error submitting application', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    alert(msg)
+  }
 }
 </script>
 

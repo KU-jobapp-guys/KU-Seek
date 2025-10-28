@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { ProfessorProfile } from '@/types/profileType'
-import type { OverviewFieldKey } from '@/configs/EditProfileConfig'
-import { OverviewFields } from '@/configs/EditProfileConfig'
+import type { OverviewFieldKey } from '@/configs/editProfileConfig'
+import { OverviewFields } from '@/configs/editProfileConfig'
 import { Building2Icon } from 'lucide-vue-next'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 

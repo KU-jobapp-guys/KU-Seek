@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
-/**
- * Submit handler for the job post form.
- * Maps the frontend payload into the backend `JobPost` schema and sends it.
- */
+const router = useRouter()
+
+
 type FormPayload = {
   role?: string
   title?: string
@@ -105,6 +105,8 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
 
     console.log('Job post response:', data)
     alert('Job Post submitted successfully!')
+    router.replace("/company/dashboard")
+
   } catch (err) {
     console.error('Error submitting job post:', err)
     alert('Failed to submit job post.')

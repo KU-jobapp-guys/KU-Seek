@@ -108,8 +108,8 @@ const goToApply = () => {
         >
           Apply
         </button>
-  <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
-          Save
+        <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
+          Add to Bookmarks
         </button>
       </div>
 

@@ -59,7 +59,6 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
     'Content-Type': 'application/json',
   }
 
-  // Try to fetch CSRF token if backend exposes it
   try {
     const csrfRes = await fetch(`${base}/api/v1/csrf-token`, { credentials: 'include' })
     if (csrfRes.ok) {
@@ -68,10 +67,8 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
       if (token) headers['X-CSRFToken'] = String(token)
     }
   } catch {
-    // Non-fatal: some backends don't expose a token endpoint
   }
 
-  // Add JWT if present in localStorage (both custom header and Authorization for safety)
   try {
     if (typeof window !== 'undefined') {
       const accessToken = localStorage.getItem('user_jwt') || localStorage.getItem('access_token')
@@ -80,7 +77,6 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
       }
     }
   } catch {
-    // ignore localStorage errors
   }
 
   // Send request

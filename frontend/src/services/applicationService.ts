@@ -1,6 +1,9 @@
 import type { JobApplication } from '@/types/applicationType'
 import type { Job } from '@/types/jobType'
 
+type updateStatusType = Map<number, 'pending' | 'accepted' | 'rejected'>
+
+
 function toNumber(v: unknown, fallback = 0): number {
   if (typeof v === 'number') return v
   if (typeof v === 'string') {
@@ -36,7 +39,7 @@ export function mapBackendApplication(b: unknown): JobApplication {
     resume: String(obj.resume ?? ''),
     letter_of_application: String(obj.letter_of_application ?? obj.letterOfApplication ?? ''),
     phone_number: String(obj.phone_number ?? obj.phoneNumber ?? ''),
-    status: (String(obj.status ?? 'pending') as 'pending' | 'approved' | 'rejected'),
+    status: (String(obj.status ?? 'pending') as 'pending' | 'accepted' | 'rejected'),
     applied_at: appliedAt,
     location: String(applicant.location ?? obj.location ?? ''),
     first_name: String(applicant.first_name ?? applicant.firstName ?? ''),
@@ -163,21 +166,7 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       credentials: 'include',
     })
 
-    const text = await res.text()
-    let data: unknown = null
-    try {
-      data = text ? JSON.parse(text) : null
-    } catch {
-      data = text
-    }
-
-    if (!res.ok) {
-      const msg = typeof data === 'object' && data !== null
-        ? JSON.stringify(data)
-        : String(data)
-      throw new Error(`Failed to submit application: ${res.status} ${msg}`)
-    }
-
+    const data = await res.json()
     if (Array.isArray(data)) {
       return mapBackendApplication(data[0] ?? null)
     }
@@ -188,3 +177,44 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
   }
 }
 
+
+export async function updateApplicationStatus(jobId: string, pendingApplications: updateStatusType): Promise<JobApplication[]> {
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+  const url = new URL(`${base}/api/v1/application/update/${encodeURIComponent(jobId)}`)
+  
+  try {
+    const csrfToken = await fetchCsrfToken(base)
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...getAuthHeader(),
+    }
+    if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
+    
+    const updates = Array.from(pendingApplications).map(([application_id, status]) => ({
+      application_id,
+      status,
+    }))
+    
+    console.log('Sending updates:', updates)
+    
+    const res = await fetch(url.toString(), {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(updates),
+      credentials: 'include',
+    })
+    
+    if (!res.ok) {
+      const errorText = await res.text()
+      console.error('Backend error response:', errorText)
+      throw new Error(`Failed to update applications: ${res.statusText} - ${errorText}`)
+    }
+
+    const data = await res.json()
+    return data
+    
+  } catch (err) {
+    console.error('Error submitting application', err)
+    throw err
+  }
+}

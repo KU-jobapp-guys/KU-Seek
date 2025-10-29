@@ -9,6 +9,7 @@ import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import CompanyProfile from '@/views/profile/CompanyProfile.vue'
 import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
+import LogoutView from '@/views/LogoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
@@ -110,6 +111,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: LogoutView,
     },
     {
       path: '/:pathMatch(.*)*',

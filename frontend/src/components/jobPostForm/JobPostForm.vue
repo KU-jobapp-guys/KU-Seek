@@ -34,31 +34,6 @@ const jobPost = ref({
   contacts: [] as { type: string; link: string }[],
 })
 
-// --- NEW: Phone and validation ---
-const errors = reactive({ phone: '' })
-const validatePhone = (phone: string) => /^[0-9]{9,10}$/.test(phone)
-function onPhoneInput(event: Event, index: number) {
-  const input = event.target as HTMLInputElement
-  input.value = input.value.replace(/[^0-9]/g, '')
-  if (input.value.length > 10) {
-    input.value = input.value.slice(0, 10)
-  }
-  jobPost.value.contacts[index].link = input.value
-  validateContacts()
-}
-
-function validateContacts() {
-  errors.phone = ''
-  const phoneContacts = jobPost.value.contacts.filter((c) => c.type === 'Phone')
-  for (const contact of phoneContacts) {
-    if (contact.link && !validatePhone(contact.link)) {
-      errors.phone = 'Phone number must contain 9–10 number digits.'
-      break
-    }
-  }
-}
-// --- END NEW ---
-
 // Initialize form with initialData if provided
 const initializeForm = () => {
   if (props.initialData) {
@@ -93,14 +68,11 @@ const isFormValid = computed(() => {
     jobPost.value.salary_max.trim() &&
     Number(jobPost.value.salary_min) > 0 &&
     Number(jobPost.value.salary_max) > 0 &&
-    isSalaryValid.value &&
-    !errors.phone
+    isSalaryValid.value
   )
 })
 
 const handleSubmit = (): void => {
-  validateContacts()
-
   if (!isFormValid.value) {
     alert('Please complete all fields before submitting.')
     return
@@ -159,7 +131,6 @@ onMounted(() => {
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Company -->
           <div>
             <label class="text-sm font-medium text-gray-700">
               Company Name <span v-if="!jobPost.company" class="text-red-500">*</span>
@@ -167,7 +138,6 @@ onMounted(() => {
             <BaseInput v-model="jobPost.company" placeholder="e.g. Techhahaha Inc." />
           </div>
 
-          <!-- Role -->
           <div>
             <label class="text-sm font-medium text-gray-700">
               Job Title <span v-if="!jobPost.role" class="text-red-500">*</span>
@@ -175,7 +145,6 @@ onMounted(() => {
             <BaseInput v-model="jobPost.role" placeholder="e.g. Frontend Developer" />
           </div>
 
-          <!-- Location -->
           <div>
             <label class="text-sm font-medium text-gray-700">
               Location <span v-if="!jobPost.location" class="text-red-500">*</span>
@@ -183,7 +152,6 @@ onMounted(() => {
             <BaseInput v-model="jobPost.location" placeholder="e.g. Bangkok, Thailand" />
           </div>
 
-          <!-- Job Type -->
           <div>
             <label class="text-sm font-medium text-gray-700">
               Job Type <span v-if="!jobPost.jobType" class="text-red-500">*</span>
@@ -200,7 +168,6 @@ onMounted(() => {
             </select>
           </div>
 
-          <!-- Salary (full width) -->
           <div class="md:col-span-2">
             <label class="text-sm font-medium text-gray-700">
               Salary Range
@@ -259,23 +226,6 @@ onMounted(() => {
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
           Contacts <span v-if="!jobPost.contacts.length" class="text-red-500">*</span>
         </h2>
-
-        <div v-for="(contact, index) in jobPost.contacts" :key="index" class="mb-4">
-          <div v-if="contact.type === 'Phone'">
-            <label class="text-sm font-medium text-gray-700">
-              Phone <span v-if="!contact.link" class="text-red-500">*</span>
-            </label>
-            <input
-              type="tel"
-              inputmode="numeric"
-              class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
-              :value="contact.link"
-              @input="onPhoneInput($event, index)"
-            />
-            <p v-if="errors.phone" class="text-red-500 text-sm mt-1">{{ errors.phone }}</p>
-          </div>
-        </div>
-
         <ContactField v-model="jobPost.contacts" />
       </section>
 

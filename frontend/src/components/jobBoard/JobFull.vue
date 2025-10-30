@@ -57,10 +57,10 @@ const toggleSave = () => {
   const id = job.value.jobId
   if (savedJobs.value.has(id)) {
     savedJobs.value.delete(id)
-    showSuccess('Save removed!')
+    showSuccess('Bookmark removed!')
   } else {
     savedJobs.value.add(id)
-    showSuccess('Job saved!')
+    showSuccess('Job bookmarked!')
   }
 }
 </script>

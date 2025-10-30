@@ -6,10 +6,11 @@ import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
 import { statusOptions } from '@/configs/statusOption'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
-
 import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
 import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+import SearchInput from '@/components/dashboards/SearchInput.vue'
 
 type ApplicationStatus = 'pending' | 'approved' | 'rejected'
 
@@ -21,8 +22,17 @@ const bookmarkedJobs = ref<Job[]>([])
 const recentlyViewedJobs = ref<Job[]>([])
 const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['pending', 'approved', 'rejected']))
 
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const searchQuery = ref('')
+
+const showSuccess = (msg = 'Action completed successfully!') =>
+  toastRef.value?.addToast(msg, 'success')
+const showError = (msg = 'An error occurred, please try again.') =>
+  toastRef.value?.addToast(msg, 'error')
+
 const toggleSection = (section: string) => {
   openSection.value = section
+  searchQuery.value = ''
 }
 
 const toggleStatus = (status: ApplicationStatus) => {
@@ -31,11 +41,13 @@ const toggleStatus = (status: ApplicationStatus) => {
   } else {
     selectedStatuses.value.add(status)
   }
+  // reassign to trigger reactivity
   selectedStatuses.value = new Set(selectedStatuses.value)
 }
 
 function clearFilters() {
   selectedStatuses.value = new Set(['pending', 'approved', 'rejected'])
+  searchQuery.value = ''
 }
 
 const handleSelect = (id: string) => {
@@ -58,9 +70,41 @@ const statusCounts = computed(() => {
   }
 })
 
+// include both status filter AND search query
 const filteredAppliedJobs = computed(() => {
-  return appliedJobs.value.filter((job) =>
-    selectedStatuses.value.has(job.status as ApplicationStatus),
+  const query = searchQuery.value.trim().toLowerCase()
+  return appliedJobs.value.filter((job) => {
+    // status filter
+    if (!selectedStatuses.value.has(job.status as ApplicationStatus)) return false
+    // search filter (if any)
+    if (!query) return true
+    return (
+      job.role.toLowerCase().includes(query) ||
+      job.company.toLowerCase().includes(query) ||
+      job.location.toLowerCase().includes(query)
+    )
+  })
+})
+
+const filteredBookmarkedJobs = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return bookmarkedJobs.value
+  return bookmarkedJobs.value.filter(
+    (job) =>
+      job.role.toLowerCase().includes(query) ||
+      job.company.toLowerCase().includes(query) ||
+      job.location.toLowerCase().includes(query)
+  )
+})
+
+const filteredRecentlyViewedJobs = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return recentlyViewedJobs.value
+  return recentlyViewedJobs.value.filter(
+    (job) =>
+      job.role.toLowerCase().includes(query) ||
+      job.company.toLowerCase().includes(query) ||
+      job.location.toLowerCase().includes(query)
   )
 })
 
@@ -70,12 +114,12 @@ async function fetchJobs() {
       appliedJobs.value = mockJobs.slice(0, 5)
       recentlyViewedJobs.value = mockJobs.slice(7, 10)
 
-      // Restore bookmarked jobs from localStorage
       const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
       bookmarkedJobs.value = mockJobs.filter((job) => saved.includes(job.jobId))
     })
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
+    showError('Failed to fetch jobs')
   }
 }
 
@@ -91,17 +135,25 @@ function handleBookmark(payload: { id: string; bookmarked: boolean }) {
   if (bookmarked) {
     if (!bookmarkedJobs.value.some((j) => j.jobId === id)) {
       bookmarkedJobs.value.push(job)
+      showSuccess('Job bookmarked!')
     }
   } else {
     bookmarkedJobs.value = bookmarkedJobs.value.filter((j) => j.jobId !== id)
+    showSuccess('Bookmark removed!')
   }
 
-  localStorage.setItem('bookmarkedJobs', JSON.stringify(bookmarkedJobs.value.map((j) => j.jobId)))
+  localStorage.setItem(
+    'bookmarkedJobs', 
+    JSON.stringify(bookmarkedJobs.value.map((j) => j.jobId)))
 }
 
 onMounted(() => {
   fetchJobs()
 })
+
+function handleSearch(value: string) {
+  searchQuery.value = value
+}
 </script>
 
 <template>
@@ -154,6 +206,12 @@ onMounted(() => {
               </button>
             </div>
           </div>
+          
+          <SearchInput
+            v-model="searchQuery"
+            placeholder="Search jobs by title, company, or department..."
+            @search="handleSearch"
+          />
 
           <div class="min-h-[200px] max-h-[600px] overflow-y-auto pr-2">
             <div
@@ -189,11 +247,17 @@ onMounted(() => {
             </div>
             <h1 class="text-4xl font-bold">Bookmarked Jobs</h1>
           </div>
+          
+          <SearchInput
+            v-model="searchQuery"
+            placeholder="Search jobs by title, company, or department..."
+            @search="handleSearch"
+          />
 
-          <div v-if="bookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
+          <div v-if="filteredBookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in bookmarkedJobs"
+                v-for="job in filteredBookmarkedJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="true"
@@ -202,7 +266,7 @@ onMounted(() => {
               />
             </div>
           </div>
-          <p v-else class="text-gray-500 text-center py-12 text-lg">No bookmarked jobs yet.</p>
+          <p v-else class="text-gray-500 text-center py-12 text-lg">No matching bookmarked jobs.</p>
         </section>
 
         <!-- Recently Viewed Section -->
@@ -218,11 +282,17 @@ onMounted(() => {
             </div>
             <h1 class="text-4xl font-bold">Recently Viewed Jobs</h1>
           </div>
+          
+          <SearchInput
+            v-model="searchQuery"
+            placeholder="Search jobs by title, company, or department..."
+            @search="handleSearch"
+          />
 
           <div class="max-h-[600px] overflow-y-auto pr-2">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in recentlyViewedJobs"
+                v-for="job in filteredRecentlyViewedJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"
@@ -234,5 +304,6 @@ onMounted(() => {
         </section>
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

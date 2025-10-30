@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, reactive } from 'vue'
 import type { Job } from '@/types/jobType'
 
 // Import components
@@ -21,7 +21,6 @@ const emit = defineEmits<{
 
 const isEditMode = computed(() => !!props.initialData)
 
-// Form state
 const jobPost = ref({
   company: '',
   role: '',
@@ -46,8 +45,8 @@ const initializeForm = () => {
       jobType: props.initialData.jobType || '',
       skills: props.initialData.skills || [],
       tags: props.initialData.tags || [],
-      salary_min: props.initialData.salary_min.toString() || '',
-      salary_max: props.initialData.salary_max.toString() || '',
+      salary_min: props.initialData.salary_min?.toString() || '',
+      salary_max: props.initialData.salary_max?.toString() || '',
       contacts: props.initialData.contacts || [],
     }
   }
@@ -57,14 +56,16 @@ const isSalaryValid = ref(true)
 
 const isFormValid = computed(() => {
   return (
-    jobPost.value.company.trim() !== '' &&
-    jobPost.value.role.trim() !== '' &&
-    jobPost.value.location.trim() !== '' &&
-    jobPost.value.description.trim() !== '' &&
-    jobPost.value.jobType.trim() !== '' &&
+    jobPost.value.company.trim() &&
+    jobPost.value.role.trim() &&
+    jobPost.value.location.trim() &&
+    jobPost.value.description.trim() &&
+    jobPost.value.jobType.trim() &&
     jobPost.value.skills.length > 0 &&
-    jobPost.value.salary_min.trim() !== '' &&
-    jobPost.value.salary_max.trim() !== '' &&
+    jobPost.value.tags.length > 0 &&
+    jobPost.value.contacts.length > 0 &&
+    jobPost.value.salary_min.trim() &&
+    jobPost.value.salary_max.trim() &&
     Number(jobPost.value.salary_min) > 0 &&
     Number(jobPost.value.salary_max) > 0 &&
     isSalaryValid.value
@@ -72,14 +73,6 @@ const isFormValid = computed(() => {
 })
 
 const handleSubmit = (): void => {
-  const min = Number(jobPost.value.salary_min)
-  const max = Number(jobPost.value.salary_max)
-
-  if (min <= 0 || max <= 0) {
-    alert('Salary cannot be zero or negative.')
-    return
-  }
-
   if (!isFormValid.value) {
     alert('Please complete all fields before submitting.')
     return
@@ -110,13 +103,9 @@ onMounted(() => {
   const form = document.querySelector('form')
   if (form) {
     form.addEventListener('keydown', (e) => {
-      // Allow Enter in textareas only
       const target = e.target as HTMLElement
       const isTextarea = target.tagName === 'TEXTAREA'
-
-      if (e.key === 'Enter' && !isTextarea) {
-        e.preventDefault()
-      }
+      if (e.key === 'Enter' && !isTextarea) e.preventDefault()
     })
   }
 })
@@ -124,7 +113,6 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen pb-10">
-    <!-- Header -->
     <header class="text-center py-14 bg-gradient-to-r from-green-500 to-indigo-600">
       <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
         {{ isEditMode ? 'Edit Your Job Post' : 'Create Your Job Post' }}
@@ -138,34 +126,41 @@ onMounted(() => {
       </p>
     </header>
 
-    <!-- Form wrapper -->
     <form @submit.prevent="handleSubmit" class="max-w-5xl mx-auto -mt-10 space-y-6">
-      <!-- Basic Information -->
+      <!-- Basic Info -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BaseInput
-            v-model="jobPost.company"
-            label="Company Name"
-            placeholder="e.g. Techhahaha Inc."
-          />
-          <BaseInput
-            v-model="jobPost.role"
-            label="Job Title"
-            placeholder="e.g. Frontend Developer"
-          />
-          <BaseInput
-            v-model="jobPost.location"
-            label="Location"
-            placeholder="e.g. Bangkok, Thailand"
-          />
-          <div class="flex flex-col">
-            <label class="text-sm font-medium text-gray-700 mb-1">Job Type</label>
+          <div>
+            <label class="text-sm font-medium text-gray-700">
+              Company Name <span v-if="!jobPost.company" class="text-red-500">*</span>
+            </label>
+            <BaseInput v-model="jobPost.company" placeholder="e.g. Techhahaha Inc." />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-gray-700">
+              Job Title <span v-if="!jobPost.role" class="text-red-500">*</span>
+            </label>
+            <BaseInput v-model="jobPost.role" placeholder="e.g. Frontend Developer" />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-gray-700">
+              Location <span v-if="!jobPost.location" class="text-red-500">*</span>
+            </label>
+            <BaseInput v-model="jobPost.location" placeholder="e.g. Bangkok, Thailand" />
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-gray-700">
+              Job Type <span v-if="!jobPost.jobType" class="text-red-500">*</span>
+            </label>
             <select
               v-model="jobPost.jobType"
-              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full"
             >
-              <option disabled value="" class="text-gray-400">Select job type</option>
+              <option disabled value="">Select job type</option>
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Internship">Internship</option>
@@ -173,26 +168,36 @@ onMounted(() => {
             </select>
           </div>
 
-          <SalaryInput
-            v-model:salaryMin="jobPost.salary_min"
-            v-model:salaryMax="jobPost.salary_max"
-            @validity="isSalaryValid = $event"
-          />
+          <div class="md:col-span-2">
+            <label class="text-sm font-medium text-gray-700">
+              Salary Range
+              <span v-if="!jobPost.salary_min || !jobPost.salary_max" class="text-red-500">*</span>
+            </label>
+            <SalaryInput
+              v-model:salaryMin="jobPost.salary_min"
+              v-model:salaryMax="jobPost.salary_max"
+              @validity="isSalaryValid = $event"
+            />
+          </div>
         </div>
       </section>
 
-      <!-- Job Description -->
+      <!-- Description -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Job Description</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Job Description <span v-if="!jobPost.description" class="text-red-500">*</span>
+        </h2>
         <BaseTextarea
           v-model="jobPost.description"
           placeholder="Describe the role, responsibilities, requirements, and benefits..."
         />
       </section>
 
-      <!-- Work Fields -->
+      <!-- Skills -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Required Skills</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Required Skills <span v-if="!jobPost.skills.length" class="text-red-500">*</span>
+        </h2>
         <SearchableTagInput
           v-model="jobPost.skills"
           :suggestions="[
@@ -218,7 +223,9 @@ onMounted(() => {
 
       <!-- Contacts -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Contacts</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Contacts <span v-if="!jobPost.contacts.length" class="text-red-500">*</span>
+        </h2>
         <ContactField v-model="jobPost.contacts" />
       </section>
 

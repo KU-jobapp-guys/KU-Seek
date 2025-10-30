@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import type { Job } from '@/types/jobType'
 import { ref, reactive, computed } from 'vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 
 // Props
 const props = defineProps<{ job: Job }>()
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg = 'Action completed successfully!') =>
+  toastRef.value?.addToast(msg, 'success')
 
 // Step control
 const step = ref(1)
@@ -158,7 +163,7 @@ function handleSubmit(e: Event) {
   if (form.resume) formData.append('resume', form.resume)
   if (form.application_letter) formData.append('application_letter', form.application_letter)
 
-  alert(`Form submitted for ${props.job.role}! (Replace this with your API call.)`)
+  showSuccess('Submitted successfully!')
 }
 </script>
 
@@ -390,5 +395,6 @@ function handleSubmit(e: Event) {
         </div>
       </form>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

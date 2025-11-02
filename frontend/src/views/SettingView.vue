@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { User, Mail, Phone, MapPin, Calendar, GraduationCap, Building2, Edit } from 'lucide-vue-next'
+import { User, Mail, GraduationCap, Building2, Edit } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
 import type { CompanyProfile, StudentProfile } from '@/types/profileType'
@@ -154,7 +154,7 @@ onMounted(() => {
 
   <div v-else class="flex h-full gap-x-8 min-h-screen w-full py-16 px-[8vw] md:px-[12vw]">
     <!-- Left Sidebar -->
-    <div class="hidden lg:block bg-gradient-to-br from-blue-900 via-black to-green-900 rounded-2xl w-[30%] p-8 shadow-2xl border border-gray-700">
+    <div class="hidden lg:block bg-gradient-to-br from-blue-900 via-black to-green-900 rounded-2xl w-[30%] p-8 py-16 shadow-2xl border border-gray-700">
       <div class="flex flex-col h-full">
         <!-- Profile Section -->
         <div class="text-center mb-8">
@@ -180,13 +180,8 @@ onMounted(() => {
             <p class="text-gray-600 mt-2">Manage your personal information</p>
           </div>
 
-          <button 
-            v-if="!isEditing"
-            @click="handleEdit"
-            class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2.5 font-semibold flex items-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg"
-          >
-            <Edit class="w-4 h-4" />
-            Edit
+          <button v-if="!isEditing" @click="handleEdit" class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2.5 font-semibold flex items-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg">
+            <Edit class="w-4 h-4" />Edit
           </button>
         </div>
 
@@ -205,7 +200,7 @@ onMounted(() => {
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                   Company Name 
                   <span class="text-red-500">*</span>
-                  <span v-if="errors.companyName && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.companyName && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.companyName }}
                   </span>
                 </label>
@@ -234,7 +229,7 @@ onMounted(() => {
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                   First Name 
                   <span class="text-red-500">*</span>
-                  <span v-if="errors.firstName && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.firstName && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.firstName }}
                   </span>
                 </label>
@@ -253,7 +248,7 @@ onMounted(() => {
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                   Last Name 
                   <span class="text-red-500">*</span>
-                  <span v-if="errors.lastName && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.lastName && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.lastName }}
                   </span>
                 </label>
@@ -270,9 +265,8 @@ onMounted(() => {
               <!-- Age -->
               <div :class="{ 'error-form': errors.age }">
                 <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                  <Calendar class="w-4 h-4" />
                   Age
-                  <span v-if="errors.age && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.age && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.age }}
                   </span>
                 </label>
@@ -318,7 +312,7 @@ onMounted(() => {
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                   Contact Email 
                   <span class="text-red-500">*</span>
-                  <span v-if="errors.contactEmail && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.contactEmail && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.contactEmail }}
                   </span>
                 </label>
@@ -335,9 +329,8 @@ onMounted(() => {
               <!-- Phone Number -->
               <div :class="{ 'error-form': errors.phoneNumber }">
                 <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                  <Phone class="w-4 h-4" />
                   Phone Number
-                  <span v-if="errors.phoneNumber && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.phoneNumber && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.phoneNumber }}
                   </span>
                 </label>
@@ -354,7 +347,6 @@ onMounted(() => {
               <!-- Location -->
               <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                  <MapPin class="w-4 h-4" />
                   Location
                 </label>
                 <input
@@ -380,7 +372,7 @@ onMounted(() => {
               <div :class="{ 'error-form': errors.gpa }">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                   GPA
-                  <span v-if="errors.gpa && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                  <span v-if="errors.gpa && isEditing" class="text-red-600 text-sm ml-2">
                     {{ errors.gpa }}
                   </span>
                 </label>

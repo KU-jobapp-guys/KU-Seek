@@ -293,7 +293,6 @@ onMounted(() => {
                   <option value="">Prefer not to say</option>
                   <option value="M">Male</option>
                   <option value="F">Female</option>
-                  <option value="O">Other</option>
                 </select>
               </div>
             </div>

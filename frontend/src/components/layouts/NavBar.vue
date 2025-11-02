@@ -7,7 +7,7 @@ import defaultProfile from '@/assets/images/defaultProfile.png'
 
 
 type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
-type Page = {'name': string ,'route': string}
+type Page = { name: string; route: string }
 
 const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:5173/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 
@@ -19,11 +19,10 @@ const props = defineProps<{
 const userId = getUserId()
 const userStore = useUserStore()
 
-// Page list
-const companyList = ['Dashboard']
-const kuList = ['Explore Job', 'Explore Company', 'Announcement', 'Dashboard']
+const companyList = ['Dashboard', 'Logout']
+const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard', 'Logout']
 const profileList = ['Profile', 'Setting', 'Logout']
-const defaultList = ['Register', {name:'Login', route:`${oauth_url}`}]
+const defaultList = ['Register', { name: 'Login', route: `${oauth_url}` }]
 const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
@@ -35,7 +34,7 @@ const pageList = computed(() => {
 
 function makeLink(page: string | Page) {
   const role = props.role
-  if (typeof(page) === 'object'){
+  if (typeof page === 'object') {
     return page.route
   }
   if (page === 'Profile') {
@@ -43,6 +42,9 @@ function makeLink(page: string | Page) {
   }
   if (page === 'Dashboard') {
     return `/${role}/dashboard`
+  }
+  if (page === 'Announcements') {
+    return `/announcements`
   }
   if (page === 'Register') {
     return `/registration`
@@ -73,8 +75,12 @@ onMounted(async () => {
     <div class="flex gap-x-4 md:gap-x-8 items-center">
       <!-- Desktop Menu List -->
       <ul class="hidden md:flex items-center gap-8">
-        <li v-for="page in pageList" :key="typeof page === 'string' ? page : page.name" class="text-base hover:text-green-300">
-          <a v-if="typeof(page) === 'object'" :href="page.route">{{ page.name }}</a>
+        <li
+          v-for="page in pageList"
+          :key="typeof page === 'string' ? page : page.name"
+          class="text-base hover:text-green-300"
+        >
+          <a v-if="typeof page === 'object'" :href="page.route">{{ page.name }}</a>
           <a v-else :href="makeLink(page)">{{ page }}</a>
         </li>
       </ul>
@@ -123,7 +129,7 @@ onMounted(async () => {
               <div v-for="page in pageList" :key="typeof page === 'string' ? page : page.name">
                 <MenuItem v-slot="{ active }">
                   <a
-                    v-if="typeof(page) === 'object'"
+                    v-if="typeof page === 'object'"
                     :href="page.route"
                     :class="[
                       active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',

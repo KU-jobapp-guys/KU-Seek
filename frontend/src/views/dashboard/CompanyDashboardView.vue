@@ -4,10 +4,11 @@ import { mockJobs } from '@/data/mockJobs'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
-import { Search, Filter, ChevronDown } from 'lucide-vue-next'
+import { Search, Filter, ChevronDown, Plus } from 'lucide-vue-next'
 import { CompanyStats } from '@/configs/dashboardStatConfig.ts'
 import type { Job } from '@/types/jobType'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
+
 
 const jobLists = ref<Job[]>([])
 const searchQuery = ref('')
@@ -76,12 +77,17 @@ onMounted(() => {
 
     <!-- Total Job Posts Section -->
     <section class="text-base relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
-      <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
+      <div class="rounded-xl bg-gray-100 px-4 md:px-8 py-16 flex flex-col gap-y-8">
         <div class="flex items-center justify-between mb-2">
           <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
-          <p class="px-4 py-1 bg-blue-500 rounded-full text-white flex gap-x-1">
-            {{ filteredJobs.length }} <span class="hidden md:block">Jobs</span>
-          </p>
+          <router-link
+            to="/company/job-post-form"
+            class="flex items-center px-4 md:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2"
+          >
+            <Plus class="w-4 h-4 md:h-5 md:w-5" />
+            <span class="hidden md:inline">Create New Job Post</span>
+            <span class="hidden sm:inline md:hidden">New Job</span>
+          </router-link>
         </div>
 
         <!-- Filter Section -->
@@ -96,7 +102,7 @@ onMounted(() => {
                   v-model="searchQuery"
                   type="text"
                   placeholder="Search by job title, location..."
-                  class="text-sm w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -143,11 +149,15 @@ onMounted(() => {
         </div>
 
         <!-- Jobs Grid -->
-        <div
-          v-if="filteredJobs.length > 0"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2"
-        >
-          <CompanyJob v-for="j in filteredJobs" :key="j.jobId" :job="j" />
+        <div v-if="filteredJobs.length > 0" class="flex flex-col gap-y-8">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2"
+          >
+            <CompanyJob v-for="j in filteredJobs" :key="j.jobId" :job="j" />
+          </div>
+          <p class="px-4 py-1 bg-blue-500 rounded-full text-white flex gap-x-1 self-end">
+            {{ filteredJobs.length }} <span class="hidden md:block">Jobs</span>
+          </p>
         </div>
 
         <!-- Empty State -->

@@ -7,6 +7,7 @@ export interface JobApplication {
   phone_number: string
   status: 'pending' | 'approved' | 'rejected'
   applied_at: Date
+  location: string
   first_name: string
   last_name: string
   contact_email: string

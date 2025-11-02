@@ -109,7 +109,7 @@ onUnmounted(() => {
         <div
           v-for="feature in visibleFeatures"
           :key="feature.title"
-          class="bg-white rounded-lg p-12 h-[400px] text-center flex flex-col items-center justify-start border-2 border-green-500 transition-all duration-300"
+          class="bg-white rounded-lg p-12 h-full text-center flex flex-col items-center justify-start border-2 border-orange-400 transition-all duration-300"
         >
           <img
             :src="feature.icon"

@@ -67,20 +67,18 @@
     <!-- Foreground Content -->
     <div class="relative z-10 flex w-full h-full px-8 justify-center items-end">
       <!-- Join Us Box -->
-      <div class="hidden md:block bg-[#0068FF]/90 text-white p-10 rounded-l-xl shadow-xl flex flex-col justify-between w-[37.5%] h-[60vh]">
+      <div class="relative hidden md:flex bg-[#0068FF]/90 text-white p-10 rounded-l-xl shadow-xl flex-col gap-y-4 justify-between items-start w-[37.5%] h-[60vh]">
         <div>
           <h1 class="text-5xl font-bold mb-2">Join Us</h1>
           <p class="text-lg text-blue-100">{{ joinUsSubtitle }}</p>
         </div>
 
         <!-- Image container -->
-        <div
-          class="flex-1 mt-4 bg-white/10 rounded-lg flex items-center justify-center text-center text-sm font-medium text-blue-100 overflow-hidden"
-        >
+        <div class="w-full flex justify-center items-end bg-white/10 rounded-lg overflow-hidden">
           <img
             src="@/assets/icons/checklist.svg"
             alt="checklist"
-            class="h-full object-contain"
+            class="w-auto h-full object-contain"
           />
         </div>
       </div>

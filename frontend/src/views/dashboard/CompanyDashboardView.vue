@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { fetchJobs } from '@/services/jobService'
+import { fetchCompanyJobs } from '@/services/jobService'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
@@ -16,7 +16,7 @@ const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
 const sortBy = ref<'default' | 'pendingApplicants'>('pendingApplicants')
 
 async function loadJob() {
-    const list = await fetchJobs()
+    const list = await fetchCompanyJobs()
     jobLists.value = list
 
 }

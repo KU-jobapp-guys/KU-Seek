@@ -71,8 +71,6 @@ async function fetchJobs() {
 
     appliedJobs.value = applications
 
-    console.log("RIDA JUMP ", applications)
-
     const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
     bookmarkedJobs.value = applications.filter((job) => saved.includes(job.jobId))
 

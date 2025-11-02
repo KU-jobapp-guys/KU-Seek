@@ -25,7 +25,6 @@ type FormPayload = {
 }
 
 const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
-  console.log('Submitting Job Post:', formPayload)
 
   const defaults = {
     work_hours: '9:00 AM - 5:00 PM',
@@ -103,7 +102,6 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
       return
     }
 
-    console.log('Job post response:', data)
     alert('Job Post submitted successfully!')
     router.replace("/company/dashboard")
 

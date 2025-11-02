@@ -96,7 +96,6 @@ export async function fetchUserAppliedJobs(): Promise<Job[]> {
 
     const data = await res.json()
     const list = Array.isArray(data) ? (data as unknown[]) : []
-    console.log(list)
     return list.map((it) => {
       const raw = it as Record<string, unknown>
       const nestedJob = raw.job as Record<string, unknown> | undefined

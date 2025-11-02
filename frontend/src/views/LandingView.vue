@@ -1,7 +1,7 @@
 <template>
   <!-- Header Section -->
   <section class="relative w-full overflow-hidden">
-    <div class="flex flex-col md:flex-row relative z-10 md:h-[560px] min-h-[400px]">
+    <div class="flex relative z-10 md:h-[560px] min-h-[400px]">
       <!-- Title Section -->
       <div class="bg-black text-white px-[8vw] md:px-[12vw] pt-20 pb-40">
         <div class="text-6xl font-bold w-full">KU Seek</div>
@@ -18,11 +18,11 @@
       </div>
 
       <!-- Logo Section -->
-      <div class="hidden md:block bg-[#FFAC13] flex-1 relative p-8 pb-48">
+      <div class="bg-[#FFAC13] flex-1 relative p-8 pb-48">
         <img 
           src="@/assets/icons/computerWithMug.png" 
           alt="Computer with mug" 
-          class="absolute bottom-0 left-1/2 -translate-x-1/2 h-full object-contain" 
+          class="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 h-full object-contain" 
         />
       </div>
     </div>
@@ -35,7 +35,10 @@
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="none"
     >
-      <path d="M0,50 C480,150 960,-50 1440,50 L1440,250 L0,250 Z" fill="white" />
+      <path
+        d="M0,80 C360,200 1080,-70 1440,80 L1440,250 L0,250 Z"
+        fill="white"
+      />
     </svg>
   </section>
 

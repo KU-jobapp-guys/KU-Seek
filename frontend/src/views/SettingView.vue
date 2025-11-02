@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { User, Mail, Phone, MapPin, Calendar, GraduationCap, Building2, Edit } from 'lucide-vue-next'
+import { User, Mail, GraduationCap, Building2, Edit } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
 import type { CompanyProfile, StudentProfile } from '@/types/profileType'
@@ -56,40 +56,40 @@ const loadUserData = async () => {
   } 
 }
 
-const validateField = (field: string, value: any) => {
+const validateField = <K extends keyof typeof profileData>(field: K, value: typeof profileData[K]) => {
   delete errors[field]
 
   switch (field) {
     case 'firstName':
-      if (!value?.trim()) errors.firstName = 'First name is required'
+      if (!value?.toString().trim()) errors.firstName = 'First name is required'
       break
     case 'lastName':
-      if (!value?.trim()) errors.lastName = 'Last name is required'
+      if (!value?.toString().trim()) errors.lastName = 'Last name is required'
       break
     case 'contactEmail':
-      if (!value?.trim()) {
+      if (!value?.toString().trim()) {
         errors.contactEmail = 'Email is required'
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.toString())) {
         errors.contactEmail = 'Invalid email format'
       }
       break
     case 'phoneNumber':
-      if (value && value.length !== 10) {
+      if (value && value.toString().length !== 10) {
         errors.phoneNumber = 'Phone number must be 10 digits'
       }
       break
     case 'age':
-      if (value && (value < 15 || value > 100)) {
+      if (value &&  value != null && (Number(value) < 15 || Number(value) > 100)) {
         errors.age = 'Age must be between 15 and 100'
       }
       break
     case 'gpa':
-      if (userType.value === 'student' && value !== null && value !== undefined && (value < 0 || value > 4)) {
+      if (userType.value === 'student' && value !== null && value !== undefined && (Number(value) < 0 || Number(value) > 4)) {
         errors.gpa = 'GPA must be between 0.00 and 4.00'
       }
       break
     case 'companyName':
-      if (userType.value === 'company' && !value?.trim()) {
+      if (userType.value === 'company' && !value?.toString().trim()) {
         errors.companyName = 'Company name is required'
       }
       break
@@ -114,7 +114,7 @@ const validateForm = (): boolean => {
   return Object.keys(errors).length === 0
 }
 
-const handleFieldInput = (field: string, value: any) => {
+const handleFieldInput = <K extends keyof typeof profileData>(field: K, value: typeof profileData[K]) => {
   touched[field] = true
   validateField(field, value)
 }

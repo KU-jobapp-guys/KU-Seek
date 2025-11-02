@@ -1,6 +1,10 @@
 export interface CompanyProfile {
   id: string
   name: string
+  first_name?: string
+  last_name?: string
+  age: number | null
+  gender?: string
   type: string
   website: string
   industry: string
@@ -12,6 +16,9 @@ export interface CompanyProfile {
   about: string
   bannerPhoto: string
   profilePhoto: string
+  email?: string
+  contact_email?: string
+  phone_number?: string
 }
 
 export interface StudentProfile {
@@ -20,9 +27,10 @@ export interface StudentProfile {
   last_name: string
   about: string
   location: string
+  email?: string
   contact_email: string
   gender: string
-  age: number
+  age: number | null
   user_type: 'student'
   profilePhoto: string
   bannerPhoto: string
@@ -47,9 +55,10 @@ export interface ProfessorProfile {
   last_name: string
   about: string
   location: string
+  email?: string
   contact_email: string
   gender: string
-  age: number
+  age: number | null
   profilePhoto: string
   bannerPhoto: string
   phone_number: string

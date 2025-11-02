@@ -1,100 +1,131 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { Save, User, Mail, Phone, MapPin, Calendar, GraduationCap, X } from 'lucide-vue-next'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { User, Mail, Phone, MapPin, Calendar, GraduationCap, Building2, Edit } from 'lucide-vue-next'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
+import type { CompanyProfile, StudentProfile } from '@/types/profileType'
 
-interface FormData {
-  firstName: string
-  lastName: string
-  contactEmail: string
-  phoneNumber: string
-  location: string
-  age: number | null
-  gender: string
-  gpa: number | null
-}
+const userType = ref<'student' | 'company' | 'professor'>('professor')
+const isEditing = ref(false)
+const isSaving = ref(false)
+const isLoading = ref(true)
 
-interface Errors {
-  firstName?: string
-  lastName?: string
-  contactEmail?: string
-  phoneNumber?: string
-  age?: string
-  gpa?: string
-}
-
-const formData = reactive<FormData>({
-  firstName: 'John',
-  lastName: 'Doe',
-  contactEmail: 'john.doe@student.edu',
-  phoneNumber: '+66 12 345 6789',
-  location: 'Bangkok, Thailand',
-  age: 21,
-  gender: 'M',
-  gpa: 3.75
+const profileData = reactive({
+  firstName: '',
+  lastName: '',
+  age: null as number | null,
+  gender: '',
+  contactEmail: '',
+  phoneNumber: '',
+  location: '',
+  companyName: '',
+  gpa: null as number | null
 })
 
-const errors = reactive<Errors>({})
-const isSaving = ref(false)
-const successMessage = ref('')
+const originalData = ref<typeof profileData | null>(null)
+const errors = reactive<Record<string, string>>({})
 
+const loadUserData = async () => {
+  console.log('Loading user data for type:', userType.value)
+  try {
+    const profile = await fetchUserProfile(userType.value)
+    
+    // Transform API response to match profileData structure
+    const transformedData = {
+      firstName: profile.first_name || '',
+      lastName: profile.last_name || '',
+      age: profile.age || null,
+      gender: profile.gender || '',
+      contactEmail: profile.contact_email || profile.email || '',
+      phoneNumber: profile.phone_number || '',
+      location: profile.location || '',
+      companyName: userType.value === 'company' ? (profile as CompanyProfile).name || '' : '',
+      gpa: userType.value === 'student' ? (profile as StudentProfile).gpa || null : null
+    }
+    
+    Object.assign(profileData, transformedData)
+    originalData.value = JSON.parse(JSON.stringify(profileData))
+    console.log('Loaded data:', originalData.value)
+  } catch (error) {
+    console.error('Failed to load user data:', error)
+  } finally {
+    isLoading.value = false
+  } 
+}
+
+// Validation
 const validateForm = (): boolean => {
-  Object.keys(errors).forEach(key => delete errors[key as keyof Errors])
+  Object.keys(errors).forEach(key => delete errors[key])
 
-  if (!formData.firstName?.trim()) {
+  if (!profileData.firstName?.trim()) {
     errors.firstName = 'First name is required'
   }
-
-  if (!formData.lastName?.trim()) {
+  if (!profileData.lastName?.trim()) {
     errors.lastName = 'Last name is required'
   }
-
-  if (formData.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
+  if (!profileData.contactEmail?.trim()) {
+    errors.contactEmail = 'Email is required'
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileData.contactEmail)) {
     errors.contactEmail = 'Invalid email format'
   }
-
-  if (formData.phoneNumber && !/^[\d\s\+\-\(\)]+$/.test(formData.phoneNumber)) {
+  if (profileData.phoneNumber && !/^[\d\s\+\-\(\)]+$/.test(profileData.phoneNumber)) {
     errors.phoneNumber = 'Invalid phone number format'
   }
-
-  if (formData.age && (formData.age < 15 || formData.age > 100)) {
+  if (profileData.age && (profileData.age < 15 || profileData.age > 100)) {
     errors.age = 'Age must be between 15 and 100'
   }
-
-  if (formData.gpa && (formData.gpa < 0 || formData.gpa > 4)) {
-    errors.gpa = 'GPA must be between 0.00 and 4.00'
+  if (userType.value === 'student') {
+    if (profileData.gpa !== null && profileData.gpa !== undefined && (profileData.gpa < 0 || profileData.gpa > 4)) {
+      errors.gpa = 'GPA must be between 0.00 and 4.00'
+    }
+  } else if (userType.value === 'company') {
+    if (!profileData.companyName?.trim()) {
+      errors.companyName = 'Company name is required'
+    }
   }
 
   return Object.keys(errors).length === 0
 }
 
-const clearError = (field: keyof Errors) => {
+const clearError = (field: string) => {
   if (errors[field]) {
     delete errors[field]
   }
-  if (successMessage.value) {
-    successMessage.value = ''
+}
+
+const handleEdit = () => {
+  isEditing.value = true
+  originalData.value = JSON.parse(JSON.stringify(profileData))
+}
+
+const handleCancel = () => {
+  if (originalData.value) {
+    Object.assign(profileData, originalData.value)
   }
+  Object.keys(errors).forEach(key => delete errors[key])
+  isEditing.value = false
 }
 
 const handleSubmit = async () => {
   if (!validateForm()) {
+    const firstError = document.querySelector('.error-form')
+    if (firstError) {
+      setTimeout(() => {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+    }
     return
   }
 
   isSaving.value = true
 
   try {
-    // TODO: Replace with actual API call
-    // await updateStudentSettings(formData)
+    // Service handles the data transformation
+    await updateUserProfile(profileData)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    originalData.value = JSON.parse(JSON.stringify(profileData))
+    isEditing.value = false
     
-    successMessage.value = 'Settings saved successfully!'
-    
-    setTimeout(() => {
-      successMessage.value = ''
-    }, 3000)
   } catch (error) {
     console.error('Failed to save settings:', error)
   } finally {
@@ -102,242 +133,282 @@ const handleSubmit = async () => {
   }
 }
 
-const handleReset = () => {
-  Object.assign(formData, {
-    firstName: 'John',
-    lastName: 'Doe',
-    contactEmail: 'john.doe@student.edu',
-    phoneNumber: '+66 12 345 6789',
-    location: 'Bangkok, Thailand',
-    age: 21,
-    gender: 'M',
-    gpa: 3.75
-  })
-  Object.keys(errors).forEach(key => delete errors[key as keyof Errors])
-  successMessage.value = ''
-}
+const inputClass = computed(() => (hasError: boolean) => {
+  const baseClass = 'w-full px-4 py-2.5 rounded-lg transition-all duration-200'
+  const editableClass = isEditing.value 
+    ? 'border-2 focus:outline-none focus:ring-2 focus:ring-blue-500' 
+    : 'border bg-gray-50 cursor-not-allowed'
+  const errorClass = hasError && isEditing.value ? 'border-red-500 bg-red-50' : 'border-gray-300'
+  
+  return `${baseClass} ${editableClass} ${errorClass}`
+})
+
+// Load data on component mount
+onMounted(() => {
+  loadUserData()
+})
 </script>
 
 <template>
-  <div class="min-h-screen py-16 px-[8vw] md:px-[12vw]">
-    <div class="mx-auto bg-gray-100 rounded-2xl p-6 md:p-10">
-      <!-- Header -->
-      <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Account Settings</h1>
-        <p class="text-gray-600 mt-2">Manage your personal information</p>
+  <LoadingScreen v-if="isLoading" />
+
+  <div v-else class="flex h-full gap-x-8 min-h-screen w-full py-16 px-[8vw] md:px-[12vw]">
+    <!-- Left Sidebar -->
+    <div class="hidden lg:block bg-gradient-to-br from-blue-900 via-black to-green-900 rounded-2xl w-[30%] p-8 shadow-2xl border border-gray-700">
+      <div class="flex flex-col h-full">
+        <!-- Profile Section -->
+        <div class="text-center mb-8">
+          <div class="w-32 h-32 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-lg">
+            {{ profileData.firstName.charAt(0) }}{{ profileData.lastName.charAt(0) }}
+          </div>
+          <h3 class="text-white text-xl font-bold">{{ profileData.firstName }} {{ profileData.lastName }}</h3>
+          <p class="text-gray-400 text-sm mt-1">{{ profileData.contactEmail }}</p>
+          <div class="mt-4 inline-block px-4 py-1.5 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold border border-blue-500/30 capitalize">
+            {{ userType }}
+          </div>
+        </div>
       </div>
+    </div>
 
-      <!-- Success Message -->
-      <div
-        v-if="successMessage"
-        class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center justify-between"
-      >
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
+    <!-- Main Content -->
+    <div class="w-full">
+      <div class="mx-auto bg-gray-100 rounded-2xl p-6 md:p-10">
+        <!-- Header -->
+        <div class="flex justify-between items-center bg-gradient-to-r from-white to-gray-50 rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Account Settings</h1>
+            <p class="text-gray-600 mt-2">Manage your personal information</p>
           </div>
-          <p class="text-green-800 font-medium">{{ successMessage }}</p>
-        </div>
-        <button @click="successMessage = ''" class="text-green-600 hover:text-green-800">
-          <X class="w-5 h-5" />
-        </button>
-      </div>
 
-      <!-- Settings Form -->
-      <div class="bg-white rounded-xl shadow-sm p-6">
-        <!-- Personal Information Section -->
-        <div class="mb-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <User class="w-5 h-5 text-blue-600" />
-            Personal Information
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- First Name -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                First Name <span class="text-red-500">*</span>
-              </label>
-              <input
-                v-model="formData.firstName"
-                @input="clearError('firstName')"
-                type="text"
-                :class="[
-                  'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  errors.firstName ? 'border-red-500' : 'border-gray-300'
-                ]"
-                placeholder="Enter first name"
-              />
-              <p v-if="errors.firstName" class="text-red-500 text-sm mt-1">{{ errors.firstName }}</p>
-            </div>
-
-            <!-- Last Name -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Last Name <span class="text-red-500">*</span>
-              </label>
-              <input
-                v-model="formData.lastName"
-                @input="clearError('lastName')"
-                type="text"
-                :class="[
-                  'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  errors.lastName ? 'border-red-500' : 'border-gray-300'
-                ]"
-                placeholder="Enter last name"
-              />
-              <p v-if="errors.lastName" class="text-red-500 text-sm mt-1">{{ errors.lastName }}</p>
-            </div>
-
-            <!-- Age -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Calendar class="w-4 h-4" />
-                Age
-              </label>
-              <input
-                v-model.number="formData.age"
-                @input="clearError('age')"
-                type="number"
-                :class="[
-                  'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  errors.age ? 'border-red-500' : 'border-gray-300'
-                ]"
-                placeholder="Enter age"
-                min="15"
-                max="100"
-              />
-              <p v-if="errors.age" class="text-red-500 text-sm mt-1">{{ errors.age }}</p>
-            </div>
-
-            <!-- Gender -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-              <select
-                v-model="formData.gender"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-              >
-                <option value="">Prefer not to say</option>
-                <option value="M">Male</option>
-                <option value="F">Female</option>
-                <option value="O">Other</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Contact Information Section -->
-        <div class="mb-8 pt-8 border-t border-gray-200">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Mail class="w-5 h-5 text-blue-600" />
-            Contact Information
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Contact Email -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
-              <input
-                v-model="formData.contactEmail"
-                @input="clearError('contactEmail')"
-                type="email"
-                :class="[
-                  'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  errors.contactEmail ? 'border-red-500' : 'border-gray-300'
-                ]"
-                placeholder="your.email@example.com"
-              />
-              <p v-if="errors.contactEmail" class="text-red-500 text-sm mt-1">
-                {{ errors.contactEmail }}
-              </p>
-            </div>
-
-            <!-- Phone Number -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Phone class="w-4 h-4" />
-                Phone Number
-              </label>
-              <input
-                v-model="formData.phoneNumber"
-                @input="clearError('phoneNumber')"
-                type="tel"
-                :class="[
-                  'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
-                ]"
-                placeholder="+66 12 345 6789"
-              />
-              <p v-if="errors.phoneNumber" class="text-red-500 text-sm mt-1">
-                {{ errors.phoneNumber }}
-              </p>
-            </div>
-
-            <!-- Location -->
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <MapPin class="w-4 h-4" />
-                Location
-              </label>
-              <input
-                v-model="formData.location"
-                type="text"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="City, Country"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Academic Information Section -->
-        <div class="mb-8 pt-8 border-t border-gray-200">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <GraduationCap class="w-5 h-5 text-blue-600" />
-            Academic Information
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- GPA -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">GPA</label>
-              <input
-                v-model.number="formData.gpa"
-                @input="clearError('gpa')"
-                type="number"
-                step="0.01"
-                min="0"
-                max="4"
-                :class="[
-                  'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
-                  errors.gpa ? 'border-red-500' : 'border-gray-300'
-                ]"
-                placeholder="0.00"
-              />
-              <p v-if="errors.gpa" class="text-red-500 text-sm mt-1">{{ errors.gpa }}</p>
-              <p class="text-gray-500 text-xs mt-1">Scale: 0.00 - 4.00</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-          <button
-            @click="handleSubmit"
-            :disabled="isSaving"
-            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+          <button 
+            v-if="!isEditing"
+            @click="handleEdit"
+            class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2.5 font-semibold flex items-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg"
           >
-            <Save class="w-5 h-5" />
-            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            <Edit class="w-4 h-4" />
+            Edit
           </button>
+        </div>
 
-          <button
-            @click="handleReset"
-            class="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
-          >
-            Reset
-          </button>
+        <!-- Settings Form -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <!-- Company-specific fields -->
+          <div v-if="userType === 'company'" class="mb-8 pt-4 pb-8 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Building2 class="w-5 h-5 text-blue-600" />
+              Company Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Company Name -->
+              <div class="md:col-span-2" :class="{ 'error-form': errors.companyName }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Company Name 
+                  <span class="text-red-500">*</span>
+                  <span v-if="errors.companyName && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.companyName }}
+                  </span>
+                </label>
+                <input
+                  v-model="profileData.companyName"
+                  @input="clearError('companyName')"
+                  type="text"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.companyName)"
+                  placeholder="e.g., TechCorp Solutions"
+                />
+              </div>              
+            </div>
+          </div>
+
+          <!-- Personal Information Section -->
+          <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <User class="w-5 h-5 text-blue-600" />
+              Personal Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- First Name -->
+              <div :class="{ 'error-form': errors.firstName }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  First Name 
+                  <span class="text-red-500">*</span>
+                  <span v-if="errors.firstName && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.firstName }}
+                  </span>
+                </label>
+                <input
+                  v-model="profileData.firstName"
+                  @input="clearError('firstName')"
+                  type="text"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.firstName)"
+                  placeholder="Enter first name"
+                />
+              </div>
+
+              <!-- Last Name -->
+              <div :class="{ 'error-form': errors.lastName }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Last Name 
+                  <span class="text-red-500">*</span>
+                  <span v-if="errors.lastName && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.lastName }}
+                  </span>
+                </label>
+                <input
+                  v-model="profileData.lastName"
+                  @input="clearError('lastName')"
+                  type="text"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.lastName)"
+                  placeholder="Enter last name"
+                />
+              </div>
+
+              <!-- Age -->
+              <div :class="{ 'error-form': errors.age }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <Calendar class="w-4 h-4" />
+                  Age
+                  <span v-if="errors.age && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.age }}
+                  </span>
+                </label>
+                <input
+                  v-model.number="profileData.age"
+                  @input="clearError('age')"
+                  type="number"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.age)"
+                  placeholder="Enter age"
+                  min="15"
+                  max="100"
+                />
+              </div>
+
+              <!-- Gender -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                <select
+                  v-model="profileData.gender"
+                  :disabled="!isEditing"
+                  :class="inputClass(false)"
+                >
+                  <option value="">Prefer not to say</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="O">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Information Section -->
+          <div class="mb-8 pt-8 border-t border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Mail class="w-5 h-5 text-blue-600" />
+              Contact Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Contact Email -->
+              <div :class="{ 'error-form': errors.contactEmail }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Contact Email 
+                  <span class="text-red-500">*</span>
+                  <span v-if="errors.contactEmail && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.contactEmail }}
+                  </span>
+                </label>
+                <input
+                  v-model="profileData.contactEmail"
+                  @input="clearError('contactEmail')"
+                  type="email"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.contactEmail)"
+                  placeholder="your.email@example.com"
+                />
+              </div>
+
+              <!-- Phone Number -->
+              <div :class="{ 'error-form': errors.phoneNumber }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <Phone class="w-4 h-4" />
+                  Phone Number
+                  <span v-if="errors.phoneNumber && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.phoneNumber }}
+                  </span>
+                </label>
+                <input
+                  v-model="profileData.phoneNumber"
+                  @input="clearError('phoneNumber')"
+                  type="tel"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.phoneNumber)"
+                  placeholder="+66 12 345 6789"
+                />
+              </div>
+
+              <!-- Location -->
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <MapPin class="w-4 h-4" />
+                  Location
+                </label>
+                <input
+                  v-model="profileData.location"
+                  type="text"
+                  :disabled="!isEditing"
+                  :class="inputClass(false)"
+                  placeholder="City, Country"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Student-specific fields -->
+          <div v-if="userType === 'student'" class="mb-8 pt-8 border-t border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <GraduationCap class="w-5 h-5 text-blue-600" />
+              Academic Information
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- GPA -->
+              <div :class="{ 'error-form': errors.gpa }">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  GPA
+                  <span v-if="errors.gpa && isEditing" class="text-red-600 text-sm font-medium ml-2">
+                    {{ errors.gpa }}
+                  </span>
+                </label>
+                <input
+                  v-model.number="profileData.gpa"
+                  @input="clearError('gpa')"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="4"
+                  :disabled="!isEditing"
+                  :class="inputClass(!!errors.gpa)"
+                  placeholder="0.00"
+                />
+                <p class="text-gray-500 text-xs mt-1">Scale: 0.00 - 4.00</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div v-if="isEditing" class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+            <button @click="handleSubmit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+              Save Changes
+            </button>
+            <button @click="handleCancel" :disabled="isSaving" class="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:cursor-not-allowed text-gray-700 font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 border-2 border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>

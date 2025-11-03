@@ -96,7 +96,7 @@ const goToApply = () => {
 
         <div class="flex gap-x-2 items-center text-gray-600">
           <Banknote class="w-4 h-4" />
-          <p>{{ job.salary_min }} - {{ job.salary_max }} THB/month</p>
+          <p>{{ job.salaryMin }} - {{ job.salaryMax }} THB/month</p>
         </div>
       </div>
 

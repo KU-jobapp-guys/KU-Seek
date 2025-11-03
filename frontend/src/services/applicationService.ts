@@ -17,9 +17,9 @@ export function mapBackendApplication(b: unknown): JobApplication {
   const obj = (b ?? {}) as Record<string, unknown>
 
   const applicant = (obj.applicant ?? {}) as Record<string, unknown>
-  const jobDetails = (obj.job_details ?? {}) as Record<string, unknown>
+  const jobDetails = (obj.job_details ?? obj.jobDetails ?? {}) as Record<string, unknown>
 
-  const appliedAtRaw = obj.applied_at ?? obj.appliedAt
+  const appliedAtRaw = obj.applied_at ?? obj.appliedAt ?? applicant.applied_at ?? applicant.appliedAt
   let appliedAt: Date
   if (typeof appliedAtRaw === 'string') {
     appliedAt = new Date(appliedAtRaw)
@@ -30,23 +30,23 @@ export function mapBackendApplication(b: unknown): JobApplication {
   }
 
   const id = toNumber(obj.id ?? 0)
-  const studentId = toNumber(applicant.user_id ?? applicant.userId ?? obj.student_id ?? 0)
+  const studentId = toNumber(applicant.user_id ?? applicant.userId ?? obj.student_id ?? obj.studentId ?? 0)
 
   const mapped: JobApplication = {
     id,
-    job_id: String(jobDetails.job_id ?? jobDetails.jobId ?? obj.job_id ?? obj.jobId ?? ''),
-    student_id: studentId,
+    jobId: String(jobDetails.job_id ?? jobDetails.jobId ?? obj.job_id ?? obj.jobId ?? ''),
+    studentId,
     resume: String(obj.resume ?? ''),
-    letter_of_application: String(obj.letter_of_application ?? obj.letterOfApplication ?? ''),
-    phone_number: String(obj.phone_number ?? obj.phoneNumber ?? ''),
+    letterOfApplication: String(obj.letter_of_application ?? obj.letterOfApplication ?? obj.letterOfApplication ?? ''),
+    phoneNumber: String(obj.phone_number ?? obj.phoneNumber ?? applicant.phone_number ?? applicant.phoneNumber ?? ''),
     status: (String(obj.status ?? 'pending') as 'pending' | 'accepted' | 'rejected'),
-    applied_at: appliedAt,
+    appliedAt,
     location: String(applicant.location ?? obj.location ?? ''),
-    first_name: String(applicant.first_name ?? applicant.firstName ?? ''),
-    last_name: String(applicant.last_name ?? applicant.lastName ?? ''),
-    contact_email: String(applicant.contact_email ?? applicant.contactEmail ?? ''),
-    years_of_experience: String(obj.years_of_experience ?? obj.yearsOfExperience ?? ''),
-    expected_salary: String(obj.expected_salary ?? obj.expectedSalary ?? ''),
+    firstName: String(applicant.first_name ?? applicant.firstName ?? ''),
+    lastName: String(applicant.last_name ?? applicant.lastName ?? ''),
+    contactEmail: String(applicant.contact_email ?? applicant.contactEmail ?? ''),
+    yearsOfExperience: String(obj.years_of_experience ?? obj.yearsOfExperience ?? ''),
+    expectedSalary: String(obj.expected_salary ?? obj.expectedSalary ?? ''),
   }
 
   return mapped
@@ -104,6 +104,12 @@ export async function fetchUserAppliedJobs(): Promise<Job[]> {
       if (raw.status) jobObj.status = raw.status
       if (raw.applied_at && !jobObj.applied_at) jobObj.postTime = raw.applied_at
 
+          // normalize job id field to camelCase for frontend
+          const jobRec = jobObj as Record<string, unknown>
+          if (!('jobId' in jobRec) && 'job_id' in jobRec) {
+            jobRec['jobId'] = String(jobRec['job_id'])
+          }
+
       if (jobObj.postTime && typeof jobObj.postTime === 'string') {
         try {
           jobObj.postTime = new Date(jobObj.postTime as string)
@@ -112,9 +118,8 @@ export async function fetchUserAppliedJobs(): Promise<Job[]> {
         }
       }
 
-      // Ensure numeric salary fields exist
-      if (jobObj.salary_min == null) jobObj.salary_min = 0
-      if (jobObj.salary_max == null) jobObj.salary_max = 0
+      if (jobObj.salaryMin == null) jobObj.salaryMin = 0
+      if (jobObj.salaryMax == null) jobObj.salaryMax = 0
 
       return (jobObj as unknown) as Job
     })
@@ -165,7 +170,37 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       credentials: 'include',
     })
 
-    const data = await res.json()
+    console.log("look at my body ", form)
+
+    const bodyText = await res.text().catch(() => '')
+    let parsed: unknown = null
+    try {
+      parsed = bodyText ? JSON.parse(bodyText) : null
+    } catch {
+      parsed = null
+    }
+
+    if (!res.ok) {
+      const parsedObj = parsed as Record<string, unknown> | null
+      let msg = bodyText || `Request failed with status ${res.status}`
+      if (parsedObj) {
+        const m = parsedObj['message'] ?? parsedObj['detail'] ?? parsedObj['error']
+        if (typeof m === 'string') msg = m
+        else if (m != null) msg = String(m)
+      }
+      console.error('submitApplication failed', { url: url.toString(), status: res.status, statusText: res.statusText, body: bodyText })
+      throw new Error(msg)
+    }
+
+    const data = parsed ?? (await (async () => {
+      try {
+        return await res.json()
+      } catch {
+        return null
+      }
+    })())
+
+    if (!data) return null
     if (Array.isArray(data)) {
       return mapBackendApplication(data[0] ?? null)
     }
@@ -190,7 +225,7 @@ export async function updateApplicationStatus(jobId: string, pendingApplications
     if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
     
     const updates = Array.from(pendingApplications).map(([application_id, status]) => ({
-      application_id,
+      applicationId: application_id,
       status,
     }))
     
@@ -209,8 +244,8 @@ export async function updateApplicationStatus(jobId: string, pendingApplications
       throw new Error(`Failed to update applications: ${res.statusText} - ${errorText}`)
     }
 
-    const data = await res.json()
-    return data
+  const data = await res.json().catch(() => [])
+  return normalizeApplications(data)
     
   } catch (err) {
     console.error('Error submitting application', err)

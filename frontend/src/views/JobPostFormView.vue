@@ -9,49 +9,49 @@ const router = useRouter()
 
 
 type FormPayload = {
-  role?: string
   title?: string
   description?: string
   location?: string
   jobType?: string
-  job_type?: string
   salaryMin?: number | string
   salaryMax?: number | string
-  salary_min?: number | string
-  salary_max?: number | string
-  skill_names?: string[]
+  skillNames?: string[]
   skills?: string[]
-  tag_names?: string[]
+  tagNames?: string[]
 }
 
 const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
 
-  const defaults = {
-    work_hours: '9:00 AM - 5:00 PM',
-    job_level: 'Mid-level',
-    capacity: 1,
-    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-  }
+    const defaults = {
+      workHours: '9:00 AM - 5:00 PM',
+      jobLevel: 'Mid-level',
+      capacity: 1,
+      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    }
 
-  // Build backend payload using safe fallbacks
-  const bodyPayload = {
-    title: (formPayload.role || formPayload.title || '') as string,
-    description: (formPayload.description || '') as string,
-    location: (formPayload.location || '') as string,
-    work_hours: defaults.work_hours,
-    job_type: ((formPayload.jobType as string) || '').toLowerCase(),
-    job_level: defaults.job_level,
-    capacity: defaults.capacity,
-    end_date: defaults.end_date,
-    salary_min: Number(formPayload.salaryMin ?? formPayload.salary_min ?? 0),
-    salary_max: Number(formPayload.salaryMax ?? formPayload.salary_max ?? 0),
-    skill_names: Array.isArray(formPayload.skill_names)
-      ? formPayload.skill_names
-      : Array.isArray(formPayload.skills)
-      ? formPayload.skills
-      : [],
-    tag_names: Array.isArray(formPayload.tag_names) ? formPayload.tag_names : [],
-  }
+    const anyPayload = formPayload as Record<string, unknown>
+    const bodyPayload = {
+      title: String(anyPayload.role ?? anyPayload.title ?? ''),
+      description: String(anyPayload.description ?? ''),
+      location: String(anyPayload.location ?? ''),
+      workHours: String(anyPayload.workHours ?? anyPayload.work_hours ?? defaults.workHours),
+      jobType: String((anyPayload.jobType ?? anyPayload.job_type ?? '')).toLowerCase(),
+      jobLevel: String(anyPayload.jobLevel ?? anyPayload.job_level ?? defaults.jobLevel),
+      capacity: Number(anyPayload.capacity ?? defaults.capacity),
+      endDate: String(anyPayload.endDate ?? anyPayload.end_date ?? defaults.endDate),
+      salaryMin: Number(anyPayload.salaryMin ?? anyPayload.salary_min ?? 0),
+      salaryMax: Number(anyPayload.salaryMax ?? anyPayload.salary_max ?? 0),
+      skillNames: Array.isArray(anyPayload.skillNames)
+        ? (anyPayload.skillNames as string[])
+        : Array.isArray(anyPayload.skills)
+        ? (anyPayload.skills as string[])
+        : [],
+      tagNames: Array.isArray(anyPayload.tagNames)
+        ? (anyPayload.tagNames as string[])
+        : Array.isArray(anyPayload.tag_names)
+        ? (anyPayload.tag_names as string[])
+        : [],
+    }
 
   // Prepare headers
   const headers: Record<string, string> = {

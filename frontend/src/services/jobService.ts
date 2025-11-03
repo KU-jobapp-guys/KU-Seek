@@ -91,7 +91,7 @@ export async function fetchCompanyJobs(): Promise<Job[]> {
   try {
     const csrfToken = await fetchCsrfToken(base)
             
-    const payload = { is_owner: true }
+  const payload = { isOwner: true }
     const res = await fetch(url.toString(), {
       method: 'POST',
       headers: {

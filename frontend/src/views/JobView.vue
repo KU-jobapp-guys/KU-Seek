@@ -20,6 +20,17 @@ const cancelEditing = () => {
 }
 
 const updateEditing = (payload: Partial<Job>) => {
+  
+  if (initialData.value) {
+    initialData.value = {
+      ...initialData.value,
+      ...(payload as Partial<Job>),
+    } as Job
+  } else if (payload && Object.keys(payload).length > 0) {
+   
+    initialData.value = payload as Job
+  }
+
   isEditing.value = false
 }
 

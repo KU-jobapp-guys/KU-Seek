@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, reactive } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import type { Job } from '@/types/jobType'
 
 // Import components

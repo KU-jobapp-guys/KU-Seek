@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Toast from '@/components/additions/Toast.vue'
+import Toast from '@/components/additions/AppToast.vue'
 
 interface ToastItem {
   id: number

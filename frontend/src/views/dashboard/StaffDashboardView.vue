@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Header from '@/components/layouts/AppHeader.vue'
 import JobCard from '@/components/jobBoard/JobBox.vue'

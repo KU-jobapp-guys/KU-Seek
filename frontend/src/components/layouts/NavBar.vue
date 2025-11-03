@@ -60,7 +60,6 @@ onMounted(() => {
   const role = props.role
   if (role && role !== 'visitor' && role !== 'staff') {
     userData.value = mockData[role].find((u) => u.id === userId) || null
-    console.log('data: ', userData)
   }
 })
 </script>

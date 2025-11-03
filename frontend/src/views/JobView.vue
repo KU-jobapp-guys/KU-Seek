@@ -21,7 +21,6 @@ const cancelEditing = () => {
 
 const updateEditing = (payload: Partial<Job>) => {
   isEditing.value = false
-  console.log('update job posting with data: ', payload)
 }
 
 onMounted(() => {

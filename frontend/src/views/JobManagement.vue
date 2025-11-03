@@ -73,7 +73,6 @@ async function loadJob(id?: string) {
   try {
     const jobs = await fetchJobs()
     jobDetail.value = jobs.find((j) => j.jobId === id)
-    console.log("Loaded job detail:", jobDetail.value)
     if (!jobDetail.value) {
       router.replace({ name: 'not found' })
       return
@@ -92,7 +91,6 @@ async function loadApplicants(id?: string) {
   }
   try {
     const apps = await fetchApplicationsByJob(id)
-    console.log("Loaded applicants:", apps)
     applicantsList.value = sortApplicant(apps)
   } catch (err) {
     console.error('Error loading applicants', err)
@@ -120,7 +118,6 @@ function handleModalClick(status: 'save' | 'cancel') {
 }
 
 async function saveChanges() {
-  console.log("Pending changes:", pendingChanges.value)
   const data = await updateApplicationStatus(route.params.id as string, pendingChanges.value)
   if (!data) {
     alert('Failed to save changes.')

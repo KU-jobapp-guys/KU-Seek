@@ -45,7 +45,6 @@ const filteredJobs = computed(() => {
       return bPending - aPending
     })
   }
-  console.log(filtered)
 
   return filtered
 })

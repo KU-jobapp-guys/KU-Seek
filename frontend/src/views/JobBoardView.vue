@@ -23,8 +23,6 @@ const companyFilter = ref<string | undefined>(route.query.company as string) // 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
 
-  console.log('Fetching new data with options:', filters.value)
-
   const mapped = await fetchJobsService()
 
   jobs.value = mapped.filter((j: Job) => {

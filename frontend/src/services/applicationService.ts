@@ -170,8 +170,6 @@ export async function submitApplication(jobId: string, form: FormData): Promise<
       credentials: 'include',
     })
 
-    console.log("look at my body ", form)
-
     const bodyText = await res.text().catch(() => '')
     let parsed: unknown = null
     try {
@@ -229,7 +227,6 @@ export async function updateApplicationStatus(jobId: string, pendingApplications
       status,
     }))
     
-    console.log('Sending updates:', updates)
     
     const res = await fetch(url.toString(), {
       method: 'PATCH',

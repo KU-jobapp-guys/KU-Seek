@@ -1,4 +1,10 @@
-<template></template>
+<template>
+    <div class="flex flex-col items-center justify-center w-full h-screen">
+    <h1 class="text-3xl font-bold mb-6">Logging you out</h1>
+    <!-- Spinning Loading Icon -->
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-green-500 border-solid border-opacity-50"></div>
+  </div>
+</template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';

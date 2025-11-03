@@ -158,14 +158,15 @@ onMounted(() => {
             </label>
             <select
               v-model="jobPost.jobType"
-              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full"
-            >
+              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full appearance-none"
+              >
               <option disabled value="">Select job type</option>
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Internship">Internship</option>
               <option value="Contract">Contract</option>
             </select>
+
           </div>
 
           <div class="md:col-span-2">

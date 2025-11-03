@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import type { Job } from '@/types/jobType'
 import { fetchJobs } from '@/services/jobService'
 import { useRouter } from 'vue-router'
@@ -7,6 +7,7 @@ import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-n
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
 import { getUserRole, isOwner } from '@/libs/userUtils'
+import { fetchUserAppliedJobs } from '@/services/applicationService'
 import { IconMap } from '@/configs/contactConfig'
 
 const props = defineProps<{ jobId: string }>()
@@ -34,6 +35,7 @@ const loadJob = async (id?: string) => {
 
 onMounted(() => {
   loadJob(props.jobId)
+  loadApplied()
 })
 
 watch(
@@ -43,8 +45,21 @@ watch(
   },
 )
 
+const appliedJobIds = ref(new Set<string>())
+
+const loadApplied = async () => {
+  try {
+    const list = await fetchUserAppliedJobs()
+    appliedJobIds.value = new Set(list.map((j) => j.jobId))
+  } catch (err) {
+    console.error('Failed to load applied jobs', err)
+  }
+}
+
+const isApplied = computed(() => !!job.value && appliedJobIds.value.has(job.value.jobId))
+
 const goToApply = () => {
-  if (job.value) {
+  if (job.value && !isApplied.value) {
     router.push(`/job/${job.value.jobId}/apply`)
   }
 }
@@ -104,9 +119,10 @@ const goToApply = () => {
       <div v-if="userRole === 'student'" class="mt-4 flex gap-x-2">
         <button
           @click="goToApply"
-          class="bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md"
+          :disabled="isApplied"
+          :class="isApplied ? 'bg-gray-400 text-white px-8 py-1 rounded-md cursor-not-allowed' : 'bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md'"
         >
-          Apply
+          {{ isApplied ? 'Applied' : 'Apply' }}
         </button>
         <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
           Add to Bookmarks

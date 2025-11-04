@@ -7,7 +7,6 @@ const props = defineProps<{ job: Job }>()
 
 // Step control
 const step = ref(1)
-const resumeOption = ref('upload')
 
 // Form data
 const form = reactive({
@@ -34,7 +33,6 @@ function validatePersonalInfo() {
   errors.email = ''
 
   if (form.phone.trim() && !validatePhone(form.phone)) {
-    // Customized message for 9–10 digits only
     errors.phone = 'Phone number must contain 9–10 number digits.'
   }
 
@@ -99,8 +97,7 @@ const isFormValid = computed(() => {
     hasValidPhone &&
     form.address.trim()
 
-  const hasResume =
-    resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.resume)
+  const hasResume = !!form.resume
   const hasLetter = !!form.application_letter
   const hasExperience = !!form.experience
   const hasExpectedSalary = !!form.expected_salary
@@ -122,8 +119,7 @@ function getMissingFields() {
   else if (errors.phone) missing.push(`Phone (${errors.phone})`)
   if (!form.email.trim()) missing.push('Email')
   else if (errors.email) missing.push(`Email (${errors.email})`)
-  if (resumeOption.value === 'upload' && !form.resume)
-    missing.push('Resume file (or select "Use resume from profile")')
+  if (!form.resume) missing.push('Resume file')
   if (!form.application_letter) missing.push('Application Letter')
   if (!form.experience) missing.push('Years of Experience')
   if (!form.expected_salary) missing.push('Expected Salary')
@@ -153,7 +149,6 @@ function handleSubmit(e: Event) {
   formData.append('experience', form.experience)
   formData.append('expected_salary', form.expected_salary)
   formData.append('confirm', form.confirm ? 'true' : 'false')
-  formData.append('resume_option', resumeOption.value)
 
   if (form.resume) formData.append('resume', form.resume)
   if (form.application_letter) formData.append('application_letter', form.application_letter)
@@ -258,22 +253,10 @@ function handleSubmit(e: Event) {
           <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-4">
               Your Resume
-              <span v-if="resumeOption === 'upload' && !form.resume" class="text-red-500">*</span>
+              <span v-if="!form.resume" class="text-red-500">*</span>
             </h2>
 
-            <div class="space-y-2 mb-4">
-              <label class="flex items-center space-x-2">
-                <input type="radio" v-model="resumeOption" value="profile" />
-                <span>Use resume from profile</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" v-model="resumeOption" value="upload" />
-                <span>Upload new resume</span>
-              </label>
-            </div>
-
             <div
-              v-if="resumeOption === 'upload'"
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'resume')"
               @dragover.prevent

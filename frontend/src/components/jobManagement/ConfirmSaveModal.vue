@@ -61,6 +61,7 @@ const emit = defineEmits<{
 
       <!-- Content -->
       <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        
         <!-- Approved Section -->
         <div v-if="groupedChanges.approved.length > 0">
           <div class="flex items-center gap-2 mb-3">

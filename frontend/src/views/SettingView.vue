@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { User, Mail, GraduationCap, Building2, Edit } from 'lucide-vue-next'
+import { User, Mail, GraduationCap, Building2, Edit, Trash, Terminal } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
 import type { CompanyProfile, StudentProfile } from '@/types/profileType'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
+import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
 
 const userType = ref<'student' | 'company' | 'professor'>('company')
 const isEditing = ref(false)
 const isSaving = ref(false)
 const isLoading = ref(true)
+const isDeleteModalOpen = ref(false)
+const deleteAccountState = ref<'delete account' | 'remove term of service'>('delete account')
 
 const profileData = reactive({
   firstName: '',
@@ -22,6 +25,7 @@ const profileData = reactive({
   companyName: '',
   gpa: null as number | null,
   email: '',
+  termOfService: true,
 })
 
 const originalData = ref<typeof profileData | null>(null)
@@ -44,6 +48,7 @@ const loadUserData = async () => {
       companyName: userType.value === 'company' ? (profile as CompanyProfile).name || '' : '',
       gpa: userType.value === 'student' ? (profile as StudentProfile).gpa || null : null,
       email: profile.email || '',
+      termOfService: true,
     }
     
     Object.assign(profileData, transformedData)
@@ -170,6 +175,13 @@ const handleSubmit = async () => {
   }
 }
 
+function handleCancelTOS() {
+  deleteAccountState.value = 'remove term of service'
+  isDeleteModalOpen.value = true
+  profileData.termOfService = true
+}
+
+
 const inputClass = computed(() => (field: string) => {
   const hasError = !!errors[field]
   const showError = hasError && touched[field] && isEditing.value
@@ -189,10 +201,12 @@ onMounted(() => {
 <template>
   <LoadingScreen v-if="isLoading" />
 
+  <DeleteAccountModal v-if="isDeleteModalOpen" :state="deleteAccountState" @close="isDeleteModalOpen = false" />
+
   <div v-else class="flex h-full gap-x-8 min-h-screen w-full py-16 px-[8vw] md:px-[12vw]">
     <!-- Left Sidebar -->
     <div :class="[`hidden lg:block bg-gradient-to-br from-blue-200 to-green-200 rounded-2xl w-[30%] p-8 py-16 border border-gray-200`, isEditing ? 'via-gray-300' : 'via-gray-200']">
-      <div class="flex flex-col h-full">
+      <div class="flex flex-col items-between h-full py-4">
         <!-- Profile Section -->
         <div class="text-center mb-8">
           <div class="w-32 h-32 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-lg">
@@ -205,11 +219,16 @@ onMounted(() => {
           </div>
         </div>
       </div>
+
+      <button @click="isDeleteModalOpen = true, deleteAccountState = 'delete account'" class="flex items-center justify-center w-full border border-red-300 rounded-lg bg-red-500/20 py-2 text-red-500 hover:bg-red-500/30">
+        Delete Account
+        <Trash class="w-4 h-4 inline-block ml-2" />
+      </button>
     </div>
 
     <!-- Main Content -->
     <div class="w-full">
-      <div :class="[`mx-auto border border-gray-200 rounded-2xl p-6 md:p-10`, isEditing ? 'bg-gray-200' : 'bg-gray-100']">
+      <div :class="[`mx-auto border border-gray-200 flex flex-col gap-y-4 rounded-2xl p-6 md:p-10`, isEditing ? 'bg-gray-200' : 'bg-gray-100']">
         <!-- Header -->
         <div class="flex justify-between items-end md:items-center bg-gradient-to-r from-white to-gray-50 rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
           <div>
@@ -434,6 +453,13 @@ onMounted(() => {
             </button>
           </div>
         </div>
+
+        <!-- Term of Service -->
+        <div class="bg-white rounded-xl flex items-center gap-x-4 shadow-sm p-6 border border-gray-200">
+          <input type="checkbox" @change="handleCancelTOS" v-model="profileData.termOfService" class="w-4 h-4 shrink-0"/>
+          <p>I agree to the Terms of Service.</p>
+        </div>
+
       </div>
     </div>
   </div>

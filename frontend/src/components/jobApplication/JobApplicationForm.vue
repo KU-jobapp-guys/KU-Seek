@@ -1,26 +1,30 @@
 <script setup lang="ts">
 import type { Job } from '@/types/jobType'
 import { ref, reactive, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { submitApplication } from '@/services/applicationService'
 
 // Props
-const props = defineProps<{ job: Job }>()
+const props = defineProps<{ job?: Job }>()
+const job = props.job
+const route = useRoute()
+const router = useRouter()
 
 // Step control
 const step = ref(1)
 const resumeOption = ref('upload')
 
-// Form data
 const form = reactive({
-  first_name: '',
-  last_name: '',
+  firstName: '',
+  lastName: '',
   email: '',
   phone: '',
   address: '',
   experience: '',
-  expected_salary: '',
+  expectedSalary: '',
   confirm: false,
   resume: null as File | null,
-  application_letter: null as File | null,
+  applicationLetter: null as File | null,
 })
 
 // Validation errors
@@ -60,14 +64,14 @@ function onFileChange(event: Event, field: string) {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
   if (field === 'resume') form.resume = file
-  if (field === 'application_letter') form.application_letter = file
+  if (field === 'applicationLetter') form.applicationLetter = file
 }
 
 function onDrop(event: DragEvent, field: string) {
   const file = event.dataTransfer?.files[0]
   if (!file) return
   if (field === 'resume') form.resume = file
-  if (field === 'application_letter') form.application_letter = file
+  if (field === 'applicationLetter') form.applicationLetter = file
 }
 
 // Options
@@ -93,17 +97,17 @@ const isFormValid = computed(() => {
   const hasValidPhone = form.phone.trim() && !errors.phone
   const hasValidEmail = form.email.trim() && !errors.email
   const hasPersonalInfo =
-    form.first_name.trim() &&
-    form.last_name.trim() &&
+    form.firstName.trim() &&
+    form.lastName.trim() &&
     hasValidEmail &&
     hasValidPhone &&
     form.address.trim()
 
   const hasResume =
     resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.resume)
-  const hasLetter = !!form.application_letter
+  const hasLetter = !!form.applicationLetter
   const hasExperience = !!form.experience
-  const hasExpectedSalary = !!form.expected_salary
+  const hasExpectedSalary = !!form.expectedSalary
   const confirmed = form.confirm
 
   return (
@@ -115,8 +119,8 @@ const isFormValid = computed(() => {
 function getMissingFields() {
   const missing: string[] = []
 
-  if (!form.first_name.trim()) missing.push('First Name')
-  if (!form.last_name.trim()) missing.push('Last Name')
+  if (!form.firstName.trim()) missing.push('First Name')
+  if (!form.lastName.trim()) missing.push('Last Name')
   if (!form.address.trim()) missing.push('Location')
   if (!form.phone.trim()) missing.push('Phone')
   else if (errors.phone) missing.push(`Phone (${errors.phone})`)
@@ -124,16 +128,16 @@ function getMissingFields() {
   else if (errors.email) missing.push(`Email (${errors.email})`)
   if (resumeOption.value === 'upload' && !form.resume)
     missing.push('Resume file (or select "Use resume from profile")')
-  if (!form.application_letter) missing.push('Application Letter')
+  if (!form.applicationLetter) missing.push('Application Letter')
   if (!form.experience) missing.push('Years of Experience')
-  if (!form.expected_salary) missing.push('Expected Salary')
+  if (!form.expectedSalary) missing.push('Expected Salary')
   if (!form.confirm) missing.push('Confirmation checkbox')
 
   return missing
 }
 
 // Submit handler
-function handleSubmit(e: Event) {
+async function handleSubmit(e: Event) {
   e.preventDefault()
   validatePersonalInfo()
 
@@ -143,22 +147,38 @@ function handleSubmit(e: Event) {
     return
   }
 
-  // If valid
+  const jobId = job?.jobId ?? (route.params.id as string | undefined)
+  if (!jobId) {
+    alert('Cannot determine job id for this application.')
+    return
+  }
+
+  // Build FormData using camelCase keys
   const formData = new FormData()
-  formData.append('first_name', form.first_name)
-  formData.append('last_name', form.last_name)
+  formData.append('firstName', form.firstName)
+  formData.append('lastName', form.lastName)
   formData.append('email', form.email)
-  formData.append('phone', form.phone)
-  formData.append('address', form.address)
-  formData.append('experience', form.experience)
-  formData.append('expected_salary', form.expected_salary)
-  formData.append('confirm', form.confirm ? 'true' : 'false')
-  formData.append('resume_option', resumeOption.value)
+  formData.append('phoneNumber', form.phone)
+  formData.append('yearsOfExperience', form.experience)
+  formData.append('expectedSalary', form.expectedSalary)
 
+  // Files
   if (form.resume) formData.append('resume', form.resume)
-  if (form.application_letter) formData.append('application_letter', form.application_letter)
+  if (form.applicationLetter) formData.append('applicationLetter', form.applicationLetter)
 
-  alert(`Form submitted for ${props.job.role}! (Replace this with your API call.)`)
+  try {
+    const result = await submitApplication(jobId, formData)
+    if (!result) {
+      alert('Application submitted but server returned no data. Please check the server logs.')
+      return
+    }
+    alert('Application submitted successfully!')
+    router.push(`/explore-job`)
+  } catch (err) {
+    console.error('Error submitting application', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    alert(msg)
+  }
 }
 </script>
 
@@ -189,10 +209,10 @@ function handleSubmit(e: Event) {
             <div>
               <label class="block text-sm font-medium text-gray-700">
                 First Name
-                <span v-if="!form.first_name" class="text-red-500">*</span>
+                <span v-if="!form.firstName" class="text-red-500">*</span>
               </label>
               <input
-                v-model="form.first_name"
+                v-model="form.firstName"
                 type="text"
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
@@ -200,10 +220,10 @@ function handleSubmit(e: Event) {
             <div>
               <label class="block text-sm font-medium text-gray-700">
                 Last Name
-                <span v-if="!form.last_name" class="text-red-500">*</span>
+                <span v-if="!form.lastName" class="text-red-500">*</span>
               </label>
               <input
-                v-model="form.last_name"
+                v-model="form.lastName"
                 type="text"
                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200"
               />
@@ -272,7 +292,7 @@ function handleSubmit(e: Event) {
               </label>
             </div>
 
-            <div
+              <div
               v-if="resumeOption === 'upload'"
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'resume')"
@@ -295,11 +315,11 @@ function handleSubmit(e: Event) {
           <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-4">
               Application Letter
-              <span v-if="!form.application_letter" class="text-red-500">*</span>
+              <span v-if="!form.applicationLetter" class="text-red-500">*</span>
             </h2>
             <div
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
-              @drop.prevent="onDrop($event, 'application_letter')"
+              @drop.prevent="onDrop($event, 'applicationLetter')"
               @dragover.prevent
               @click="letterInput?.click()"
             >
@@ -308,10 +328,10 @@ function handleSubmit(e: Event) {
                 type="file"
                 class="hidden"
                 ref="letterInput"
-                @change="onFileChange($event, 'application_letter')"
+                @change="onFileChange($event, 'applicationLetter')"
               />
-              <p v-if="form.application_letter" class="mt-2 text-gray-700 font-medium">
-                Selected: {{ form.application_letter.name }}
+              <p v-if="form.applicationLetter" class="mt-2 text-gray-700 font-medium">
+                Selected: {{ form.applicationLetter.name }}
               </p>
             </div>
           </div>
@@ -339,11 +359,11 @@ function handleSubmit(e: Event) {
               <div>
                 <p>
                   Expected Salary
-                  <span v-if="!form.expected_salary" class="text-red-500">*</span>
+                  <span v-if="!form.expectedSalary" class="text-red-500">*</span>
                 </p>
                 <div v-for="option in salaryOptions" :key="option.value">
                   <label class="flex items-center space-x-2">
-                    <input type="radio" v-model="form.expected_salary" :value="option.value" />
+                    <input type="radio" v-model="form.expectedSalary" :value="option.value" />
                     <span>{{ option.label }}</span>
                   </label>
                 </div>

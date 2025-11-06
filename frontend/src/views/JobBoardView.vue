@@ -4,11 +4,11 @@ import Header from '@/components/layouts/AppHeader.vue'
 import FilterBox from '@/components/jobBoard/FilterBox.vue'
 import JobBox from '@/components/jobBoard/JobBox.vue'
 import type { Job, FilterKeys } from '@/types/jobType'
-import { mockJobs } from '@/data/mockJobs'
 import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { fetchJobs as fetchJobsService } from '@/services/jobService'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,12 +23,15 @@ const companyFilter = ref<string | undefined>(route.query.company as string) // 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
 
-  console.log('Fetching new data with options:', filters.value)
+  const mapped = await fetchJobsService()
 
-  jobs.value = mockJobs.filter((job) => {
+  jobs.value = mapped.filter((j: Job) => {
     return Object.entries(filters.value).every(([key, value]) => {
       if (!value) return true
-      return (job as Job)[key as FilterKeys].toString().toLowerCase().includes(value.toLowerCase())
+      const field = (j as unknown as Record<string, unknown>)[key]
+      return String(field ?? '')
+        .toLowerCase()
+        .includes(value.toLowerCase())
     })
   })
 }

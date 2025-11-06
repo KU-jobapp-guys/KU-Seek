@@ -12,7 +12,7 @@ import defaultProfile from '@/assets/images/defaultProfile.png'
 type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
 type Page = { name: string; route: string }
 
-const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:5173/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
+const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${import.meta.env.VITE_API_BASE_URL}/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 
 const props = defineProps<{
   role: UserRole
@@ -63,7 +63,6 @@ onMounted(() => {
   const role = props.role
   if (role && role !== 'visitor' && role !== 'staff') {
     userData.value = mockData[role].find((u) => u.id === userId) || null
-    console.log('data: ', userData)
   }
 })
 </script>

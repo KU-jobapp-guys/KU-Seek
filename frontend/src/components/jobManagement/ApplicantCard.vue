@@ -17,18 +17,18 @@ import { getStatusColor } from '@/libs/getStatusStyle'
 
 const props = defineProps<{
   applicant: JobApplication
-  pendingStatus?: 'pending' | 'approved' | 'rejected'
+  pendingStatus?: 'pending' | 'accepted' | 'rejected'
 }>()
 
 const emit = defineEmits<{
-  updateStatus: [id: number, status: 'pending' | 'approved' | 'rejected']
+  updateStatus: [id: number, status: 'pending' | 'accepted' | 'rejected']
 }>()
 
 const localStatus = computed(() => props.pendingStatus ?? props.applicant.status)
 
 const canModify = computed(() => props.applicant.status === 'pending')
 
-function handleStatusChange(newStatus: 'approved' | 'rejected') {
+function handleStatusChange(newStatus: 'accepted' | 'rejected') {
   emit('updateStatus', props.applicant.id, newStatus)
 }
 
@@ -55,25 +55,25 @@ function formatDate(date: Date) {
           </span>
           <div class="flex-1 mt-2">
             <h3 class="text-2xl font-semibold text-gray-900">
-              {{ applicant.first_name }} {{ applicant.last_name }}
+              {{ applicant.firstName }} {{ applicant.lastName }}
             </h3>
-            <p class="text-gray-600 text-sm">Applied on {{ formatDate(applicant.applied_at) }}</p>
+            <p class="text-gray-600 text-sm">Applied on {{ formatDate(applicant.appliedAt) }}</p>
           </div>
         </div>
 
         <div class="flex gap-x-2" v-if="canModify">
           <button
-            @click="handleStatusChange('approved')"
-            :disabled="localStatus === 'approved'"
+            @click="handleStatusChange('accepted')"
+            :disabled="localStatus === 'accepted'"
             :class="[
               'p-2 shrink-0 px-4 py-2 text-white rounded-lg transition-colors flex items-center gap-2 font-medium',
-              localStatus === 'approved'
+              localStatus === 'accepted'
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-green-500 hover:bg-green-600',
             ]"
           >
             <Check class="w-5 h-5 md:w-full md:h-full" />
-            <span class="hidden md:block">Approve</span>
+            <span class="hidden md:block">Accept</span>
           </button>
 
           <button
@@ -96,22 +96,22 @@ function formatDate(date: Date) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
         <div class="flex items-center gap-2">
           <Mail class="w-5 h-5 text-gray-400" />
-          <span class="text-gray-700">{{ applicant.contact_email }}</span>
+          <span class="text-gray-700">{{ applicant.contactEmail }}</span>
         </div>
 
         <div class="flex items-center gap-2">
           <Phone class="w-5 h-5 text-gray-400" />
-          <span class="text-gray-700">{{ applicant.phone_number }}</span>
+          <span class="text-gray-700">{{ applicant.phoneNumber }}</span>
         </div>
 
         <div class="flex items-center gap-2">
           <BriefcaseBusiness class="w-5 h-5 text-gray-400" />
-          <span class="text-gray-700">{{ applicant.years_of_experience }} years experience</span>
+          <span class="text-gray-700">{{ applicant.yearsOfExperience }} years experience</span>
         </div>
 
         <div class="flex items-center gap-2">
           <Banknote class="w-5 h-5 text-gray-400" />
-          <span class="text-gray-700">Expected: {{ applicant.expected_salary }}</span>
+          <span class="text-gray-700">Expected: {{ applicant.expectedSalary }}</span>
         </div>
 
         <div class="flex items-center gap-2">
@@ -123,7 +123,7 @@ function formatDate(date: Date) {
       <!-- Action Buttons -->
       <div class="flex flex-col md:flex-row gap-3 pt-4 border-t text-base border-gray-200">
         <router-link
-          :to="`/student/profile/${applicant.student_id}`"
+          :to="`/student/profile/${applicant.studentId}`"
           class="flex-1 sm:flex-none px-4 py-2 bg-[#6495ED] hover:bg-[#6495ED]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <User class="w-5 h-5" />
@@ -140,7 +140,7 @@ function formatDate(date: Date) {
         </a>
 
         <button
-          v-if="applicant.letter_of_application"
+          v-if="applicant.letterOfApplication"
           class="px-4 py-2 bg-[#4682B4] hover:bg-[#4682B4]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <FileText class="w-5 h-5" />

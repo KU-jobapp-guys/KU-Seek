@@ -1,41 +1,85 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import type { Job } from '@/types/jobType'
-import { Bookmark } from 'lucide-vue-next'
+import { Banknote, Bookmark, BookmarkCheck, MapPin } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
+import { getStatusColor } from '@/libs/getStatusStyle'
 
-const props = defineProps<{ job: Job }>()
-const { job } = props
+const props = withDefaults(
+  defineProps<{
+    job: Job
+    bookmarked?: boolean
+    showBookmark?: boolean
+  }>(),
+  { showBookmark: true, bookmarked: false },
+)
 
-const emit = defineEmits<{ (e: 'select', id: string): void }>()
+const emit = defineEmits<{
+  (e: 'select', id: string): void
+  (e: 'bookmark', payload: { id: string; bookmarked: boolean }): void
+}>()
+
+const isBookmarked = ref(props.bookmarked)
+
+// Keep local state in sync with parent
+watch(
+  () => props.bookmarked,
+  (newVal) => (isBookmarked.value = newVal),
+)
 
 function handleJobSelected() {
   emit('select', props.job.jobId)
+}
+
+function toggleBookmark() {
+  isBookmarked.value = !isBookmarked.value
+  emit('bookmark', { id: props.job.jobId, bookmarked: isBookmarked.value })
 }
 </script>
 
 <template>
   <div
-    class="h-full bg-[#F9F9F9] px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
+    class="h-full text-base bg-[#F9F9F9] px-6 md:px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
     @click="handleJobSelected"
   >
-    <div class="flex justify-between items-center mb-4">
+    <div :class="job.status ? 'block' : 'hidden'" class="mb-4">
+      <span
+        :class="getStatusColor(job.status)"
+        class="px-3 py-1 rounded-full text-sm font-medium border capitalize"
+      >
+        {{ job.status }}
+      </span>
+    </div>
+
+    <div class="flex justify-between items-start mb-2">
       <div>
         <p class="text-xl font-bold">{{ job.role }}</p>
         <p>{{ job.company }}</p>
       </div>
-      <div class="bg-gray-300 w-20 h-20 rounded-full" />
+      <div class="shrink-0 bg-gray-300 h-12 w-12 md:w-20 md:h-20 rounded-full" />
     </div>
-    <p>{{ job.location }}</p>
-    <p>{{ job.salary }}</p>
-    <ul class="list-disc list-inside mt-2">
-      <li v-for="(value, index) in job.highlights" :key="index">
-        {{ value }}
-      </li>
-    </ul>
+
+    <div class="text-sm">
+      <p class="flex gap-1">
+        <span><MapPin class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.location }}
+      </p>
+      <p class="flex gap-1">
+        <span><Banknote class="inline-block h-4 w-4 text-gray-600" /></span>{{ job.salary_min }} -
+        {{ job.salary_max }} THB/month
+      </p>
+    </div>
+
+    <p class="mt-4">{{ job.description }}</p>
 
     <div class="w-full flex justify-between mt-4 text-sm text-gray-500">
       <p>{{ getPostTime(job.postTime) }}</p>
-      <Bookmark class="h-6 w-6 cursor-pointer" />
+
+      <component
+        :is="isBookmarked ? BookmarkCheck : Bookmark"
+        v-if="showBookmark"
+        class="h-6 w-6 cursor-pointer text-blue-500 hover:scale-110 transition-transform"
+        @click.stop="toggleBookmark"
+      />
     </div>
   </div>
 </template>

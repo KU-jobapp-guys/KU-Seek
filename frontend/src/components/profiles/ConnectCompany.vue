@@ -29,7 +29,8 @@ const { company } = props
       <div class="relative px-8 md:px-12 h-full w-full flex justify-between items-center">
         <div class="flex flex-col">
           <span class="flex gap-x-4 items-start md:items-center">
-            <h1 class="font-bold text-2xl mb-2">{{ company.company_name }}</h1>
+
+            <h1 class="font-bold text-2xl mb-2">{{ company.name }}</h1>
             <p class="flex text-white px-2 bg-blue-500 gap-x-1 rounded-full">
               14 <span class="hidden md:block"> Jobs</span>
             </p>

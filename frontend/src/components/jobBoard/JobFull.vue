@@ -3,13 +3,20 @@ import { ref, watch, onMounted } from 'vue'
 import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
 import { useRouter } from 'vue-router'
-import { MapPin, Clock, Banknote, BriefcaseBusiness } from 'lucide-vue-next'
+import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
+import { getUserRole, isOwner } from '@/libs/userUtils'
+import { IconMap } from '@/configs/contactConfig'
 
 const props = defineProps<{ jobId: string }>()
 const router = useRouter()
 const job = ref<Job | null>(null)
+const userRole = getUserRole()
+
+const emit = defineEmits<{
+  (e: 'edit'): void
+}>()
 
 const loadJob = (id?: string) => {
   if (!id) {
@@ -34,6 +41,12 @@ watch(
     loadJob(newId)
   },
 )
+
+const goToApply = () => {
+  if (job.value) {
+    router.push(`/job/${job.value.jobId}/apply`)
+  }
+}
 </script>
 
 <template>
@@ -49,9 +62,19 @@ watch(
     </div>
 
     <div class="px-12 mt-24">
-      <router-link :to="`/job/${job.jobId}`" class="text-2xl font-bold underline cursor-pointer">{{
-        job.role
-      }}</router-link>
+      <div class="flex justify-between items-center">
+        <router-link
+          :to="`/job/${job.jobId}`"
+          class="text-2xl font-bold underline cursor-pointer"
+          >{{ job.role }}</router-link
+        >
+        <PenBox
+          :stroke-width="1.5"
+          class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer"
+          @click="emit('edit')"
+          v-if="(isOwner(job.company) || true) && job.status === 'rejected'"
+        />
+      </div>
       <p class="text-gray-600">{{ job.company }}</p>
 
       <div class="flex flex-col mt-4">
@@ -70,15 +93,16 @@ watch(
           <p>{{ job.jobLevel }}</p>
         </div>
 
-        <div v-if="job.salary" class="flex gap-x-2 items-center text-gray-600">
+        <div class="flex gap-x-2 items-center text-gray-600">
           <Banknote class="w-4 h-4" />
-          <p>{{ job.salary }}</p>
+          <p>{{ job.salary_min }} - {{ job.salary_max }} THB/month</p>
         </div>
       </div>
 
-      <div class="mt-4 flex gap-x-2">
-        <!-- Action Buttons -->
+      <!-- Action Buttons -->
+      <div v-if="userRole === 'student'" class="mt-4 flex gap-x-2">
         <button
+          @click="goToApply"
           class="bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md"
         >
           Apply
@@ -90,11 +114,7 @@ watch(
 
       <p class="mt-12">{{ job.description }}</p>
 
-      <ul class="list-disc list-inside mt-4">
-        <li v-for="(item, i) in job.highlights" :key="i">{{ item }}</li>
-      </ul>
-
-      <div class="mb-20">
+      <div class="mb-12">
         <p class="font-bold mt-12">Skills</p>
         <div class="flex flex-wrap gap-2 mt-2">
           <p
@@ -105,6 +125,29 @@ watch(
           >
             {{ skill }}
           </p>
+        </div>
+      </div>
+
+      <div v-if="job.tags && job.tags.length > 0" class="mb-12">
+        <p class="font-bold">Tags</p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <p
+            v-for="(tag, i) in job.tags"
+            :key="i"
+            class="text-white px-4 py-1 rounded-3xl bg-blue-500"
+          >
+            {{ tag }}
+          </p>
+        </div>
+      </div>
+
+      <div v-if="job.contacts && job.contacts.length > 0" class="mb-20">
+        <p class="font-bold">Contact Information</p>
+        <div class="flex flex-col gap-y-2 mt-2">
+          <div v-for="(contact, i) in job.contacts" :key="i" class="flex gap-x-2 items-center">
+            <component :is="IconMap[contact.type]" class="text-gray-500 w-4 h-4" />
+            <p>{{ contact.link }}</p>
+          </div>
         </div>
       </div>
 

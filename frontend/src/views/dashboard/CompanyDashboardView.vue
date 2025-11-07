@@ -1,212 +1,170 @@
 <script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
+import { mockJobs } from '@/data/mockJobs'
+import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
-import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
-import CompanyJobCard from '@/components/dashboards/CompanyJobCard.vue'
+import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
+import { Search, Filter, ChevronDown, Plus } from 'lucide-vue-next'
+import { CompanyStats } from '@/configs/dashboardStatConfig.ts'
+import type { Job } from '@/types/jobType'
+import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
-import jobPostIcon from '@/assets/job-post-icon.svg'
-import appliedIcon from '@/assets/applied-icon.svg'
-import searchIcon from '@/assets/search-icon.svg'
+
+const jobLists = ref<Job[]>([])
+const searchQuery = ref('')
+const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
+const sortBy = ref<'default' | 'pendingApplicants'>('pendingApplicants')
+
+async function loadJob() {
+  jobLists.value = mockJobs
+}
+
+const filteredJobs = computed(() => {
+  let filtered = jobLists.value
+
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(
+      (job) =>
+        job.role?.toLowerCase().includes(query) ||
+        job.company?.toLowerCase().includes(query) ||
+        job.location?.toLowerCase().includes(query),
+    )
+  }
+
+  if (statusFilter.value !== 'all') {
+    filtered = filtered.filter((job) => job.status === statusFilter.value)
+  }
+
+  if (sortBy.value === 'pendingApplicants') {
+    filtered = [...filtered].sort((a, b) => {
+      const aPending = a.pendingApplicants || 0
+      const bPending = b.pendingApplicants || 0
+      return bPending - aPending
+    })
+  }
+  console.log(filtered)
+
+  return filtered
+})
+
+function clearFilters() {
+  searchQuery.value = ''
+  statusFilter.value = 'all'
+}
+
+const stats = computed(() => {
+  const totalJobs = jobLists.value.length
+  const totalApplicants = jobLists.value.reduce((sum, j) => sum + (j.totalApplicants || 0), 0)
+  const pendingReview = jobLists.value.reduce((sum, j) => sum + (j.pendingApplicants || 0), 0)
+
+  return { totalJobs, totalApplicants, pendingReview }
+})
+
+onMounted(() => {
+  loadJob()
+})
 </script>
 
 <template>
-  <div class="dashboard-bg min-h-screen pb-0">
+  <div class="min-h-screen">
     <!-- Main Dashboard Section -->
     <Header page="companyDashboard" />
-    <!-- 3 boxes: perfectly centered between black and white -->
-    <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16">
-      <DashboardStatCard
-        title="Total Job Posts"
-        :value="6"
-        description="Approved Job Posts"
-        :icon="jobPostIcon"
-        cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-      />
-      <DashboardStatCard
-        title="Total Job applications"
-        :value="67"
-        description="Applicants"
-        :icon="appliedIcon"
-        cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-      />
-      <DashboardStatCard
-        title="Profile Views"
-        :value="237"
-        description="This month"
-        :icon="searchIcon"
-        cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-      />
+
+    <div class="relative -mt-40 px-[8vw] md:px-[12vw]">
+      <StatCarousel :stats="CompanyStats" :data="stats" />
     </div>
 
     <!-- Total Job Posts Section -->
-    <section class="px-[8vw] md:px-[12vw] pt-40 pb-10 bg-white">
-      <div class="flex items-center mb-4">
-        <img :src="jobPostIcon" alt="Job" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Total Job Posts</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-3 rounded-lg border mb-8 text-black"
-      />
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-      </div>
-      <div
-        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
-      >
-        View More +
-      </div>
-    </section>
+    <section class="text-base relative px-[8vw] md:px-[12vw] mt-24 bg-white flex flex-col gap-y-8">
+      <div class="rounded-xl bg-gray-100 px-4 md:px-8 py-16 flex flex-col gap-y-8">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-black text-4xl font-bold">Total Job Posts</h2>
+          <router-link
+            to="/company/job-post-form"
+            class="flex items-center px-4 md:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2"
+          >
+            <Plus class="w-4 h-4 md:h-5 md:w-5" />
+            <span class="hidden md:inline">Create New Job Post</span>
+            <span class="hidden sm:inline md:hidden">New Job</span>
+          </router-link>
+        </div>
 
-    <!-- Total Job Applications Section -->
-    <section class="px-[8vw] md:px-[12vw] py-10 bg-white">
-      <div class="flex items-center mb-4">
-        <img :src="appliedIcon" alt="Applied" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Total Job Applications</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-3 rounded-lg border mb-8 text-black"
-      />
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <CompanyJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-      </div>
-      <div
-        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
-      >
-        View More +
+        <!-- Filter Section -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6 space-y-4 space">
+          <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search Input -->
+            <div class="w-full space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Search Jobs</label>
+              <div class="relative">
+                <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search by job title, location..."
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div class="w-full flex flex-col md:flex-row gap-x-4 gap-y-2">
+              <!-- Status Filter -->
+              <div class="w-full space-y-2">
+                <label class="text-sm font-semibold text-gray-700">Job Status</label>
+                <div class="relative">
+                  <Filter class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <select
+                    v-model="statusFilter"
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <ChevronDown class="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort By -->
+              <div class="w-full space-y-2 hover:cursor-pointer">
+                <label class="text-sm font-semibold text-gray-700">Sort By</label>
+                <div class="relative">
+                  <select
+                    v-model="sortBy"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
+                  >
+                    <option value="pendingApplicants">Most Pending Reviews</option>
+                    <option value="postTime">Recently posted</option>
+                  </select>
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <ChevronDown class="h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div v-if="filteredJobs.length > 0" class="flex flex-col gap-y-8">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-h-[520px] overflow-y-auto pr-2"
+          >
+            <CompanyJob v-for="j in filteredJobs" :key="j.jobId" :job="j" />
+          </div>
+          <p class="px-4 py-1 bg-blue-500 rounded-full text-white flex gap-x-1 self-end">
+            {{ filteredJobs.length }} <span class="hidden md:block">Jobs</span>
+          </p>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="flex flex-col items-center justify-center py-16 text-center">
+          <EmptyFilter :clearFilters="clearFilters" />
+        </div>
       </div>
     </section>
   </div>
 </template>
-
-<style scoped>
-.dashboard-bg {
-  background: #f5f6fa;
-  min-height: 100vh;
-  position: relative;
-}
-section.bg-black {
-  position: relative;
-  padding-bottom: 0;
-}
-</style>

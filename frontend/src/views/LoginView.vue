@@ -14,6 +14,12 @@ async function handleURICallback() {
 
   try {
     const code = route.query.code
+    const user_info = localStorage.getItem("userInfo")
+    const user_file = localStorage.getItem("userFile")
+    
+    localStorage.removeItem("userInfo")
+    localStorage.removeItem("userFile")
+    
     if (!code) {
       throw new Error('No code found in callback URL')
     }
@@ -30,23 +36,39 @@ async function handleURICallback() {
       throw new Error('Login request failed, please try again.')
     }
 
-    const res = await fetch('http://localhost:8000/api/v1/auth/oauth', {
-      method: 'POST',
+    const formData = new FormData();
+    formData.append("code", code.toString())
+    
+    if (user_info) {
+      formData.append('user_info', user_info)
+    }
+
+    if (user_file) {
+      const fileData = JSON.parse(user_file)
+      // Convert base64 back to File object
+      const base64Response = await fetch(fileData.data)
+      const blob = await base64Response.blob()
+      const file = new File([blob], fileData.name, { type: fileData.type })
+      formData.append('id_doc', file)
+    }
+
+    const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
+      method: "POST",
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
         'X-CSRFToken': csrf_token,
       },
-      body: JSON.stringify({ code }),
+      body: formData
     })
 
     if (res.ok) {
       const user_jwt = await res.json()
       console.log(user_jwt)
       localStorage.setItem('user_jwt', user_jwt.access_token)
-      localStorage.setItem('user_id', '66fbb875-897a-4bec-8f44-403f0c468b7c')
-      emit('update:role', 'company')
-      router.replace({ name: 'company dashboard' })
+      console.log(user_jwt)
+      localStorage.setItem('userRole', user_jwt.type)
+      emit('update:role', user_jwt.type)
+      router.replace({ name: `${user_jwt.type} dashboard` })
     } else {
       throw new Error(`Login request failed, please try again.`)
     }

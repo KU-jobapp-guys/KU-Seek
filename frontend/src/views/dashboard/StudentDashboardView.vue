@@ -1,311 +1,238 @@
 <script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import Header from '@/components/layouts/AppHeader.vue'
-import DashboardStatCard from '@/components/dashboards/DashboardStatCard.vue'
-import StudentJobCard from '@/components/dashboards/StudentJobCard.vue'
+import JobCard from '@/components/jobBoard/JobBox.vue'
+import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
+import { statusOptions } from '@/configs/statusOption'
+import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
-import appliedIcon from '@/assets/applied-icon.svg'
-import bigBookmarkIcon from '@/assets/big-bookmark-icon.svg'
-import searchIcon from '@/assets/search-icon.svg'
+import type { Job } from '@/types/jobType'
+import { StudentStats } from '@/configs/dashboardStatConfig'
+import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
+
+type ApplicationStatus = 'pending' | 'approved' | 'rejected'
+
+const openSection = ref<string>('Total Jobs Applied')
+const router = useRouter()
+
+const appliedJobs = ref<Job[]>([])
+const bookmarkedJobs = ref<Job[]>([])
+const recentlyViewedJobs = ref<Job[]>([])
+const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['pending', 'approved', 'rejected']))
+
+const toggleSection = (section: string) => {
+  openSection.value = section
+}
+
+const toggleStatus = (status: ApplicationStatus) => {
+  if (selectedStatuses.value.has(status)) {
+    selectedStatuses.value.delete(status)
+  } else {
+    selectedStatuses.value.add(status)
+  }
+  selectedStatuses.value = new Set(selectedStatuses.value)
+}
+
+function clearFilters() {
+  selectedStatuses.value = new Set(['pending', 'approved', 'rejected'])
+}
+
+const handleSelect = (id: string) => {
+  router.push(`/job/${id}`)
+}
+
+const stats = computed(() => {
+  const appliedJobsCount = appliedJobs.value.length
+  const bookmarkedJobsCount = bookmarkedJobs.value.length
+  const recentlyViewedJobsCount = recentlyViewedJobs.value.length
+
+  return { appliedJobsCount, bookmarkedJobsCount, recentlyViewedJobsCount }
+})
+
+const statusCounts = computed(() => {
+  return {
+    pending: appliedJobs.value.filter((j) => j.status === 'pending').length,
+    approved: appliedJobs.value.filter((j) => j.status === 'approved').length,
+    rejected: appliedJobs.value.filter((j) => j.status === 'rejected').length,
+  }
+})
+
+const filteredAppliedJobs = computed(() => {
+  return appliedJobs.value.filter((job) =>
+    selectedStatuses.value.has(job.status as ApplicationStatus),
+  )
+})
+
+async function fetchJobs() {
+  try {
+    import('@/data/mockJobs').then(({ mockJobs }) => {
+      appliedJobs.value = mockJobs.slice(0, 5)
+      recentlyViewedJobs.value = mockJobs.slice(7, 10)
+
+      // Restore bookmarked jobs from localStorage
+      const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
+      bookmarkedJobs.value = mockJobs.filter((job) => saved.includes(job.jobId))
+    })
+  } catch (error) {
+    console.error('Failed to fetch jobs:', error)
+  }
+}
+
+function handleBookmark(payload: { id: string; bookmarked: boolean }) {
+  const { id, bookmarked } = payload
+  const job =
+    appliedJobs.value.find((j) => j.jobId === id) ||
+    recentlyViewedJobs.value.find((j) => j.jobId === id) ||
+    bookmarkedJobs.value.find((j) => j.jobId === id)
+
+  if (!job) return
+
+  if (bookmarked) {
+    if (!bookmarkedJobs.value.some((j) => j.jobId === id)) {
+      bookmarkedJobs.value.push(job)
+    }
+  } else {
+    bookmarkedJobs.value = bookmarkedJobs.value.filter((j) => j.jobId !== id)
+  }
+
+  localStorage.setItem('bookmarkedJobs', JSON.stringify(bookmarkedJobs.value.map((j) => j.jobId)))
+}
+
+onMounted(() => {
+  fetchJobs()
+})
 </script>
 
 <template>
   <div class="dashboard-bg min-h-screen pb-0">
-    <!-- Main Dashboard Section -->
     <Header page="studentDashboard" />
-    <!-- 3 boxes: perfectly centered between black and white -->
-    <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw] flex gap-x-16">
-      <DashboardStatCard
-        title="Applied Jobs"
-        :value="6"
-        description="Jobs you've applied"
-        :icon="appliedIcon"
-        cardClass="bg-red-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-      />
-      <DashboardStatCard
-        title="Bookmarked Jobs"
-        :value="6"
-        description="Jobs saved for later"
-        :icon="bigBookmarkIcon"
-        cardClass="bg-blue-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
-      />
-      <DashboardStatCard
-        title="Recently Viewed Jobs"
-        :value="7"
-        description="Jobs you've explored today"
-        :icon="searchIcon"
-        cardClass="bg-yellow-400 rounded-xl p-8 flex-1 text-white relative shadow-lg overflow-hidden"
+
+    <!-- Stat Cards -->
+    <div class="relative -mt-44 px-[8vw] md:px-[12vw]">
+      <StatCarousel
+        :stats="StudentStats"
+        :data="stats"
+        :isClickable="true"
+        @toggleSection="toggleSection"
       />
     </div>
 
-    <!-- Applied Jobs Section -->
-    <section class="px-[8vw] md:px-[12vw] pt-40 pb-10 bg-white">
-      <div class="flex items-center mb-4">
-        <img :src="appliedIcon" alt="Applied" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Applied Jobs</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-3 rounded-lg border mb-8 text-black"
-      />
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="true"
-          :bookmarked="true"
-          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="true"
-          :bookmarked="false"
-          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="true"
-          :bookmarked="false"
-          cardClass="border-red-200 hover:bg-red-400 hover:border-red-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-      </div>
-      <div
-        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
-      >
-        View More +
-      </div>
-    </section>
+    <div class="px-[8vw] md:px-[12vw] mt-24 rounded-xl flex flex-col gap-y-8">
+      <div class="rounded-xl bg-gray-100 px-8 py-16 flex flex-col gap-y-8">
+        <!-- Applied Section -->
+        <section
+          v-if="openSection === 'Total Jobs Applied'"
+          class="bg-gray-100 transition-all flex flex-col gap-y-8"
+        >
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 gap-y-8"
+          >
+            <div class="flex gap-x-4 items-center">
+              <div
+                class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-blue-500 rounded-lg text-white"
+              >
+                <BriefcaseBusiness class="w-full h-full text-white" />
+              </div>
+              <h1 class="text-4xl font-bold">Jobs Applied</h1>
+            </div>
 
-    <!-- Bookmarked Jobs Section -->
-    <section class="px-[8vw] md:px-[12vw] py-10 bg-white">
-      <div class="flex items-center mb-4">
-        <img :src="bigBookmarkIcon" alt="Bookmarked" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Bookmarked Jobs</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-3 rounded-lg border mb-8 text-black"
-      />
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="true"
-          :bookmarked="true"
-          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="false"
-          :bookmarked="true"
-          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="false"
-          :bookmarked="true"
-          cardClass="border-blue-200 hover:bg-blue-400 hover:border-blue-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-      </div>
-      <div
-        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
-      >
-        View More +
-      </div>
-    </section>
+            <!-- Status Filter Box -->
+            <div class="flex w-full md:w-auto border border-gray-300 rounded-full overflow-hidden">
+              <button
+                v-for="status in statusOptions"
+                :key="status.key"
+                @click="toggleStatus(status.key as ApplicationStatus)"
+                :class="[
+                  'w-full md:w-auto px-4 py-2 text-sm font-medium transition-colors',
+                  selectedStatuses.has(status.key as ApplicationStatus)
+                    ? status.activeClass
+                    : 'bg-white text-gray-400 hover:bg-gray-50',
+                ]"
+              >
+                {{ status.label }} ({{ statusCounts[status.key as ApplicationStatus] }})
+              </button>
+            </div>
+          </div>
 
-    <!-- Recently Viewed Jobs Section -->
-    <section class="px-[8vw] md:px-[12vw] py-10 bg-white">
-      <div class="flex items-center mb-4">
-        <img :src="searchIcon" alt="Search" class="w-12 h-12 mr-2" />
-        <h2 class="text-black text-6xl font-bold">Recently Viewed Jobs</h2>
-      </div>
-      <input
-        type="text"
-        placeholder="Search here.."
-        class="w-full p-3 rounded-lg border mb-8 text-black"
-      />
+          <div class="min-h-[200px] max-h-[600px] overflow-y-auto pr-2">
+            <div
+              v-if="filteredAppliedJobs.length > 0"
+              class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8"
+            >
+              <JobCard
+                v-for="job in filteredAppliedJobs"
+                :key="job.jobId"
+                :job="job"
+                :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"
+                @select="handleSelect"
+                @bookmark="handleBookmark"
+              />
+            </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="false"
-          :bookmarked="false"
-          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="true"
-          :bookmarked="true"
-          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
-        <StudentJobCard
-          company="Techhahaha Inc."
-          job="Frontend Developer"
-          place="Nonthaburi, Thailand"
-          days="3 days ago"
-          description="Our company is so good!!! ..."
-          type="Full-time"
-          :applied="true"
-          :bookmarked="true"
-          cardClass="border-yellow-200 hover:bg-yellow-400 hover:border-yellow-400"
-          :tags="[
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: 'React', color: 'text-blue-700', bg: 'bg-blue-100' },
-            { label: 'CSS', color: 'text-orange-700', bg: 'bg-orange-100' },
-            { label: 'TypeScript', color: 'text-yellow-700', bg: 'bg-yellow-100' },
-            { label: 'Python', color: 'text-pink-700', bg: 'bg-pink-100' },
-            { label: '+7 more', color: 'text-blue-700', bg: 'bg-blue-200' },
-          ]"
-        />
+            <div v-else class="flex flex-col items-center justify-center py-16 text-center">
+              <EmptyFilter :clearFilters="clearFilters" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Bookmarked Section -->
+        <section
+          v-if="openSection === 'Bookmarked'"
+          class="bg-gray-100 transition-all flex flex-col gap-y-8"
+        >
+          <div class="flex gap-x-4 items-center">
+            <div
+              class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-red-500 rounded-lg text-white"
+            >
+              <Bookmark class="w-full h-full text-white" />
+            </div>
+            <h1 class="text-4xl font-bold">Bookmarked Jobs</h1>
+          </div>
+
+          <div v-if="bookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
+              <JobCard
+                v-for="job in bookmarkedJobs"
+                :key="job.jobId"
+                :job="job"
+                :bookmarked="true"
+                @select="handleSelect"
+                @bookmark="handleBookmark"
+              />
+            </div>
+          </div>
+          <p v-else class="text-gray-500 text-center py-12 text-lg">No bookmarked jobs yet.</p>
+        </section>
+
+        <!-- Recently Viewed Section -->
+        <section
+          v-if="openSection === 'Recently Viewed'"
+          class="bg-gray-100 transition-all flex flex-col gap-y-8"
+        >
+          <div class="flex gap-x-4 items-center">
+            <div
+              class="shrink-0 flex items-center justify-center w-16 h-16 p-4 bg-yellow-500 rounded-lg text-white"
+            >
+              <Eye class="w-full h-full text-white" />
+            </div>
+            <h1 class="text-4xl font-bold">Recently Viewed Jobs</h1>
+          </div>
+
+          <div class="max-h-[600px] overflow-y-auto pr-2">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
+              <JobCard
+                v-for="job in recentlyViewedJobs"
+                :key="job.jobId"
+                :job="job"
+                :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"
+                @select="handleSelect"
+                @bookmark="handleBookmark"
+              />
+            </div>
+          </div>
+        </section>
       </div>
-      <div
-        class="text-right mt-4 text-green-600 font-semibold text-3xl cursor-pointer hover:text-green-800"
-      >
-        View More +
-      </div>
-    </section>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.dashboard-bg {
-  background: #f5f6fa;
-  min-height: 100vh;
-  position: relative;
-}
-section.bg-black {
-  position: relative;
-  padding-bottom: 0;
-}
-</style>

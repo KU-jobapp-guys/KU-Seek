@@ -1,11 +1,11 @@
 export function isOwner(userId: string) {
   const thisId = userId
-  const storedUserId = localStorage.getItem('userId')
+  const storedUserId = getUserId()
   return storedUserId === thisId
 }
 
 export function getUserId() {
-  return localStorage.getItem('userId') || '1'
+  return localStorage.getItem('user_id') || '1'
 }
 
 export function getUserRole() {

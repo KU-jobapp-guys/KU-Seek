@@ -33,7 +33,7 @@ export interface StudentProfile {
   skills: string[]
   interests: string
   education: {
-    curriculum_name: string
+    curriculumName: string
     university: string
     major: string
     yearOfStudy: number

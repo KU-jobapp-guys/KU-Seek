@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Save, X } from 'lucide-vue-next'
+import { Save, X, Plus } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { isOwner } from '@/libs/userUtils'
@@ -14,6 +14,7 @@ import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
 import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
 import NoProfile from '@/components/profiles/NoProfile.vue'
+import AddConnectionModal from '@/components/profiles/AddConnectionModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -22,6 +23,15 @@ const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
 const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
   useEditableProfile<ProfessorProfile>()
+const isAddingConnection = ref(false)
+
+
+const tabList = ['Overview', 'Connection']
+const activeTab = ref('Overview')
+
+const switchTab = (tab: string) => {
+  activeTab.value = tab
+}
 
 const loadProfessor = (id?: string) => {
   if (!id) {
@@ -57,20 +67,18 @@ const save = () => {
   saveProfile(professorData)
 }
 
+const handleAddNewConnection = () => {
+  
+}
+
 onMounted(() => {
   loadProfessor(route.params.id as string)
 })
-
-const tabList = ['Overview', 'Connection']
-const activeTab = ref('Overview')
-
-const switchTab = (tab: string) => {
-  activeTab.value = tab
-}
 </script>
 
 <template>
   <LoadingScreen v-if="isLoading" />
+  <AddConnectionModal v-if="isAddingConnection" @close="isAddingConnection = false" />
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
     <ProfessorBanner
@@ -131,8 +139,21 @@ const switchTab = (tab: string) => {
 
           <!-- Connection Tab -->
           <div v-if="activeTab === 'Connection'" class="space-y-4 max-h-[410px] overflow-y-auto">
-            <div v-for="c in mockCompany" v-bind:key="c.id">
-              <ConnectCompany :company="c" />
+            <!-- Add Connection Card -->
+            <button
+              @click="isAddingConnection = true"
+              class="w-full border-2 border-dashed border-green-600 hover:border-green-700 hover:bg-green-50/70 rounded-xl p-4 flex flex-col items-center justify-center gap-3 group"
+            >
+              <div class="w-16 h-16 bg-green-100 group-hover:bg-green-200 rounded-full flex items-center justify-center">
+                <Plus class="w-8 h-8 text-green-600" />
+              </div>
+              <span class="text-lg font-semibold text-green-600 group-hover:text-green-700">
+                Add New Connection
+              </span>
+            </button>
+
+            <div v-for="c in mockCompany" :key="c.id">
+              <ConnectCompany :company="c" @select="router.push(`/company/profile/${c.id}`)"/>
             </div>
           </div>
         </div>

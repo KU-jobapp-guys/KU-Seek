@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CheckCircle, XCircle, X, FileUser } from 'lucide-vue-next'
+import { CheckCircle, XCircle, X } from 'lucide-vue-next'
 
 const { changes, applicants } = defineProps<{
   changes: Map<number, 'pending' | 'approved' | 'rejected'>

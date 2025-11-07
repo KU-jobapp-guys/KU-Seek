@@ -65,7 +65,7 @@ async function handleURICallback() {
       const user_jwt = await res.json()
       localStorage.setItem('user_jwt', user_jwt.access_token)
       localStorage.setItem('userRole', user_jwt.type)
-      localStorage.setItem('user_id', '11848e3a-fc7b-4001-afe2-ce21e96575ce') // Currently put the user_id here
+      localStorage.setItem('user_id', user_jwt.user_id)
       emit('update:role', user_jwt.type)
       router.replace({ name: `${user_jwt.type} dashboard` })
     } else {

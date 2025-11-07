@@ -25,11 +25,9 @@ export async function getProfileData(user_id: string): Promise<Profile | null> {
 
 export async function updateProfileData(plainData: Profile): Promise<Profile | null>  {
   try {
-    const { id, ...data } = plainData
-
     // Replace all null values with ''
     const cleanedData = Object.fromEntries(
-        Object.entries(data).map(([key, value]) => [key, value === null ? '' : value])
+        Object.entries(plainData).map(([key, value]) => [key, value === null ? '' : value])
     );
     console.log('Updating profile with data:', cleanedData)
     const res = await fetch(`http://localhost:8000/api/v1/users/profile`, {

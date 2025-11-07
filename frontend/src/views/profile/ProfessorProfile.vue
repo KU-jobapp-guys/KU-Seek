@@ -62,7 +62,7 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
-  let data = editData.value
+  const data = editData.value
 
   if (!data) return
 

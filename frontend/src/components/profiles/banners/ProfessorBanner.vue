@@ -12,7 +12,6 @@ const props = defineProps<{
 }>()
 const { professorData, isEditing } = props
 const editForm = ref<ProfessorProfile>({ ...props.modelValue })
-const userId = localStorage.getItem('user_id') as string
 
 const emits = defineEmits<{
   (e: 'edit'): void

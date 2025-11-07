@@ -28,14 +28,14 @@ function deleteAccount() {
 
 <template>
   <div class="fixed inset-0 flex items-center justify-center z-50 p-4">
+    <!-- Overlay Background -->
     <div
       class="absolute inset-0 bg-black/40 backdrop-blur-md"
       @click="emits('close')"
     />
 
-    <div
-      class="relative bg-white/95 backdrop-blur-xl rounded-lg shadow-2xl z-50 max-w-md w-full border border-gray-200/50 overflow-hidden"
-    >
+    <!-- Modal Content -->
+    <div class="relative bg-white/95 backdrop-blur-xl rounded-lg shadow-2xl z-50 max-w-md w-full border border-gray-200/50 overflow-hidden">
       <button
         @click="emits('close')"
         class="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center z-10 transition-colors duration-200 group"
@@ -44,9 +44,9 @@ function deleteAccount() {
       </button>
       
       <div class="px-8 pt-8 pb-6 relative">
-        <div class="absolute top-0 left-0 right-0 h-2 bg-red-500 via-red-400 to-orange-400"/>
+        <div class="absolute top-0 left-0 right-0 h-2 bg-red-500"/>
             
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center mb-5 shadow-lg shadow-red-500/30">
+        <div class="w-14 h-14 rounded-2xl bg-red-500 flex items-center justify-center mb-5 shadow-lg shadow-red-500/30">
           <TriangleAlert class="w-7 h-7 text-white" />
         </div>
 
@@ -76,5 +76,6 @@ function deleteAccount() {
         </div>
       </div>
     </div>
+
   </div>
 </template>

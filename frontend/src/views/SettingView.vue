@@ -203,7 +203,7 @@ onMounted(() => {
 
   <DeleteAccountModal v-if="isDeleteModalOpen" :state="deleteAccountState" @close="isDeleteModalOpen = false" />
 
-  <div v-else class="flex h-full gap-x-8 min-h-screen w-full py-16 px-[8vw] md:px-[12vw]">
+  <div class="flex h-full gap-x-8 min-h-screen w-full py-16 px-[8vw] md:px-[12vw]">
     <!-- Left Sidebar -->
     <div :class="[`hidden lg:block bg-gradient-to-br from-blue-200 to-green-200 rounded-2xl w-[30%] p-8 py-16 border border-gray-200`, isEditing ? 'via-gray-300' : 'via-gray-200']">
       <div class="flex flex-col items-between h-full py-4">

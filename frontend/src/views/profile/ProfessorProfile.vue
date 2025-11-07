@@ -6,7 +6,7 @@ import { Save, X } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
-import { isOwner } from '@/libs/userUtil'
+import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockCompany } from '@/data/mockCompany'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -69,9 +69,9 @@ const save = async () => {
 
   const plainData: ProfessorProfile = {
     ...data,
-    profile_img: data.profile_img || '',
-    banner_img: data.banner_img || '',
-    phone_number: data.phone_number || '',
+    profilePhoto: data.profilePhoto || '',
+    bannerPhoto: data.bannerPhoto || '',
+    phoneNumber: data.phoneNumber || '',
   }
 
   const res = await updateProfileData(plainData)
@@ -124,7 +124,7 @@ const switchTab = (tab: string) => {
     <!-- No Profile Data -->
     <NoProfile
       v-if="isNewProfile && !isEditing"
-      :isOwner="isOwner(professorData.user_id)"
+      :isOwner="isOwner(professorData.id)"
       @edit="edit"
     />
 
@@ -163,7 +163,7 @@ const switchTab = (tab: string) => {
 
           <!-- Connection Tab -->
           <div v-if="activeTab === 'Connection'" class="space-y-4 max-h-[410px] overflow-y-auto">
-            <div v-for="c in mockCompany" v-bind:key="c.user_id">
+            <div v-for="c in mockCompany" v-bind:key="c.id">
               <ConnectCompany :company="c" />
             </div>
           </div>

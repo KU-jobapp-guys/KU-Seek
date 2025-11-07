@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toast-notification'
 import { Save, X } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
-import { isOwner } from '@/libs/userUtil'
+import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import StudentBanner from '@/components/profiles/banners/StudentBanner.vue'
@@ -69,9 +69,9 @@ const save = async () => {
 
   const plainData: StudentProfile = {
     ...data,
-    profile_img: data.profile_img || '',
-    banner_img: data.banner_img || '',
-    phone_number: data.phone_number || '',
+    profilePhoto: data.profilePhoto || '',
+    bannerPhoto: data.bannerPhoto || '',
+    phoneNumber: data.phoneNumber || '',
     skills: [...(data.skills || [])],
     education: (data.education || []).map(edu => ({ ...edu })),
   }
@@ -127,7 +127,7 @@ onMounted(() => {
       <!-- No Profile Data -->
       <NoProfile
         v-if="isNewProfile"
-        :isOwner="isOwner(studentData.user_id)"
+        :isOwner="isOwner(studentData.id)"
         @edit="edit"
       />
       <!-- Profile View -->

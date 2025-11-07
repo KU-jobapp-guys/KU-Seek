@@ -9,7 +9,7 @@ const { company } = props
   <div
     class="relative bg-white rounded-xl border border-[#B1B1B1] w-full h-[160px] shadow-md overflow-hidden hover:bg-gray-100 hover:cursor-pointer"
   >
-    <router-link :to="`/company/profile/${company.user_id}`">
+    <router-link :to="`/company/profile/${company.id}`">
       <!-- Background -->
       <div class="absolute inset-0">
         <div
@@ -17,7 +17,7 @@ const { company } = props
           style="clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%)"
         >
           <img
-            :src="company.banner_img"
+            :src="company.bannerPhoto"
             class="w-full h-full object-cover text-white"
             alt="banner"
             loading="lazy"
@@ -35,12 +35,12 @@ const { company } = props
               14 <span class="hidden md:block"> Jobs</span>
             </p>
           </span>
-          <p>{{ company.company_type }}</p>
+          <p>{{ company.industry }}</p>
           <p class="text-gray-500">{{ company.location }}</p>
         </div>
 
         <img
-          :src="company.profile_img"
+          :src="company.profilePhoto"
           class="hidden md:block w-28 h-28 rounded-full border-[4px] border-gray-400 overflow-hidden bg-black"
           alt="Profile"
         />

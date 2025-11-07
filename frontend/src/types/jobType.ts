@@ -11,8 +11,8 @@ export interface Job {
   workfields?: string[]
   contacts?: { type: string; link: string }[]
   tags?: string[]
-  salary_min: number
-  salary_max: number
+  salaryMin: number
+  salaryMax: number
   status: string
   totalApplicants: number
   pendingApplicants: number

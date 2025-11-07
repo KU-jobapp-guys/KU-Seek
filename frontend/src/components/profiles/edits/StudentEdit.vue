@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { EducationBaseFields } from '@/configs/EditProfileConfig'
-import type { EducationFieldKey } from '@/configs/EditProfileConfig'
+import { EducationBaseFields } from '@/configs/editProfileConfig'
+import type { EducationFieldKey } from '@/configs/editProfileConfig'
 import type { StudentProfile } from '@/types/profileType'
 import { CircleUserRound, Wrench, GraduationCap, Star, X } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
@@ -36,8 +36,8 @@ const addEducation = () => {
     curriculum_name: '',
     major: '',
     university: '',
-    year_of_study: MINYEAR,
-    graduate_year: MINYEAR,
+    yearOfStudy: MINYEAR,
+    graduateYear: MINYEAR,
   })
 }
 
@@ -258,21 +258,21 @@ onMounted(() => {
               <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Year of study
                 <div>
-                  <span v-if="!edu.year_of_study" :class=ProfileStyle.errorText> (This field is required) </span>
-                  <span v-else-if="edu.year_of_study < MINYEAR" :class=ProfileStyle.errorText>
+                  <span v-if="!edu.yearOfStudy" :class=ProfileStyle.errorText> (This field is required) </span>
+                  <span v-else-if="edu.yearOfStudy < MINYEAR" :class=ProfileStyle.errorText>
                     (Year of study cannot be earlier than {{ MINYEAR }})
                   </span>
-                  <span v-else-if="edu.year_of_study > MAXYEAR" :class=ProfileStyle.errorText>
+                  <span v-else-if="edu.yearOfStudy > MAXYEAR" :class=ProfileStyle.errorText>
                     (Year of study cannot be later than {{ MAXYEAR }})
                   </span>
                 </div>
               </label>
               <input
-                v-model="edu.year_of_study"
+                v-model="edu.yearOfStudy"
                 type="number"
                 :class="[
                   ProfileStyle.inputBox,
-                  !edu.year_of_study || edu.year_of_study < 0 || edu.year_of_study > 3000
+                  !edu.yearOfStudy || edu.yearOfStudy < 0 || edu.yearOfStudy > 3000
                     ? ProfileStyle.errorBox
                     : '',
                 ]"
@@ -282,28 +282,28 @@ onMounted(() => {
               <label :class="[ProfileStyle.formLabel, 'flex gap-x-1']">
                 Graduate Year
                 <div>
-                  <span v-if="!edu.graduate_year" :class=ProfileStyle.errorText> (This field is required) </span>
-                  <span v-else-if="edu.graduate_year < MINYEAR" :class=ProfileStyle.errorText>
+                  <span v-if="!edu.graduateYear" :class=ProfileStyle.errorText> (This field is required) </span>
+                  <span v-else-if="edu.graduateYear < MINYEAR" :class=ProfileStyle.errorText>
                     (Graduate year cannot be earlier than {{ MINYEAR }})
                   </span>
-                  <span v-else-if="edu.graduate_year > MAXYEAR" :class=ProfileStyle.errorText>
+                  <span v-else-if="edu.graduateYear > MAXYEAR" :class=ProfileStyle.errorText>
                     (Graduate year cannot be later than {{ MAXYEAR }})
                   </span>
-                  <span v-else-if="edu.graduate_year < edu.year_of_study" :class=ProfileStyle.errorText>
+                  <span v-else-if="edu.graduateYear < edu.yearOfStudy" :class=ProfileStyle.errorText>
                     (Graduation year must be later than year of study)
                   </span>
                 </div>
               </label>
               <input
-                v-model="edu.graduate_year"
+                v-model="edu.graduateYear"
                 type="number"
                 :class="[
                   ProfileStyle.inputBox,
                   'focus:ring-blue-500',
-                  !edu.graduate_year ||
-                  edu.graduate_year < edu.year_of_study ||
-                  edu.graduate_year < 0 ||
-                  edu.graduate_year > 3000
+                  !edu.graduateYear ||
+                  edu.graduateYear < edu.yearOfStudy ||
+                  edu.graduateYear < 0 ||
+                  edu.graduateYear > 3000
                     ? ProfileStyle.errorBox
                     : '',
                 ]"

@@ -7,7 +7,7 @@ import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
-import { isOwner } from '@/libs/userUtil'
+import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockJobs } from '@/data/mockJobs'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -43,7 +43,7 @@ async function loadCompany(id?: string) {
     router.replace({ name: 'not found' })
     return
   }
-  companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.company_name)
+  companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
 }
 
 const isNewProfile = computed(() => {
@@ -68,8 +68,8 @@ const save = async () => {
 
   const plainData: CompanyProfile = {
     ...data,
-    profile_img: data.profile_img || '',
-    banner_img: data.banner_img || '',
+    profilePhoto: data.profilePhoto || '',
+    bannerPhoto: data.bannerPhoto || '',
   }
 
   const res = await updateProfileData(plainData)
@@ -143,7 +143,7 @@ const displayedJobs = computed(() => {
     <NoProfile
       v-if="isNewProfile && !isEditing"
       :isEditing="isEditing"
-      :isOwner="isOwner(companyData.user_id)"
+      :isOwner="isOwner(companyData.id)"
       @edit="edit"
     />
 

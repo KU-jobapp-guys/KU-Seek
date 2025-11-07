@@ -5,7 +5,7 @@ import { useToast } from 'vue-toast-notification'
 import { Save, X } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
+import { getProfileData, updateProfileData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -30,11 +30,9 @@ async function loadStudent(id?: string) {
     return
   }
   
-  const res = await getProfileData(id)
-  
-  if (res && res.ok) {   
-    const data = await res.json() 
-    studentData.value = data
+  const data = await getProfileData(id)
+  if (data) {   
+    studentData.value = data as StudentProfile
   } else {
     router.replace({ name: 'not found' })
     return
@@ -76,22 +74,14 @@ const save = async () => {
     education: (data.education || []).map(edu => ({ ...edu })),
   }
 
-  const res = await updateProfileData(plainData)
+  const resData = await updateProfileData(plainData)
   
-  if (!res) return
-
-  if (!res.ok) {
-    await loadStudent(route.params.id as string)
-    saveProfile()
+  if (resData) {
+    saveProfile(resData)
+    studentData.value = { ...resData } as StudentProfile
     toast.success('Profile updated successfully')
   } else {
-    const err = await res.json()
-    console.error('Error:', err.title, '-', err.detail)
     toast.error('Failed to update profile. Please try again.')
-    isSaveDisabled.value = true
-    setTimeout(() => {
-      isSaveDisabled.value = false
-    }, 3000)
   }
 }
 

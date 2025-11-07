@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { CircleCheck } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
+import { isOwner } from '@/libs/userUtils'
 import BaseBanner from './BaseBanner.vue'
 
 const props = defineProps<{
@@ -11,6 +12,7 @@ const props = defineProps<{
 }>()
 const { professorData, isEditing } = props
 const editForm = ref<ProfessorProfile>({ ...props.modelValue })
+const userId = localStorage.getItem('user_id') as string
 
 const emits = defineEmits<{
   (e: 'edit'): void
@@ -24,8 +26,6 @@ watch(
   },
   { deep: true },
 )
-
-const isOwner = professorData.user_id === '1'
 </script>
 
 <template>
@@ -40,7 +40,7 @@ const isOwner = professorData.user_id === '1'
       <div class="flex flex-col w-full">
         <h1 class="flex flex-col md:flex-row md:items-end">
           <span class="font-bold text-4xl mr-2">{{
-            professorData.first_name + ' ' + professorData.last_name
+            professorData.firstName + ' ' + professorData.lastName
           }}</span>
         </h1>
         <p>{{ professorData.location }}</p>
@@ -48,7 +48,7 @@ const isOwner = professorData.user_id === '1'
 
       <div class="flex items-center gap-2">
         <div
-          v-if="professorData.is_verified"
+          v-if="professorData.isVerified"
           class="flex items-center gap-x-2 bg-green-600 text-white px-2 md:px-4 py-2 rounded-full"
         >
           <p class="hidden md:block">Verified</p>
@@ -56,7 +56,7 @@ const isOwner = professorData.user_id === '1'
         </div>
 
         <button
-          v-if="isOwner && !professorData.is_verified"
+          v-if="isOwner(professorData.id) && !professorData.isVerified"
           class="bg-gray-400 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60"
         >
           Verify Account

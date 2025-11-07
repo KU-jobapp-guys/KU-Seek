@@ -6,7 +6,7 @@ import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
+import { getProfileData, updateProfileData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockJobs } from '@/data/mockJobs'
@@ -34,11 +34,10 @@ async function loadCompany(id?: string) {
     return
   }
 
-  const res = await getProfileData(id)
+  const data = await getProfileData(id)
   
-  if (res && res.ok) {   
-    const data = await res.json() 
-    companyData.value = data
+  if (data) {   
+    companyData.value = data as CompanyProfile
   } else {
     router.replace({ name: 'not found' })
     return
@@ -72,17 +71,12 @@ const save = async () => {
     bannerPhoto: data.bannerPhoto || '',
   }
 
-  const res = await updateProfileData(plainData)
+  const resData = await updateProfileData(plainData)
   
-  if (!res) return
-
-  if (res.ok) {
-    await loadCompany(route.params.id as string)
-    saveProfile()
+  if (resData) {
+    saveProfile(resData)
     toast.success('Profile updated successfully')
   } else {
-    const err = await res.json()
-    console.error('Error:', err.title, '-', err.detail)
     toast.error('Failed to update profile. Please try again.')
   }
 }

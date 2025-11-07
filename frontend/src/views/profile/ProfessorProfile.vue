@@ -5,7 +5,7 @@ import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/libs/api/profileAPI'
+import { getProfileData, updateProfileData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockCompany } from '@/data/mockCompany'
@@ -31,11 +31,10 @@ async function loadProfessor(id?: string) {
     return
   }
 
-  const res = await getProfileData(id)
+  const data = await getProfileData(id)
   
-  if (res && res.ok) {   
-    const data = await res.json() 
-    professorData.value = data
+  if (data) {   
+    professorData.value = data as ProfessorProfile
   } else {
     router.replace({ name: 'not found' })
     return
@@ -74,17 +73,12 @@ const save = async () => {
     phoneNumber: data.phoneNumber || '',
   }
 
-  const res = await updateProfileData(plainData)
+  const resData = await updateProfileData(plainData)
   
-  if (!res) return
-
-  if (res.ok) {
-    await loadProfessor(route.params.id as string)
-    saveProfile()
+  if (resData) {
+    saveProfile(resData)
     toast.success('Profile updated successfully')
   } else {
-    const err = await res.json()
-    console.error('Error:', err.title, '-', err.detail)
     toast.error('Failed to update profile. Please try again.')
   }
 }

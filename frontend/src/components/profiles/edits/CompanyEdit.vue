@@ -19,15 +19,15 @@ const showIndustryDropdown = ref(false)
 const addWorkField = () => {
   if (
     workFieldInput.value.trim() &&
-    !(editForm.value.company_workFields || []).includes(workFieldInput.value.trim())
+    !(editForm.value.workFields || []).includes(workFieldInput.value.trim())
   ) {
-    editForm.value.company_workFields = [...(editForm.value.company_workFields || []), workFieldInput.value.trim()]
+    editForm.value.workFields = [...(editForm.value.workFields || []), workFieldInput.value.trim()]
   }
   workFieldInput.value = ''
 }
 
 const removeWorkField = (index: number) => {
-  editForm.value.company_workFields = editForm.value.company_workFields.filter((_, i) => i !== index)
+  editForm.value.workFields = editForm.value.workFields.filter((_, i) => i !== index)
 }
 
 const toggleDropdownField = (field: string) => {
@@ -44,12 +44,12 @@ const toggleDropdownField = (field: string) => {
 }
 
 const selectSize = (size: string) => {
-  editForm.value.company_size = size
+  editForm.value.size = size
   showSizeDropdown.value = false
 }
 
 const selectIndustry = (industry: string) => {
-  editForm.value.company_industry = industry
+  editForm.value.industry = industry
   showIndustryDropdown.value = false
 }
 
@@ -86,7 +86,7 @@ watch(
               <span class="text-sm text-gray-500"> (Optional) </span>
             </label>
             <input
-              v-model="editForm.company_website"
+              v-model="editForm.website"
               type="url"
               :class="ProfileStyle.inputBox"
               placeholder="https://example.com"
@@ -97,17 +97,17 @@ watch(
           <div class="relative w-full">
             <label :class="ProfileStyle.formLabel">
               Industry
-              <span v-if="!editForm.company_industry" :class="ProfileStyle.errorText">
+              <span v-if="!editForm.industry" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
             <button
               :class="['w-full flex justify-between items-center', ProfileStyle.inputBox,
-                !editForm.company_industry ? 'border-red-500' : ''
+                !editForm.industry ? 'border-red-500' : ''
               ]"
               @click="toggleDropdownField('industry')"
             >
-              <span>{{ editForm.company_industry || 'Select Industry' }}</span>
+              <span>{{ editForm.industry || 'Select Industry' }}</span>
               <ChevronDown class="w-5 h-5" />
             </button>
 
@@ -130,17 +130,17 @@ watch(
           <div class="relative w-full">
             <label :class="ProfileStyle.formLabel">
               Company Size
-              <span v-if="!editForm.company_size?.trim()" :class="ProfileStyle.errorText">
+              <span v-if="!editForm.size?.trim()" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
             <button
               :class="['w-full flex justify-between items-center', ProfileStyle.inputBox,
-                !editForm.company_size ? 'border-red-500' : ''
+                !editForm.size ? 'border-red-500' : ''
               ]"
               @click="toggleDropdownField('size')"
             >
-              <span>{{ editForm.company_size || 'Select company size' }}</span>
+              <span>{{ editForm.size || 'Select company size' }}</span>
               <ChevronDown class="w-5 h-5" />
             </button>
 
@@ -163,16 +163,16 @@ watch(
           <div>
             <label :class="ProfileStyle.formLabel">
               Primary Location
-              <span v-if="!editForm.full_location?.trim()" :class="ProfileStyle.errorText">
+              <span v-if="!editForm.fullLocation?.trim()" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
             <input
-              v-model="editForm.full_location"
+              v-model="editForm.fullLocation"
               type="text"
               :class="[
                 ProfileStyle.inputBox,
-                !editForm.full_location?.trim() ? ProfileStyle.errorBox : '',
+                !editForm.fullLocation?.trim() ? ProfileStyle.errorBox : '',
               ]"
               placeholder="e.g., San Francisco, CA, USA"
             />
@@ -182,7 +182,7 @@ watch(
           <div>
             <label :class="ProfileStyle.formLabel">
               Specialties
-              <span v-if="(editForm.company_workFields || []).length === 0" :class="ProfileStyle.errorText">
+              <span v-if="(editForm.workFields || []).length === 0" :class="ProfileStyle.errorText">
                 (At least one specialty is required)
               </span>
             </label>
@@ -193,7 +193,7 @@ watch(
                 type="text"
                 :class="[
                   ProfileStyle.inputBox,
-                  (editForm.company_workFields || []).length === 0 ? ProfileStyle.errorBox : '',
+                  (editForm.workFields || []).length === 0 ? ProfileStyle.errorBox : '',
                 ]"
                 placeholder="Add a specialty (press Enter)"
               />
@@ -206,7 +206,7 @@ watch(
             </div>
             <div class="flex flex-wrap gap-2">
               <div
-                v-for="(field, index) in editForm.company_workFields"
+                v-for="(field, index) in editForm.workFields"
                 :key="index"
                 class="flex items-center gap-1 px-4 py-1 bg-orange-100 text-orange-800 rounded-full"
               >

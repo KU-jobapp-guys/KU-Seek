@@ -33,7 +33,7 @@ const filteredSkills = computed(() => {
 
 const addEducation = () => {
   editForm.value.education.push({
-    curriculum_name: '',
+    curriculumName: '',
     major: '',
     university: '',
     yearOfStudy: MINYEAR,

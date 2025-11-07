@@ -158,7 +158,7 @@ onMounted(() => {
             </div>
             <div class="flex items-center gap-2">
               <Banknote class="h-5 w-5" />
-              {{ jobDetail.salary_min }} - {{ jobDetail.salary_max }} THB/month
+              {{ jobDetail.salaryMin }} - {{ jobDetail.salaryMax }} THB/month
             </div>
             <div class="flex items-center gap-2">
               <BriefcaseBusiness class="h-5 w-5" />

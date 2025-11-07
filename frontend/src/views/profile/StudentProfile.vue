@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toast-notification'
+import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'

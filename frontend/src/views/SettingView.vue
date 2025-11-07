@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { User, Mail, GraduationCap, Building2, Edit, Trash, Terminal } from 'lucide-vue-next'
+import { User, Mail, GraduationCap, Building2, Edit, Trash } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
 import type { CompanyProfile, StudentProfile } from '@/types/profileType'

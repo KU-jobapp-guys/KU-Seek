@@ -131,13 +131,14 @@ onMounted(() => {
           @click="confirmConnection"
           :disabled="!selectedCompanyId"
           :class="[
-            'px-5 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2',
+            'px-5 py-2.5 rounded-lg font-medium flex items-center',
             selectedCompanyId
               ? 'bg-orange-500 hover:bg-orange-600 text-white'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           ]"
         >
-          Confirm Connection
+          Confirm 
+          <span class="hidden md:block font-medium ml-1">Connection</span>
         </button>
       </div>
     </div>

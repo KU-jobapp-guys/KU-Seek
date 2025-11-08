@@ -1,9 +1,9 @@
 <template>
-  <div class="relative w-full min-h-screen overflow-hidden bg-white flex justify-center items-center">
+  <div class="relative w-full min-h-screen mt-16 overflow-hidden bg-white flex justify-center items-center">
     <!-- Background -->
     <div class="absolute inset-0 flex">
       <!-- Left side background -->
-      <div class="relative w-1/2 bg-[#2b2b2b]">
+      <div class="relative w-full md:w-1/2 bg-[#2b2b2b]">
         <svg
           viewBox="0 0 960 480"
           xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@
       </div>
 
       <!-- Right side background -->
-      <div class="relative w-1/2 bg-white">
+      <div class="hidden md:block relative w-1/2 bg-white">
         <svg
           viewBox="0 0 960 480"
           xmlns="http://www.w3.org/2000/svg"
@@ -65,22 +65,26 @@
   </RouterLink>
 
     <!-- Foreground Content -->
-    <div class="relative z-10 flex w-full h-full justify-center items-end">
+    <div class="relative z-10 flex w-full h-full px-8 justify-center items-end">
       <!-- Join Us Box -->
-      <div class="bg-[#0068FF]/90 text-white p-10 rounded-l-xl shadow-xl flex flex-col justify-between w-[37.5%] h-[60vh]">
+      <div class="relative hidden md:flex bg-[#0068FF]/90 text-white p-10 rounded-l-xl shadow-xl flex-col gap-y-4 justify-between items-start w-[37.5%] h-[60vh]">
         <div>
           <h1 class="text-5xl font-bold mb-2">Join Us</h1>
-          <p class="text-lg text-blue-100">Find the right job for you</p>
+          <p class="text-lg text-blue-100">{{ joinUsSubtitle }}</p>
         </div>
-        <div
-          class="flex-1 mt-6 bg-white/10 rounded-lg flex items-center justify-center text-center text-sm font-medium text-blue-100"
-        >
-          [ Illustration Image Here ]
+
+        <!-- Image container -->
+        <div class="w-full flex justify-center items-end bg-white/10 rounded-lg overflow-hidden">
+          <img
+            src="@/assets/icons/checklist.svg"
+            alt="checklist"
+            class="w-auto h-full object-contain"
+          />
         </div>
       </div>
 
       <!-- Register Box with Tabs -->
-      <div class="w-[37.5%] flex flex-col items-center">
+      <div class="w-full md:w-[37.5%] flex flex-col items-center">
         <!-- Tabs on top -->
         <div class="flex w-full justify-center mb-0 rounded-t-lg overflow-hidden shadow-md">
           <button
@@ -259,6 +263,10 @@ const isKuIdValid = computed(() => {
 
 const fileUploadLabel = computed(() => {
   return form_role.value === 'staff' ? staffFileText.value : companyFileText.value
+})
+
+const joinUsSubtitle = computed(() => {
+  return form_role.value === 'staff' ? 'Find the right job for you' : 'Find the right Nisit for you'
 })
 
 const isFormValid = computed(() => {

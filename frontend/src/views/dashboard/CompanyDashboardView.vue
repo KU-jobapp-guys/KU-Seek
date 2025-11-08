@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { mockJobs } from '@/data/mockJobs'
+import { fetchCompanyJobs } from '@/services/jobService'
 import CompanyJob from '@/components/profiles/CompanyJob.vue'
 import Header from '@/components/layouts/AppHeader.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
@@ -12,11 +12,13 @@ import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 
 const jobLists = ref<Job[]>([])
 const searchQuery = ref('')
-const statusFilter = ref<'all' | 'approved' | 'pending' | 'rejected'>('all')
+const statusFilter = ref<'all' | 'accepted' | 'pending' | 'rejected'>('all')
 const sortBy = ref<'default' | 'pendingApplicants'>('pendingApplicants')
 
 async function loadJob() {
-  jobLists.value = mockJobs
+    const list = await fetchCompanyJobs()
+    jobLists.value = list
+
 }
 
 const filteredJobs = computed(() => {
@@ -43,7 +45,6 @@ const filteredJobs = computed(() => {
       return bPending - aPending
     })
   }
-  console.log(filtered)
 
   return filtered
 })
@@ -118,7 +119,7 @@ onMounted(() => {
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:cursor-pointer appearance-none bg-white"
                   >
                     <option value="all">All Status</option>
-                    <option value="approved">Approved</option>
+                    <option value="accepted">accepted</option>
                     <option value="pending">Pending</option>
                     <option value="rejected">Rejected</option>
                   </select>

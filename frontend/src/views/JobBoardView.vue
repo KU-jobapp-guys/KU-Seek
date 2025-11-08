@@ -4,12 +4,12 @@ import Header from '@/components/layouts/AppHeader.vue'
 import FilterBox from '@/components/jobBoard/FilterBox.vue'
 import JobBox from '@/components/jobBoard/JobBox.vue'
 import type { Job, FilterKeys } from '@/types/jobType'
-import { mockJobs } from '@/data/mockJobs'
 import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 import ToastContainer from '@/components/additions/ToastContainer.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { fetchJobs as fetchJobsService } from '@/services/jobService'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,40 +17,30 @@ const router = useRouter()
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
 const bookmarkedJobs = ref<Set<string>>(new Set()) // track bookmarked jobs
-const isInitialLoad = ref(true)
 
 const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
 const showSuccess = (msg = 'Action completed successfully!') =>
   toastRef.value?.addToast(msg, 'success')
-const showError = (msg = 'An error occurred, please try again.') =>
-  toastRef.value?.addToast(msg, 'error')
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
 const companyFilter = ref<string | undefined>(route.query.company as string)
 
+
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
-  try {
-    filters.value = { ...filters.value, ...newFilters }
-    console.log('Fetching jobs with:', filters.value)
+  filters.value = { ...filters.value, ...newFilters }
 
-    jobs.value = mockJobs.filter((job) => {
-      return Object.entries(filters.value).every(([key, value]) => {
-        if (!value) return true
-        const field = (job as Job)[key as FilterKeys]
-        return field?.toString().toLowerCase().includes(value.toLowerCase())
-      })
+  const mapped = await fetchJobsService()
+
+  jobs.value = mapped.filter((j: Job) => {
+    return Object.entries(filters.value).every(([key, value]) => {
+      if (!value) return true
+      const field = (j as unknown as Record<string, unknown>)[key]
+      return String(field ?? '')
+        .toLowerCase()
+        .includes(value.toLowerCase())
     })
-
-    if (!isInitialLoad.value) {
-      showSuccess('Applied successfully!')
-    }
-  } catch (err) {
-    console.error('Error fetching jobs:', err)
-    showError('Failed to fetch jobs.')
-  } finally {
-    isInitialLoad.value = false
-  }
+  })
 }
 
 function handleSelect(id: string) {
@@ -84,9 +74,7 @@ onMounted(() => {
     <FilterBox :initialFilters="{ company: companyFilter }" @applyFilter="fetchJobs" />
 
     <div class="mt-12">
-      <!-- Job List + Details -->
       <div v-if="jobs.length > 0" class="w-full h-[800px] flex gap-x-4">
-        <!-- Left Job List -->
         <div class="w-full pr-4 h-full gap-y-4 overflow-y-auto">
           <div v-for="job in jobs" :key="job.jobId">
             <JobBox

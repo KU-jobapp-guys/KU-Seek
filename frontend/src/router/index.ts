@@ -13,6 +13,7 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
+import AnnouncementsView from '@/views/AnnouncementsView.vue'
 import Registration from '@/views/RegistrationView.vue'
 import JobManagement from '@/views/JobManagement.vue'
 
@@ -57,7 +58,7 @@ const router = createRouter({
     },
     {
       path: '/student/dashboard',
-      name: 'studentDashboard',
+      name: 'student dashboard',
       component: StudentDashboardView,
     },
     {
@@ -84,6 +85,11 @@ const router = createRouter({
       path: '/explore-company',
       name: 'company board',
       component: CompanyBoardView,
+    },
+    {
+      path: '/announcements',
+      name: 'announcements',
+      component: AnnouncementsView,
     },
     {
       path: '/job/:id',

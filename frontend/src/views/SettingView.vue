@@ -6,12 +6,14 @@ import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
 import type { CompanyProfile, StudentProfile } from '@/types/profileType'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
+import ChangeContactEmailModal from '@/components/settings/ChangeContactEmailModal.vue'
 
 const userType = ref<'student' | 'company' | 'professor'>('company')
 const isEditing = ref(false)
 const isSaving = ref(false)
 const isLoading = ref(true)
 const isDeleteModalOpen = ref(false)
+const isChangeContactEmail = ref(false)
 const deleteAccountState = ref<'delete account' | 'remove term of service'>('delete account')
 
 const profileData = reactive({
@@ -151,7 +153,26 @@ const handleCancel = () => {
   isEditing.value = false
 }
 
-const handleSubmit = async () => {
+async function saveSetting() {
+  try {
+    await updateUserProfile(profileData)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    originalData.value = JSON.parse(JSON.stringify(profileData))
+    Object.keys(touched).forEach(key => delete touched[key])
+    isEditing.value = false
+  } catch (error) {
+    console.error('Failed to save settings:', error)
+  } finally {
+    isSaving.value = false
+  }
+}
+
+async function handleSubmit() {
+  if (JSON.stringify(profileData) === JSON.stringify(originalData.value)) {
+    isEditing.value = false
+    return
+  }
+
   if (!validateForm()) {
     const firstError = document.querySelector('.error-form')
     if (firstError) {
@@ -162,19 +183,26 @@ const handleSubmit = async () => {
     return
   }
 
-  isSaving.value = true
-
-  try {
-    await updateUserProfile(profileData)
-    originalData.value = JSON.parse(JSON.stringify(profileData))
-    Object.keys(touched).forEach(key => delete touched[key])
-    isEditing.value = false
-    
-  } catch (error) {
-    console.error('Failed to save settings:', error)
-  } finally {
-    isSaving.value = false
+  const emailChanged = profileData.contactEmail !== originalData.value?.contactEmail
+  if (emailChanged) {
+    isChangeContactEmail.value = true
   }
+  else {
+    isSaving.value = true
+    saveSetting()
+  }
+}
+
+function handleChangeContactEmailModal(confirmChange: boolean) {
+  if(!confirmChange) {
+    profileData.contactEmail = originalData.value?.contactEmail || ''
+  }
+  else {
+    profileData.contactEmailVerified = false
+  }
+  isChangeContactEmail.value = false
+  isSaving.value = true
+  saveSetting()
 }
 
 function handleCancelTOS() {
@@ -182,7 +210,6 @@ function handleCancelTOS() {
   isDeleteModalOpen.value = true
   profileData.termOfService = true
 }
-
 
 const inputClass = computed(() => (field: string) => {
   const hasError = !!errors[field]
@@ -201,9 +228,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <LoadingScreen v-if="isLoading" />
+  <LoadingScreen v-if="isLoading || isSaving" />
 
   <DeleteAccountModal v-if="isDeleteModalOpen" :state="deleteAccountState" @close="isDeleteModalOpen = false" />
+  <ChangeContactEmailModal v-if="isChangeContactEmail" :newEmail="profileData.contactEmail" @click="handleChangeContactEmailModal" @close="isChangeContactEmail = false" />
 
   <div class="flex h-full gap-x-8 min-h-screen w-full py-16 px-[8vw] md:px-[12vw]">
     <!-- Left Sidebar -->

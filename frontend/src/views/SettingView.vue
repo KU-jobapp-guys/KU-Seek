@@ -8,7 +8,7 @@ import { ProfileStyle } from '@/configs/profileStyleConfig'
 import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
 import ChangeContactEmailModal from '@/components/settings/ChangeContactEmailModal.vue'
 
-const userType = ref<'student' | 'company' | 'professor'>('company')
+const userType = localStorage.getItem('userRole')
 const isEditing = ref(false)
 const isSaving = ref(false)
 const isLoading = ref(true)
@@ -28,7 +28,7 @@ const profileData = reactive({
   gpa: null as number | null,
   email: '',
   contactEmailVerified: true,
-  termOfService: true,
+  termOfServiceAccepted: true,
 })
 
 const originalData = ref<typeof profileData | null>(null)
@@ -36,29 +36,28 @@ const errors = reactive<Record<string, string>>({})
 const touched = reactive<Record<string, boolean>>({})
 
 const loadUserData = async () => {
-  console.log('Loading user data for type:', userType.value)
+  console.log('Loading user data for type:', userType)
   try {
     const profile = await getProfileData(localStorage.getItem('user_id') || '') as Profile
     console.log('profile data: ', profile)
 
     const transformedData = {
       firstName: profile.firstName || '',
-      lastName: profile.last_name || '',
+      lastName: profile.lastName || '',
       age: profile.age || null,
       gender: profile.gender || '',
-      contactEmail: profile.contact_email || profile.email || '',
-      phoneNumber: profile.phone_number || '',
+      contactEmail: profile.contactEmail || '',
+      phoneNumber: profile.phoneNumber || '',
       location: profile.location || '',
-      companyName: userType.value === 'company' ? (profile as CompanyProfile).name || '' : '',
-      gpa: userType.value === 'student' ? (profile as StudentProfile).gpa || null : null,
+      companyName: userType === 'company' ? (profile as CompanyProfile).name || '' : '',
+      gpa: userType === 'student' ? (profile as StudentProfile).gpa || null : null,
       email: profile.email || '',
       contactEmailVerified: true,
-      termOfService: true,
+      termOfServiceAccepted: true,
     }
     
     Object.assign(profileData, transformedData)
     originalData.value = JSON.parse(JSON.stringify(profileData))
-    console.log('Loaded data:', originalData.value)
   } catch (error) {
     console.error('Failed to load user data:', error)
   } finally {
@@ -94,12 +93,12 @@ const validateField = <K extends keyof typeof profileData>(field: K, value: type
       }
       break
     case 'gpa':
-      if (userType.value === 'student' && value !== null && value !== undefined && (Number(value) < 0 || Number(value) > 4)) {
+      if (userType === 'student' && value !== null && value !== undefined && (Number(value) < 0 || Number(value) > 4)) {
         errors.gpa = 'GPA must be between 0.00 and 4.00'
       }
       break
     case 'companyName':
-      if (userType.value === 'company' && !value?.toString().trim()) {
+      if (userType === 'company' && !value?.toString().trim()) {
         errors.companyName = 'Company name is required'
       }
       break
@@ -115,9 +114,9 @@ const validateForm = (): boolean => {
   validateField('phoneNumber', profileData.phoneNumber)
   validateField('age', profileData.age)
   
-  if (userType.value === 'student') {
+  if (userType === 'student') {
     validateField('gpa', profileData.gpa)
-  } else if (userType.value === 'company') {
+  } else if (userType === 'company') {
     validateField('companyName', profileData.companyName)
   }
 
@@ -157,7 +156,6 @@ const handleCancel = () => {
 async function saveSetting() {
   try {
     await updateProfileData(profileData)
-    await new Promise(resolve => setTimeout(resolve, 2000))
     originalData.value = JSON.parse(JSON.stringify(profileData))
     Object.keys(touched).forEach(key => delete touched[key])
     isEditing.value = false
@@ -169,18 +167,20 @@ async function saveSetting() {
 }
 
 async function handleSubmit() {
-  if (JSON.stringify(profileData) === JSON.stringify(originalData.value)) {
-    isEditing.value = false
-    return
-  }
-
   if (!validateForm()) {
+    console.log('some error in form')
     const firstError = document.querySelector('.error-form')
     if (firstError) {
       setTimeout(() => {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
     }
+    return
+  }
+
+  if (JSON.stringify(profileData) === JSON.stringify(originalData.value)) {
+    console.log('no data changed')
+    isEditing.value = false
     return
   }
 
@@ -209,7 +209,7 @@ function handleChangeContactEmailModal(confirmChange: boolean) {
 function handleCancelTOS() {
   deleteAccountState.value = 'remove term of service'
   isDeleteModalOpen.value = true
-  profileData.termOfService = true
+  profileData.termOfServiceAccepted = true
 }
 
 const inputClass = computed(() => (field: string) => {
@@ -490,7 +490,7 @@ onMounted(() => {
 
         <!-- Term of Service -->
         <div class="bg-white rounded-xl flex items-center gap-x-4 shadow-sm p-6 border border-gray-200">
-          <input type="checkbox" @change="handleCancelTOS" v-model="profileData.termOfService" class="w-4 h-4 shrink-0"/>
+          <input type="checkbox" @change="handleCancelTOS" v-model="profileData.termOfServiceAccepted" class="w-4 h-4 shrink-0"/>
           <p>I agree to the Terms of Service.</p>
         </div>
 

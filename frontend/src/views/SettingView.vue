@@ -25,7 +25,7 @@ const profileData = reactive({
   companyName: '',
   gpa: null as number | null,
   email: '',
-  contactEmailStatus: 'pending',
+  contactEmailVerified: true,
   termOfService: true,
 })
 
@@ -49,7 +49,7 @@ const loadUserData = async () => {
       companyName: userType.value === 'company' ? (profile as CompanyProfile).name || '' : '',
       gpa: userType.value === 'student' ? (profile as StudentProfile).gpa || null : null,
       email: profile.email || '',
-      contactEmailStatus: 'pending',
+      contactEmailVerified: true,
       termOfService: true,
     }
     
@@ -369,7 +369,7 @@ onMounted(() => {
                     Contact Email 
                     <span class="text-red-500">*</span>
                   </span>
-                  <span class="rounded-full bg-gray-200 px-3">{{ profileData.contactEmailStatus }}</span>
+                  <span :class="['rounded-full px-3', profileData.contactEmailVerified ? 'bg-blue-100 text-blue-500' : 'bg-gray-200 text-gray-700']">{{ profileData.contactEmailVerified ? 'Enabled' : 'Disabled' }}</span>
                 </label>
                 <input
                   v-model="profileData.contactEmail"

@@ -25,13 +25,13 @@ const toggleSkillsExpansion = () => {
 
 <template>
   <component
-    :is="!isOwner('1234') && job.status === 'approved' ? 'router-link' : 'div'"
+    :is="!isOwner('1234') && job.status === 'accepted' ? 'router-link' : 'div'"
     :to="!isOwner('1234') ? `/company/manage-job/${job.jobId}` : undefined"
     class="flex flex-col bg-white ring-1 ring-[#B1B1B1] ring-inset py-8 md:py-12 px-8 rounded-xl shadow-md h-full justify-between gap-y-4"
   >
     <div class="flex flex-col">
       <!-- <h3 class="text-[#636363] text-sm">{{ job.company }}</h3> -->
-      <div v-if="job.status === 'approved'" class="flex justify-end mb-2">
+      <div v-if="job.status === 'accepted'" class="flex justify-end mb-2">
         <div class="flex rounded-full overflow-hidden text-sm font-medium text-white py-0.5">
           <div class="bg-red-200 text-orange-600 px-4">
             <span class="font-bold text-red-500">{{ job.pendingApplicants }}</span> Pending
@@ -45,7 +45,7 @@ const toggleSkillsExpansion = () => {
           :is="getStatusIcon(job.status)"
           class="w-6 h-6 p-1 rounded-full text-white flex-shrink-0"
           :class="{
-            'bg-green-500': job.status === 'approved',
+            'bg-green-500': job.status === 'accepted',
             'bg-gray-500': job.status === 'pending',
             'bg-red-500': job.status === 'rejected',
           }"

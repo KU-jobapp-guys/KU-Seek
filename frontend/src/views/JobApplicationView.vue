@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { mockJobs } from '@/data/mockJobs'
 import JobApplicationForm from '@/components/jobApplication/JobApplicationForm.vue'
+import { fetchJobs } from '@/services/jobService'
 
 const route = useRoute()
-const job = mockJobs.find((j) => j.jobId === route.params.id)
+import type { Job } from '@/types/jobType'
+
+const job = ref<Job | null>(null)
+
+onMounted(async () => {
+  const list = await fetchJobs()
+  job.value = list.find((j) => j.jobId === route.params.id) ?? null
+})
 </script>
 
 <template>

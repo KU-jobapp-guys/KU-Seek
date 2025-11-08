@@ -1,80 +1,53 @@
-import type { Profile, CompanyProfile, StudentProfile, ProfessorProfile } from "@/types/profileType"
+import type { Profile } from "@/types/profileType"
 
-export async function fetchUserProfile(userType: string): Promise<Profile> {  
-  if (userType === 'student') {
-    return {
-      id: '1',
-      first_name: 'John',
-      last_name: 'Doe',
-      about: 'Computer Engineering student',
-      location: 'Bangkok, Thailand',
-      email: 'john.doe@student.ku.th',
-      contact_email: 'john.doe@student.ku.th',
-      gender: 'M',
-      age: 21,
-      user_type: 'student',
-      profilePhoto: '',
-      bannerPhoto: '',
-      phone_number: '1231231234',
-      is_verified: true,
-      nisit_id: '6666666666',
-      gpa: 3.75,
-      skills: ['JavaScript', 'Vue.js'],
-      interests: 'Web Development',
-      education: [{
-        curriculum_name: 'Bachelor of Engineering',
-        university: 'Kasetsart University',
-        major: 'Computer Engineering',
-        year_of_study: 3,
-        graduate_year: 2025
-      }]
-    } as StudentProfile
-  } else if (userType === 'company') {
-    return {
-      id: '1',
-      name: 'TechCorp Solutions',
-      first_name: 'John',
-      last_name: 'Doe',
-      gender: 'M',
-      type: 'company',
-      website: 'https://techcorp.com',
-      industry: 'Technology',
-      workFields: ['Software Development', 'AI'],
-      location: 'Bangkok',
-      fullLocation: 'Bangkok, Thailand',
-      size: '51-200 employees',
-      email: 'jane.smith@techcorp.com',
-      contact_email: 'jane.smith@techcorp.com',
-      about: 'Leading tech company',
-      bannerPhoto: '',
-      profilePhoto: ''
-    } as CompanyProfile
-  } else {
-    return {
-      id: '1',
-      first_name: 'Dr. Alex',
-      last_name: 'Johnson',
-      about: 'Associate Professor in Computer Engineering',
-      location: 'Bangkok, Thailand',
-      email: 'alex.johnson@ku.th',
-      contact_email: 'alex.johnson@ku.th',
-      gender: '',
-      age: 45,
-      profilePhoto: '',
-      bannerPhoto: '',
-      phone_number: '1231231234',
-      is_verified: true,
-      skills: ['Machine Learning', 'Data Science'],
-      department: 'Computer Engineering',
-      position: 'Associate Professor',
-      office_location: 'Building 3, Room 301',
-      research_interest: 'Artificial Intelligence',
-      description: 'Researcher in AI and ML'
-    } as ProfessorProfile
+export async function getProfileData(user_id: string): Promise<Profile | null> {
+  try {
+    const res = await fetch(`http://localhost:8000/api/v1/users/${user_id}/profile`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || ''
+      },
+    })
+    if (!res.ok) {
+      console.error('Fetching profile failed with status:', res.status)
+      return null
+    }
+    return res.json() as Promise<Profile>
+
+  }
+  catch (error) {
+    console.error('Fetching profile error:', error)
+    return null
   }
 }
 
-export async function updateUserProfile(data: Partial<Profile>): Promise<void> {
-  // Call API to update user profile
-  console.log('Updating profile with data:', data)
+export async function updateProfileData(plainData: Partial<Profile>): Promise<Profile | null>  {
+  try {
+    // Replace all null values with ''
+    const cleanedData = Object.fromEntries(
+        Object.entries(plainData).map(([key, value]) => [key, value === null ? '' : value])
+    );
+    console.log('Updating profile with data:', cleanedData)
+    const res = await fetch(`http://localhost:8000/api/v1/users/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || '',
+        'X-CSRFToken': localStorage.getItem('csrf_token') || '',
+      },
+      body: JSON.stringify(cleanedData)
+    })
+    if (!res.ok) {
+      console.error('Updating profile failed with status:', res.status)
+      return null
+    }
+    return res.json() as Promise<Profile>
+  }
+  catch (error) {
+    console.error('Updating profile error:', error)
+    return null
+  }
 }

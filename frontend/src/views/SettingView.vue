@@ -2,8 +2,8 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { User, Mail, GraduationCap, Building2, Edit, Trash } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
-import { fetchUserProfile, updateUserProfile } from '@/services/profileServices'
-import type { CompanyProfile, StudentProfile } from '@/types/profileType'
+import { getProfileData, updateProfileData } from '@/services/profileServices'
+import type { CompanyProfile, Profile, StudentProfile } from '@/types/profileType'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
 import ChangeContactEmailModal from '@/components/settings/ChangeContactEmailModal.vue'
@@ -38,7 +38,7 @@ const touched = reactive<Record<string, boolean>>({})
 const loadUserData = async () => {
   console.log('Loading user data for type:', userType.value)
   try {
-    const profile = await fetchUserProfile(userType.value)
+    const profile = await getProfileData(localStorage.getItem('user_id') || '') as Profile
     
     const transformedData = {
       firstName: profile.first_name || '',
@@ -155,7 +155,7 @@ const handleCancel = () => {
 
 async function saveSetting() {
   try {
-    await updateUserProfile(profileData)
+    await updateProfileData(profileData)
     await new Promise(resolve => setTimeout(resolve, 2000))
     originalData.value = JSON.parse(JSON.stringify(profileData))
     Object.keys(touched).forEach(key => delete touched[key])

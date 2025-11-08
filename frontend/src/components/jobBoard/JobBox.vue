@@ -4,19 +4,20 @@ import type { Job } from '@/types/jobType'
 import { Banknote, Bookmark, BookmarkCheck, MapPin } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 import { getStatusColor } from '@/libs/getStatusStyle'
+import { postBookmark as postBookmarkService, deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
 
 const props = withDefaults(
   defineProps<{
     job: Job
-    bookmarked?: boolean
+    bookmarked: boolean
     showBookmark?: boolean
   }>(),
-  { showBookmark: true, bookmarked: false },
+  { showBookmark: true },
 )
 
 const emit = defineEmits<{
   (e: 'select', id: string): void
-  (e: 'bookmark', payload: { id: string; bookmarked: boolean }): void
+  (e: 'bookmark', payload: { jobId: string, bm: boolean }): void
 }>()
 
 const isBookmarked = ref(props.bookmarked)
@@ -31,9 +32,18 @@ function handleJobSelected() {
   emit('select', props.job.jobId)
 }
 
-function toggleBookmark() {
-  isBookmarked.value = !isBookmarked.value
-  emit('bookmark', { id: props.job.jobId, bookmarked: isBookmarked.value })
+async function toggleBookmark() {
+  if (isBookmarked.value) {
+    if (await deleteBookmarkService(props.job.jobId)) {
+      isBookmarked.value = !isBookmarked.value
+      emit('bookmark', { jobId: props.job.jobId, bm: isBookmarked.value })
+    }
+  } else {
+    if (await postBookmarkService(props.job.jobId)) {
+      isBookmarked.value = !isBookmarked.value
+      emit('bookmark', { jobId: props.job.jobId, bm: isBookmarked.value })
+    }
+  }
 }
 </script>
 

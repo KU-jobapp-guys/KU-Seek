@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X, Mail } from 'lucide-vue-next'
+import { Mail } from 'lucide-vue-next'
 
 const { newEmail } = defineProps<{ newEmail: string }>()
 

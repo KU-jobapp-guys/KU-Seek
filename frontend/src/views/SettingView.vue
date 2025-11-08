@@ -39,9 +39,10 @@ const loadUserData = async () => {
   console.log('Loading user data for type:', userType.value)
   try {
     const profile = await getProfileData(localStorage.getItem('user_id') || '') as Profile
-    
+    console.log('profile data: ', profile)
+
     const transformedData = {
-      firstName: profile.first_name || '',
+      firstName: profile.firstName || '',
       lastName: profile.last_name || '',
       age: profile.age || null,
       gender: profile.gender || '',

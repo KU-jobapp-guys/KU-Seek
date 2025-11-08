@@ -29,7 +29,8 @@ async function logout() {
             localStorage.removeItem("csrf_token")
             localStorage.removeItem("access_token")
             localStorage.removeItem("userRole")
-            emit('update:role', 'vistor')
+            localStorage.removeItem("user_jwt")
+            emit('update:role', 'visitor')
             router.replace({path: '/'})
         } else {
             backToPreviousPage()

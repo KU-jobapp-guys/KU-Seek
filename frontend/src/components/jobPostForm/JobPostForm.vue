@@ -30,8 +30,8 @@ const jobPost = ref({
   jobType: '',
   skills: [] as string[],
   tags: [] as string[],
-  salary_min: '',
-  salary_max: '',
+  salaryMin: '',
+  salaryMax: '',
   contacts: [] as { type: string; link: string }[],
 })
 
@@ -46,8 +46,8 @@ const initializeForm = () => {
       jobType: props.initialData.jobType || '',
       skills: props.initialData.skills || [],
       tags: props.initialData.tags || [],
-      salary_min: props.initialData.salary_min.toString() || '',
-      salary_max: props.initialData.salary_max.toString() || '',
+      salaryMin: props.initialData.salaryMin.toString() || '',
+      salaryMax: props.initialData.salaryMax.toString() || '',
       contacts: props.initialData.contacts || [],
     }
   }
@@ -63,17 +63,17 @@ const isFormValid = computed(() => {
     jobPost.value.description.trim() !== '' &&
     jobPost.value.jobType.trim() !== '' &&
     jobPost.value.skills.length > 0 &&
-    jobPost.value.salary_min.trim() !== '' &&
-    jobPost.value.salary_max.trim() !== '' &&
-    Number(jobPost.value.salary_min) > 0 &&
-    Number(jobPost.value.salary_max) > 0 &&
+    jobPost.value.salaryMin.trim() !== '' &&
+    jobPost.value.salaryMax.trim() !== '' &&
+    Number(jobPost.value.salaryMin) > 0 &&
+    Number(jobPost.value.salaryMax) > 0 &&
     isSalaryValid.value
   )
 })
 
 const handleSubmit = (): void => {
-  const min = Number(jobPost.value.salary_min)
-  const max = Number(jobPost.value.salary_max)
+  const min = Number(jobPost.value.salaryMin)
+  const max = Number(jobPost.value.salaryMax)
 
   if (min <= 0 || max <= 0) {
     alert('Salary cannot be zero or negative.')
@@ -87,8 +87,8 @@ const handleSubmit = (): void => {
 
   const payload = {
     ...jobPost.value,
-    salary_min: Number(jobPost.value.salary_min),
-    salary_max: Number(jobPost.value.salary_max),
+    salaryMin: Number(jobPost.value.salaryMin),
+    salaryMax: Number(jobPost.value.salaryMax),
   }
 
   emit('submit', payload)
@@ -174,8 +174,8 @@ onMounted(() => {
           </div>
 
           <SalaryInput
-            v-model:salaryMin="jobPost.salary_min"
-            v-model:salaryMax="jobPost.salary_max"
+            v-model:salaryMin="jobPost.salaryMin"
+            v-model:salaryMax="jobPost.salaryMax"
             @validity="isSalaryValid = $event"
           />
         </div>

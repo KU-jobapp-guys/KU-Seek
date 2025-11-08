@@ -52,7 +52,6 @@ function makeLink(page: string | Page) {
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 
-
 onMounted(async () => {
   if (!userStore.profileImage) {
     console.log('No user data in store, fetching...')

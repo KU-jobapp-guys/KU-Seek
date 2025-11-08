@@ -12,7 +12,7 @@ export function getUserId() {
 }
 
 export function getUserRole() {
-  return 'company'
+  return localStorage.getItem('userRole') || 'company'
 }
 
 export const useUserStore = defineStore('user', () => {

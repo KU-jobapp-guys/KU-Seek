@@ -289,7 +289,7 @@ onMounted(() => {
       :changes="pendingChanges"
       :applicants="
         applicantsList.reduce((map, applicant) => {
-          map.set(applicant.id, { name: `${applicant.first_name} ${applicant.last_name}` })
+          map.set(applicant.id, { name: `${applicant.firstName} ${applicant.lastName}` })
           return map
         }, new Map<number, { name: string }>())
       "

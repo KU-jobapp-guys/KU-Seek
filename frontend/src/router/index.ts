@@ -59,7 +59,7 @@ const router = createRouter({
     },
     {
       path: '/student/dashboard',
-      name: 'studentDashboard',
+      name: 'student dashboard',
       component: StudentDashboardView,
     },
     {

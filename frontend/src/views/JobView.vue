@@ -5,10 +5,13 @@ import { onMounted, ref } from 'vue'
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
+import { fetchBookmarkId as fetchBookmarkService } from '@/services/bookmarkService'
+import { Bookmark } from 'lucide-vue-next'
 
 const route = useRoute()
 const isEditing = ref(false)
 const initialData = ref<Job | null>()
+const bookmarked = ref<boolean>(false)
 
 const startEditing = () => {
   isEditing.value = true
@@ -34,14 +37,20 @@ const updateEditing = (payload: Partial<Job>) => {
   isEditing.value = false
 }
 
+async function loadBookmark() {
+  const list = await fetchBookmarkService()
+  bookmarked.value = list.includes(route.params.id.toString())
+}
+
 onMounted(() => {
   window.scrollTo({ top: 0 })
+  loadBookmark()
 })
 </script>
 
 <template>
   <div v-if="!isEditing" class="px-[6vw] md:px-[12vw] mt-24">
-    <JobFull :jobId="route.params.id as string" @edit="startEditing" />
+    <JobFull :jobId="route.params.id as string" :bookmarked="bookmarked" @edit="startEditing" />
   </div>
 
   <JobPostForm

@@ -6,7 +6,6 @@ import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
 import { fetchBookmarkId as fetchBookmarkService } from '@/services/bookmarkService'
-import { Bookmark } from 'lucide-vue-next'
 
 const route = useRoute()
 const isEditing = ref(false)

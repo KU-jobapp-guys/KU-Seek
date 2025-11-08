@@ -5,9 +5,7 @@ import type { Job } from '@/types/jobType'
 export async function fetchBookmarkId(): Promise<string[]> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/bookmarks`)
-  try {
-    const csrfToken = await fetchCsrfToken(base)
-            
+  try {            
     const res = await fetch(url.toString(), {
       method: 'GET',
       headers: {

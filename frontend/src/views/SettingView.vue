@@ -158,7 +158,7 @@ async function saveSetting() {
   try {
     const res = await updateProfileData(profileData)
     if (res && res.ok) {
-      let newData = res.json()
+      const newData = res.json()
       originalData.value = JSON.parse(JSON.stringify(newData))
       Object.keys(touched).forEach(key => delete touched[key])
       isEditing.value = false

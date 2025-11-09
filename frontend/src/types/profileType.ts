@@ -1,35 +1,33 @@
-export interface CompanyProfile {
-  id: string
-  name: string
-  type: string
-  website: string
-  industry: string
-  workFields: string[]
-  location: string
-  fullLocation: string
-  size: string
-  contacts: string
-  about: string
-  bannerPhoto: string
-  profilePhoto: string
-}
-
-export interface StudentProfile {
+export interface BaseProfile {
   id: string
   firstName: string
   lastName: string
   about: string
   location: string
+  email: string
   contactEmail: string
   gender: string
-  age: number
-  userType: 'student'
-  profilePhoto: string
+  age: number | null
   bannerPhoto: string
+  profilePhoto: string
   phoneNumber: string
-  isVerified: boolean
+  contactEmailVerified: boolean
+  termOfServiceAccepted: boolean
+}
+
+export interface CompanyProfile extends BaseProfile {
+  name: string
+  type: string
+  website: string
+  industry: string
+  workFields: string[]
+  fullLocation: string
+  size: string
+}
+
+export interface StudentProfile extends BaseProfile{
   nisitId: string
-  gpa: number
+  gpa?: number | null
   skills: string[]
   interests: string
   education: {
@@ -41,20 +39,7 @@ export interface StudentProfile {
   }[]
 }
 
-export interface ProfessorProfile {
-  id: string
-  firstName: string
-  lastName: string
-  about: string
-  location: string
-  contactEmail: string
-  gender: string
-  age: number
-  profilePhoto: string
-  bannerPhoto: string
-  phoneNumber: string
-  isVerified: boolean
-  skills: string[]
+export interface ProfessorProfile extends BaseProfile{
   department: string
   position: string
   officeLocation: string

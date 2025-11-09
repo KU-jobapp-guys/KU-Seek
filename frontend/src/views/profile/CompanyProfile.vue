@@ -75,6 +75,7 @@ const save = async () => {
   
   if (resData) {
     saveProfile(resData)
+    companyData.value = { ...resData } as CompanyProfile
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')

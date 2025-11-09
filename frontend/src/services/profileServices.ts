@@ -29,6 +29,11 @@ export async function updateProfileData(plainData: Profile): Promise<Profile | n
     const cleanedData = Object.fromEntries(
         Object.entries(plainData).map(([key, value]) => [key, value === null ? '' : value])
     );
+
+    delete cleanedData.id
+    if (cleanedData.gender === '') delete cleanedData.gender
+    if (cleanedData.age === '') delete cleanedData.age
+
     console.log('Updating profile with data:', cleanedData)
     const res = await fetch(`http://localhost:8000/api/v1/users/profile`, {
       method: 'PATCH',

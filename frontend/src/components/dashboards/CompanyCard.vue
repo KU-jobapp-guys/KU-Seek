@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { withDefaults } from 'vue'
+import { useRouter } from 'vue-router'
 import defaultCompany from '@/assets/images/defaultCompany.png'
 
 const props = withDefaults(defineProps<{
@@ -12,8 +13,11 @@ const props = withDefaults(defineProps<{
   profilePhoto: ''
 })
 
+const router = useRouter()
+
 const viewJob = () => {
-  console.log("YES")
+  const name = props.companyName ?? ''
+  router.push({ path: '/explore-job', query: { company: String(name) } })
 }
 </script>
 

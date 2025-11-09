@@ -22,7 +22,29 @@ export async function getProfileData(user_id: string): Promise<Profile | null> {
   }
 }
 
-export async function updateProfileData(plainData: Partial<Profile>)  {
+export async function getSettingData(): Promise<Profile | null> {
+  try {
+    const res = await fetch(`http://localhost:8000/api/v1/settings`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || ''
+      },
+    })
+    if (!res.ok) {
+      console.error('Fetching settings failed with status:', res.status)
+      return null
+    }
+    return res.json() as Promise<Profile>
+  }
+  catch (error) {
+    console.error('Fetching profile error:', error)
+    return null
+  }
+}
+
+export async function updateUserData(plainData: Partial<Profile>)  {
   try {
     // Replace all null values with ''
     const cleanedData = Object.fromEntries(

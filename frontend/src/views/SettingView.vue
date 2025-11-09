@@ -3,7 +3,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import { User, Mail, GraduationCap, Building2, Edit, Trash } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
+import { getSettingData, updateUserData } from '@/services/profileServices'
 import type { CompanyProfile, Profile, StudentProfile } from '@/types/profileType'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
@@ -39,7 +39,7 @@ const touched = reactive<Record<string, boolean>>({})
 
 const loadUserData = async () => {
   try {
-    const profile = await getProfileData(localStorage.getItem('user_id') || '') as Profile
+    const profile = await getSettingData() as Profile
     console.log('profile data: ', profile)
 
     const transformedData = {
@@ -156,7 +156,7 @@ const handleCancel = () => {
 
 async function saveSetting() {
   try {
-    const res = await updateProfileData(profileData)
+    const res = await updateUserData(profileData)
     if (res && res.ok) {
       const newData = res.json()
       originalData.value = JSON.parse(JSON.stringify(newData))
@@ -384,7 +384,7 @@ onMounted(() => {
                   :disabled="!isEditing"
                   :class="[inputClass('gender'), 'h-12']"
                 >
-                  <option value="">Prefer not to say</option>
+                  <option disabled value="">Select your gender</option>
                   <option value="M">Male</option>
                   <option value="F">Female</option>
                 </select>

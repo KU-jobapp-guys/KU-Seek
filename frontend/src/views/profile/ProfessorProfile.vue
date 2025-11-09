@@ -89,6 +89,7 @@ const save = async () => {
   
   if (resData) {
     saveProfile(resData)
+    professorData.value = { ...resData } as ProfessorProfile
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')

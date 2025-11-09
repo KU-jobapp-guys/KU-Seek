@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withDefaults } from 'vue'
+import { ref, onMounted, onUnmounted, withDefaults } from 'vue'
 import { useRouter } from 'vue-router'
 import defaultCompany from '@/assets/images/defaultCompany.png'
 
@@ -11,6 +11,57 @@ const props = withDefaults(defineProps<{
   companyName: 'Unknown Company',
   jobCount: 0,
   profilePhoto: ''
+})
+
+const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
+
+const headers: Record<string, string> = {}
+
+const profileRealImg = ref<string | null>(null)
+let objectUrl: string | null = null
+if (token) {
+  headers['access_token'] = token
+}
+
+onMounted(async () => {
+  try {
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+    const res = await fetch(`${base}/api/v1/file/${props.profilePhoto}`, {
+      method: 'GET',
+      headers,
+      credentials: 'include'
+    })
+    if (res.ok) {
+      const contentType = res.headers.get('content-type') ?? ''
+      // hope this work
+      if (contentType.startsWith('image/')) { 
+        const blob = await res.blob()
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl)
+          objectUrl = null
+        }
+        objectUrl = URL.createObjectURL(blob)
+        profileRealImg.value = objectUrl
+      } else if (contentType.includes('application/json')) {
+        const data = await res.json()
+        profileRealImg.value = (data.url ?? data.fileUrl ?? null) as string | null
+      } else {
+        const text = await res.text()
+        profileRealImg.value = text && (text.startsWith('http') || text.startsWith('data:')) ? text : null
+      }
+    } else {
+      console.error('Failed to fetch companies', res.status, await res.text())
+    }
+  } catch (err) {
+    console.error('Error fetching companies', err)
+  }
+})
+
+onUnmounted(() => {
+  if (objectUrl) {
+    URL.revokeObjectURL(objectUrl)
+    objectUrl = null
+  }
 })
 
 const router = useRouter()
@@ -26,7 +77,7 @@ const viewJob = () => {
     class="w-full bg-[#F4F4F4] border point cursor-pointer border-gray-200 shadow-sm rounded-2xl p-5 hover:shadow-md transition-all duration-200 flex items-center gap-4 flex-col"
   >
     <img
-      :src="props.profilePhoto || defaultCompany"
+      :src="profileRealImg || defaultCompany"
       alt="company"
       class="w-[6rem] h-[6rem] rounded-full object-cover"
     />

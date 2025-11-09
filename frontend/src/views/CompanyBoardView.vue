@@ -4,6 +4,7 @@ import type { Company } from '@/types/companyType.ts'
 import CompanyCard from '@/components/dashboards/CompanyCard.vue'
 import { ref, onMounted, computed } from 'vue'
 import CompanySearchBar from '@/components/dashboards/CompanySearchBar.vue'
+import search from '@/assets/icons/search.svg'
 
 const companies = ref<Company[]>([])
 const selectedCompany = ref('')
@@ -28,42 +29,6 @@ onMounted(async () => {
     if (res.ok) {
       companies.value = await res.json()
 
-      const mockCompanies = [
-        {
-          companyId: 9001,
-          companyName: 'Acme Corporation',
-          jobCount: 4,
-          profilePhoto: '',
-          companyIndustry: 'Manufacturing',
-          name: 'Acme Corporation',
-        },
-        {
-          companyId: 9002,
-          companyName: 'Blue Ocean Tech',
-          jobCount: 2,
-          profilePhoto: '',
-          companyIndustry: 'Software',
-          name: 'Blue Ocean Tech',
-        },
-        {
-          companyId: 9003,
-          companyName: 'Green Fields Ltd.',
-          jobCount: 1,
-          profilePhoto: '',
-          companyIndustry: 'Agriculture',
-          name: 'Green Fields Ltd.',
-        },
-        {
-          companyId: 9004,
-          companyName: 'Urban Mobility',
-          jobCount: 6,
-          profilePhoto: '',
-          companyIndustry: 'Transportation',
-          name: 'Urban Mobility',
-        },
-      ]
-
-      companies.value.push(...mockCompanies)
     } else {
       console.error('Failed to fetch companies', res.status, await res.text())
     }
@@ -87,7 +52,7 @@ const filteredCompany = computed(() =>
       <CompanySearchBar v-model:selectedCompany="selectedCompany" />
 
       <main class="mt-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-12">
+        <div v-if="filteredCompany.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-12">
           <!-- Company Card -->
           <CompanyCard
             v-for="company in filteredCompany"
@@ -96,6 +61,13 @@ const filteredCompany = computed(() =>
             :jobCount="company.jobCount"
             :profilePhoto="company.profilePhoto"
           />
+        </div>
+
+        <div v-if="filteredCompany.length == 0" class="mt-24 w-full flex flex-col items-center justify-center">
+          <img :src="search" class="h-32 w-32" />
+          <p class="text-xl font-bold my-4">No matching results found</p>
+          <p>We couldn't find any results that match your search.</p>
+          <p>Try adjusting your filters or checking for spelling errors.</p>
         </div>
       </main>
   </section>

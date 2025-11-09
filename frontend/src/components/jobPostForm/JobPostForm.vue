@@ -9,6 +9,8 @@ import TagInput from './inputs/TagInput.vue'
 import ContactField from './inputs/ContactField.vue'
 import SalaryInput from './inputs/SalaryInput.vue'
 import SearchableTagInput from './inputs/SearchableTagInput.vue'
+import CalendarInput from './inputs/CalendarInput.vue'
+import TimeInput from './inputs/TimeInput.vue'
 
 const props = defineProps<{
   initialData?: Job
@@ -30,8 +32,12 @@ const jobPost = ref({
   jobType: '',
   skills: [] as string[],
   tags: [] as string[],
+  capacity: '',
   salaryMin: '',
   salaryMax: '',
+  jobLevel: '',
+  endDate: '',
+  workHours: '',
   contacts: [] as { type: string; link: string }[],
 })
 
@@ -49,6 +55,10 @@ const initializeForm = () => {
       salaryMin: props.initialData.salaryMin.toString() || '',
       salaryMax: props.initialData.salaryMax.toString() || '',
       contacts: props.initialData.contacts || [],
+      capacity: props.initialData.capacity ? String(props.initialData.capacity) : '',
+      jobLevel: props.initialData.jobLevel || '',
+      endDate: props.initialData.endDate ? String(props.initialData.endDate) : '',
+      workHours: props.initialData.workHours || '',
     }
   }
 }
@@ -67,6 +77,11 @@ const isFormValid = computed(() => {
     jobPost.value.salaryMax.trim() !== '' &&
     Number(jobPost.value.salaryMin) > 0 &&
     Number(jobPost.value.salaryMax) > 0 &&
+    jobPost.value.jobLevel.trim() !== '' &&
+    jobPost.value.capacity.trim() !== '' &&
+    Number(jobPost.value.capacity) > 0 &&
+    jobPost.value.endDate.trim() !== '' &&
+    jobPost.value.workHours.trim() !== '' &&
     isSalaryValid.value
   )
 })
@@ -89,6 +104,7 @@ const handleSubmit = (): void => {
     ...jobPost.value,
     salaryMin: Number(jobPost.value.salaryMin),
     salaryMax: Number(jobPost.value.salaryMax),
+    capacity: Number(jobPost.value.capacity),
   }
 
   emit('submit', payload)
@@ -172,12 +188,42 @@ onMounted(() => {
               <option value="Contract">Contract</option>
             </select>
           </div>
+          
+          <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700 mb-1">Job Level</label>
+            <select
+              v-model="jobPost.jobLevel"
+              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          >
+              <option disabled value="" class="text-gray-400">Select job level</option>
+              <option value="Junior">Junior</option>
+              <option value="Mid-Level">Mid-Level</option>
+              <option value="Senior-Level">Senior-Level</option>
+            </select>
+          </div>
+
+          <BaseInput
+            v-model="jobPost.capacity"
+            label="Capacity"
+            placeholder="e.g. 4, 5, 6"
+          />
 
           <SalaryInput
             v-model:salaryMin="jobPost.salaryMin"
             v-model:salaryMax="jobPost.salaryMax"
             @validity="isSalaryValid = $event"
           />
+
+          <CalendarInput
+            v-model="jobPost.endDate"
+          />
+          
+          <TimeInput
+            v-model="jobPost.workHours"
+            :emitCombined="true"
+          />
+
+          
         </div>
       </section>
 

@@ -15,7 +15,6 @@ export async function getProfileData(user_id: string): Promise<Profile | null> {
       return null
     }
     return res.json() as Promise<Profile>
-
   }
   catch (error) {
     console.error('Fetching profile error:', error)
@@ -23,7 +22,7 @@ export async function getProfileData(user_id: string): Promise<Profile | null> {
   }
 }
 
-export async function updateProfileData(plainData: Partial<Profile>): Promise<Profile | null>  {
+export async function updateProfileData(plainData: Partial<Profile>)  {
   try {
     // Replace all null values with ''
     const cleanedData = Object.fromEntries(
@@ -45,11 +44,7 @@ export async function updateProfileData(plainData: Partial<Profile>): Promise<Pr
       },
       body: JSON.stringify(cleanedData)
     })
-    if (!res.ok) {
-      console.error('Updating profile failed with status:', res.status)
-      return null
-    }
-    return res.json() as Promise<Profile>
+    return res
   }
   catch (error) {
     console.error('Updating profile error:', error)

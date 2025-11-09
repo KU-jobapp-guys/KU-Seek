@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useToast } from 'vue-toastification'
 import { User, Mail, GraduationCap, Building2, Edit, Trash } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { getProfileData, updateProfileData } from '@/services/profileServices'
@@ -8,6 +9,7 @@ import { ProfileStyle } from '@/configs/profileStyleConfig'
 import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
 import ChangeContactEmailModal from '@/components/settings/ChangeContactEmailModal.vue'
 
+const toast = useToast()
 const userType = localStorage.getItem('userRole')
 const isEditing = ref(false)
 const isSaving = ref(false)
@@ -36,7 +38,6 @@ const errors = reactive<Record<string, string>>({})
 const touched = reactive<Record<string, boolean>>({})
 
 const loadUserData = async () => {
-  console.log('Loading user data for type:', userType)
   try {
     const profile = await getProfileData(localStorage.getItem('user_id') || '') as Profile
     console.log('profile data: ', profile)
@@ -155,10 +156,18 @@ const handleCancel = () => {
 
 async function saveSetting() {
   try {
-    await updateProfileData(profileData)
-    originalData.value = JSON.parse(JSON.stringify(profileData))
-    Object.keys(touched).forEach(key => delete touched[key])
-    isEditing.value = false
+    const res = await updateProfileData(profileData)
+    if (res && res.ok) {
+      let newData = res.json()
+      originalData.value = JSON.parse(JSON.stringify(newData))
+      Object.keys(touched).forEach(key => delete touched[key])
+      isEditing.value = false
+      toast.success('Settings updated successfully.')
+    }
+    else {
+      toast.error('Failed to update settings. Please try again.')
+    }
+    
   } catch (error) {
     console.error('Failed to save settings:', error)
   } finally {

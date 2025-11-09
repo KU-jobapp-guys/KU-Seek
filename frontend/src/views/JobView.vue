@@ -5,12 +5,17 @@ import { onMounted, ref } from 'vue'
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import type { Job } from '@/types/jobType'
 import { mockJobs } from '@/data/mockJobs'
-import { fetchBookmarkId as fetchBookmarkService } from '@/services/bookmarkService'
+import { 
+  fetchBookmarkId as fetchBookmarkService, 
+  postBookmark as postBookmarkService, 
+  deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
+
 
 const route = useRoute()
 const isEditing = ref(false)
 const initialData = ref<Job | null>()
 const bookmarked = ref<boolean>(false)
+const handlingBookmark = ref<boolean>(false)
 
 const startEditing = () => {
   isEditing.value = true
@@ -41,6 +46,27 @@ async function loadBookmark() {
   bookmarked.value = list.includes(route.params.id.toString())
 }
 
+async function handleBookmark(payload: {jobId: string, bm: boolean}) {
+  console.log(handlingBookmark.value)
+  if (handlingBookmark.value) return
+
+  handlingBookmark.value = true
+
+  console.log(payload)
+
+  if (bookmarked.value) {
+    if (await deleteBookmarkService(payload.jobId)) {
+      bookmarked.value = false
+    }
+  } else {
+    if (await postBookmarkService(payload.jobId)) {
+      bookmarked.value = true
+    }
+  }
+
+  handlingBookmark.value = false
+}
+
 onMounted(() => {
   window.scrollTo({ top: 0 })
   loadBookmark()
@@ -49,7 +75,7 @@ onMounted(() => {
 
 <template>
   <div v-if="!isEditing" class="px-[6vw] md:px-[12vw] mt-24">
-    <JobFull :jobId="route.params.id as string" :bookmarked="bookmarked" @edit="startEditing" />
+    <JobFull :jobId="route.params.id as string" :bookmarked="bookmarked" @edit="startEditing" @bookmark="handleBookmark" />
   </div>
 
   <JobPostForm

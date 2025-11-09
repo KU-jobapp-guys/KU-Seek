@@ -9,7 +9,11 @@ import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchJobs as fetchJobsService } from '@/services/jobService'
-import { fetchBookmarkId as fetchBookmarkService } from '@/services/bookmarkService'
+import { 
+  fetchBookmarkId as fetchBookmarkService, 
+  postBookmark as postBookmarkService, 
+  deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
+
 
 const route = useRoute()
 const router = useRouter()
@@ -17,6 +21,7 @@ const router = useRouter()
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
 const bookmarked = ref<string[]>([]);
+const handlingBookmark = ref<boolean>(false)
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
@@ -46,12 +51,25 @@ async function fetchBookmark() {
   }
 }
 
-function handleBookmark(payload: {jobId: string, bm: boolean}) {
+async function handleBookmark(payload: {jobId: string, bm: boolean}) {
+  console.log(handlingBookmark.value)
+  if (handlingBookmark.value) return
+
+  handlingBookmark.value = true
+
+  console.log(payload)
+
   if (isBookmarked(payload.jobId) && !payload.bm) {
-    bookmarked.value = bookmarked.value.filter(id => id !== payload.jobId)
+    if (await deleteBookmarkService(payload.jobId)) {
+      bookmarked.value = bookmarked.value.filter(id => id !== payload.jobId)
+    }
   } else if (!isBookmarked(payload.jobId) && payload.bm) {
-    bookmarked.value.push(payload.jobId)
+    if (await postBookmarkService(payload.jobId)) {
+      bookmarked.value.push(payload.jobId)
+    }
   }
+
+  handlingBookmark.value = false
 }
 
 const isBookmarked = ((jobId: string) => {

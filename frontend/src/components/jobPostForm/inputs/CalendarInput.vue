@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch, onMounted } from 'vue'
 
 const props = defineProps<{
   modelValue?: string 
@@ -20,6 +20,31 @@ const localValue = computed({
   get: () => props.modelValue ?? '',
   set: (v: string) => emit('update:modelValue', v),
 })
+
+function onInput(e: Event) {
+  const v = (e.target as HTMLInputElement).value
+  if (v && v < minDate.value) {
+    emit('update:modelValue', minDate.value)
+  } else {
+    emit('update:modelValue', v)
+  }
+}
+watch(
+  () => props.modelValue,
+  (v) => {
+    if (v && v < minDate.value) {
+      emit('update:modelValue', minDate.value)
+    }
+  },
+  { immediate: true },
+)
+
+onMounted(() => {
+  const v = props.modelValue
+  if (v && v < minDate.value) {
+    emit('update:modelValue', minDate.value)
+  }
+})
 </script>
 
 <template>
@@ -28,7 +53,8 @@ const localValue = computed({
     <input
       type="date"
       :min="minDate"
-      v-model="localValue"
+      :value="localValue"
+      @input="onInput"
       class="px-3 py-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
     />
     <p class="text-xs text-gray-400 mt-1">Please select the date.</p>

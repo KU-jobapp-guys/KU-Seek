@@ -3,30 +3,30 @@ import { computed } from 'vue'
 import { CheckCircle, XCircle, X } from 'lucide-vue-next'
 
 const { changes, applicants } = defineProps<{
-  changes: Map<number, 'pending' | 'approved' | 'rejected'>
+  changes: Map<number, 'pending' | 'accepted' | 'rejected'>
   applicants: Map<number, { name: string }>
 }>()
 
 const groupedChanges = computed(() => {
-  const approved: Array<{ id: number; name: string }> = []
+  const accepted: Array<{ id: number; name: string }> = []
   const rejected: Array<{ id: number; name: string }> = []
 
   Array.from(changes.entries()).forEach(([id, status]) => {
     const applicant = applicants.get(id)
     if (applicant) {
-      if (status === 'approved') {
-        approved.push({ id, name: applicant.name })
+      if (status === 'accepted') {
+        accepted.push({ id, name: applicant.name })
       } else if (status === 'rejected') {
         rejected.push({ id, name: applicant.name })
       }
     }
   })
 
-  return { approved, rejected }
+  return { accepted, rejected }
 })
 
 const totalChanges = computed(
-  () => groupedChanges.value.approved.length + groupedChanges.value.rejected.length,
+  () => groupedChanges.value.accepted.length + groupedChanges.value.rejected.length,
 )
 
 const emit = defineEmits<{
@@ -61,22 +61,22 @@ const emit = defineEmits<{
 
       <!-- Content -->
       <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-        <!-- Approved Section -->
-        <div v-if="groupedChanges.approved.length > 0">
+        <!-- Accepted Section -->
+        <div v-if="groupedChanges.accepted.length > 0">
           <div class="flex items-center gap-2 mb-3">
             <div class="p-1.5 bg-green-100 rounded-lg">
               <CheckCircle class="w-5 h-5 text-green-600" />
             </div>
             <h4 class="font-semibold text-gray-900">
-              Approved
+              Accepted
               <span class="text-sm font-normal text-gray-500 ml-1">
-                ({{ groupedChanges.approved.length }})
+                ({{ groupedChanges.accepted.length }})
               </span>
             </h4>
           </div>
           <div class="space-y-2 max-h-[20vh]">
             <div
-              v-for="applicant in groupedChanges.approved"
+              v-for="applicant in groupedChanges.accepted"
               :key="applicant.id"
               class="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-gray-700"
             >

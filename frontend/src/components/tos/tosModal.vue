@@ -21,6 +21,22 @@ function closeModal() {
   emit("closetos")
 }
 
+const hasScrolledToBottom = ref(false)
+const scrollArea = ref<HTMLElement | null>(null)
+const onScroll = () => {
+  const el = scrollArea.value
+  if (!el) return
+
+  const reachedBottom =
+    el.scrollTop + el.clientHeight >= el.scrollHeight - 4 // small tolerance
+
+  if (reachedBottom) {
+    hasScrolledToBottom.value = true
+  }
+}
+
+
+
 </script>
 
 <template>
@@ -46,7 +62,11 @@ function closeModal() {
           </button>
         </header>
 
-        <section class="flex-1 overflow-y-auto px-6">
+        <section 
+          class="flex-1 overflow-y-auto px-6"
+          ref="scrollArea"
+          @scroll="onScroll"
+        >
           <div class="space-y-1 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">
             <slot>
               {{ tosContent }}
@@ -61,7 +81,8 @@ function closeModal() {
             <input
               type="checkbox"
               v-model="checkedTOS"
-              class="h-4 w-4 rounded border-gray-300"
+              class="h-4 w-4 rounded border-gray-300 disabled:bg-gray-300"
+              :disabled="!hasScrolledToBottom"
             />
             <span>I have read, accept, and agree to the Terms of Service</span>
           </label>

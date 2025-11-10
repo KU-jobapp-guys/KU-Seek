@@ -250,10 +250,10 @@ function handleSearch(value: string) {
             @search="handleSearch"
           />
 
-          <div v-if="bookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
+          <div v-if="filteredBookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in bookmarkedJobs"
+                v-for="job in filteredBookmarkedJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="true"
@@ -262,7 +262,7 @@ function handleSearch(value: string) {
               />
             </div>
           </div>
-          <p v-else class="text-gray-500 text-center py-12 text-lg">No bookmarked jobs yet.</p>
+          <p v-else class="text-gray-500 text-center py-12 text-lg">No matching bookmarked jobs.</p>
         </section>
 
         <!-- Recently Viewed Section -->
@@ -284,11 +284,11 @@ function handleSearch(value: string) {
             placeholder="Search jobs by title, company, or department..."
             @search="handleSearch"
           />
-
+          
           <div class="max-h-[600px] overflow-y-auto pr-2">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in recentlyViewedJobs"
+                v-for="job in filteredRecentlyViewedJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"

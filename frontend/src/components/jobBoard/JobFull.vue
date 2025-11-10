@@ -138,8 +138,14 @@ const toggleSave = () => {
         >
           {{ isApplied ? 'Applied' : 'Apply' }}
         </button>
-        <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
-          Add to Bookmarks
+        <button
+          @click="toggleSave"
+          :class="[
+            savedJobs.has(job.jobId) ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-600',
+            'border border-2 border-gray-600 px-8 py-1 rounded-md',
+          ]"
+        >
+          {{ savedJobs.has(job.jobId) ? 'Saved' : 'Save' }}
         </button>
       </div>
 

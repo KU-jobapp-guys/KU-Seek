@@ -2,9 +2,6 @@
 import { ref } from 'vue'
 import { tosContent } from '@/libs/getTOS';
 
-const props = defineProps<{
-  modelValue: boolean
-}>()
 
 const checkedTOS = ref(false)
 

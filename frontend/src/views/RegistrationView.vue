@@ -234,7 +234,6 @@ import TOSModal from '@/components/tos/tosModal.vue'
 
 const form_role = ref<'staff' | 'company'>('staff')
 const showModal = ref<boolean>(false)
-const checkedTOS = ref<boolean>(false)
 
 const staffFileText = ref('Upload one of the following: Physical/Digital KU ID, Transcript')
 const companyFileText = ref('Upload a business license or equivalent document')

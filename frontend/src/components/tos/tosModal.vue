@@ -62,35 +62,36 @@ const onScroll = () => {
           ref="scrollArea"
           @scroll="onScroll"
         >
-          <div class="space-y-1 text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">
+          <div class="space-y-1 text-sm text-gray-700 whitespace-pre-wrap">
             <slot>
               {{ tosContent }}
             </slot>
+
+            <br/>
+            <div class="border-t py-3 w-full max-w-s px-6 justify-center">
+              <label
+                class="inline-flex items-center gap-2 text-sm text-gray-700"
+                >
+                <input
+                type="checkbox"
+                v-model="checkedTOS"
+                class="h-4 w-4 rounded border-gray-300 disabled:bg-gray-300"
+                :disabled="!hasScrolledToBottom"
+                />
+                <span>I have read, accept, and agree to the Terms of Service</span>
+              </label>
+              
+              <button
+                type="button"
+                class="w-full max-w-s px-4 py-3 mt-2 rounded-xl text-sm font-medium bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-60"
+                :disabled="!checkedTOS"
+                @click="continueRegister"
+                >
+                Continue
+              </button>
+            </div>
           </div>
         </section>        
-
-        <footer class="w-full max-w px-6 py-3 border-t justify-center">
-          <label
-            class="inline-flex items-center gap-2 text-sm text-gray-700"
-            >
-            <input
-              type="checkbox"
-              v-model="checkedTOS"
-              class="h-4 w-4 rounded border-gray-300 disabled:bg-gray-300"
-              :disabled="!hasScrolledToBottom"
-            />
-            <span>I have read, accept, and agree to the Terms of Service</span>
-          </label>
-
-          <button
-            type="button"
-            class="w-full max-w-s px-4 py-3 mt-2 rounded-xl text-sm font-medium bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-60"
-            :disabled="!checkedTOS"
-            @click="continueRegister"
-          >
-            Continue
-          </button>
-        </footer>
       </div>
     </div>
   </teleport>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, onBeforeUnmount } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { getUserId, useUserStore } from '@/libs/userUtils'
@@ -11,29 +11,24 @@ type Page = { name: string; route: string }
 
 const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http://localhost:5173/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 
-const props = defineProps<{
-  role: UserRole
-}>()
-
-
 const userId = getUserId()
+const userRole = ref<UserRole>(localStorage.getItem('userRole') as UserRole || 'visitor')
 const userStore = useUserStore()
 
-const companyList = ['Dashboard', 'Logout']
-const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard', 'Logout']
+const companyList = ['Dashboard']
+const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard']
 const profileList = ['Profile', 'Setting', 'Logout']
 const defaultList = ['Register', { name: 'Login', route: `${oauth_url}` }]
 const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
-  if (props.role === 'company') return companyList
-  if (props.role && ['student', 'professor', 'staff'].includes(props.role)) return kuList
+  if (userRole.value === 'company') return companyList
+  if (userRole.value && ['student', 'professor', 'staff'].includes(userRole.value)) return kuList
   return defaultList
 })
 
-
 function makeLink(page: string | Page) {
-  const role = props.role
+  const role = userRole.value
   if (typeof page === 'object') {
     return page.route
   }
@@ -52,7 +47,13 @@ function makeLink(page: string | Page) {
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 
+const syncUserRole = () => {
+  userRole.value = (localStorage.getItem('userRole') as UserRole) || 'visitor'
+}
+
 onMounted(async () => {
+  syncUserRole()
+  window.addEventListener('userRoleChanged', syncUserRole)
   if (!userStore.profileImage) {
     console.log('No user data in store, fetching...')
     // const userData = await fetchUserProfile()
@@ -63,6 +64,7 @@ onMounted(async () => {
     // })
   }
 })
+
 </script>
 
 <template>
@@ -85,7 +87,7 @@ onMounted(async () => {
       </ul>
 
       <!-- Mobile Dropdown -->
-      <Menu v-if="props.role" as="div" class="relative inline-block md:hidden">
+      <Menu v-if="userRole" as="div" class="relative inline-block md:hidden">
         <MenuButton
           class="flex w-full items-center justify-center"
           @click="openMenu = openMenu === 'page' ? null : 'page'"
@@ -155,7 +157,7 @@ onMounted(async () => {
       </Menu>
 
       <!-- Profile Dropdown -->
-      <Menu v-if="props.role !== 'visitor'" as="div" class="relative inline-block">
+      <Menu v-if="userRole !== 'visitor'" as="div" class="relative inline-block">
         <MenuButton
           class="flex items-center justify-center"
           @click="openMenu = openMenu === 'profile' ? null : 'profile'"

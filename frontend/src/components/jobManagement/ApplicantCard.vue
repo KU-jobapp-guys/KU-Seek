@@ -14,6 +14,7 @@ import {
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { getStatusColor } from '@/libs/getStatusStyle'
+import { getFile } from '@/services/fileService'
 
 const props = defineProps<{
   applicant: JobApplication
@@ -132,7 +133,8 @@ function formatDate(date: Date) {
 
         <a
           v-if="applicant.resume"
-          :href="applicant.resume"
+          role="button"
+          @click="getFile(applicant.resume)"
           class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <File class="w-5 h-5" />
@@ -141,6 +143,8 @@ function formatDate(date: Date) {
 
         <button
           v-if="applicant.letterOfApplication"
+          role="button"
+          @click="getFile(applicant.letterOfApplication)"
           class="px-4 py-2 bg-[#4682B4] hover:bg-[#4682B4]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <FileText class="w-5 h-5" />

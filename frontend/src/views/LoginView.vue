@@ -14,12 +14,12 @@ async function handleURICallback() {
 
   try {
     const code = route.query.code
-    const user_info = localStorage.getItem("userInfo")
-    const user_file = localStorage.getItem("userFile")
-    
-    localStorage.removeItem("userInfo")
-    localStorage.removeItem("userFile")
-    
+    const user_info = localStorage.getItem('userInfo')
+    const user_file = localStorage.getItem('userFile')
+
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('userFile')
+
     if (!code) {
       throw new Error('No code found in callback URL')
     }
@@ -36,9 +36,9 @@ async function handleURICallback() {
       throw new Error('Login request failed, please try again.')
     }
 
-    const formData = new FormData();
-    formData.append("code", code.toString())
-    
+    const formData = new FormData()
+    formData.append('code', code.toString())
+
     if (user_info) {
       formData.append('user_info', user_info)
     }
@@ -52,13 +52,13 @@ async function handleURICallback() {
       formData.append('id_doc', file)
     }
 
-    const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
-      method: "POST",
+    const res = await fetch('http://localhost:8000/api/v1/auth/oauth', {
+      method: 'POST',
       credentials: 'include',
       headers: {
         'X-CSRFToken': csrf_token,
       },
-      body: formData
+      body: formData,
     })
 
     if (res.ok) {

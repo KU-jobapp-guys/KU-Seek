@@ -67,7 +67,6 @@ const handleInput = (event: Event, field: 'min' | 'max') => {
 
 <template>
   <div class="flex flex-col space-y-1">
-    <label class="text-sm font-medium text-gray-700">Salary</label>
     <div class="flex items-center gap-3">
       <!-- Min -->
       <div class="relative flex-1">

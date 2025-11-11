@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Job } from '@/types/jobType'
 import { ref, reactive, computed } from 'vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { submitApplication } from '@/services/applicationService'
 
@@ -9,6 +10,12 @@ const props = defineProps<{ job?: Job }>()
 const job = props.job
 const route = useRoute()
 const router = useRouter()
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg = 'Action completed successfully!') =>
+  toastRef.value?.addToast(msg, 'success')
+const showError = (msg = 'An error occurred, please try again.') =>
+  toastRef.value?.addToast(msg, 'error')
 
 // Step control
 const step = ref(1)
@@ -170,12 +177,15 @@ async function handleSubmit(e: Event) {
     const result = await submitApplication(jobId, formData)
     if (!result) {
       alert('Application submitted but server returned no data. Please check the server logs.')
+      showError('Submitted error')
       return
     }
     alert('Application submitted successfully!')
+    showSuccess('Submitted successfully!')
     router.push(`/explore-job`)
   } catch (err) {
     console.error('Error submitting application', err)
+    showError('Submitted error')
     const msg = err instanceof Error ? err.message : String(err)
     alert(msg)
   }
@@ -410,5 +420,6 @@ async function handleSubmit(e: Event) {
         </div>
       </form>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

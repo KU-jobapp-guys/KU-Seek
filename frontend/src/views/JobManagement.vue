@@ -18,6 +18,7 @@ import {
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import ApplicantCard from '@/components/jobManagement/ApplicantCard.vue'
 import ConfirmSaveModal from '@/components/jobManagement/ConfirmSaveModal.vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -27,6 +28,9 @@ const applicantsList = ref<JobApplication[]>([])
 const statusFilter = ref<'all' | 'pending' | 'accepted' | 'rejected'>('all')
 const pendingChanges = ref<Map<number, 'pending' | 'accepted' | 'rejected'>>(new Map())
 const isModalOpen = ref(false)
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 // Statistics computed properties
 const stats = computed(() => {
@@ -104,6 +108,12 @@ function setStatusFilter(status: 'all' | 'pending' | 'accepted' | 'rejected') {
 
 function updateStatus(applicationId: number, newStatus: 'pending' | 'accepted' | 'rejected') {
   pendingChanges.value.set(applicationId, newStatus)
+
+  if (newStatus === 'approved') {
+    showSuccess('Application approved! (waiting for save)')
+  } else if (newStatus === 'rejected') {
+    showSuccess('Application rejected! (waiting for save)')
+  }
 }
 
 function saveButtonClick() {
@@ -127,10 +137,12 @@ async function saveChanges() {
     applicantsList.value = sortApplicant(data)
   }
   pendingChanges.value.clear()
+  showSuccess('Change saved successfully!')
 }
 
 function cancelChanges() {
   pendingChanges.value.clear()
+  showSuccess('Change discarded.')
 }
 
 onMounted(() => {
@@ -282,6 +294,7 @@ onMounted(() => {
         />
       </div>
     </section>
+    <ToastContainer ref="toastRef" />
   </div>
 
   <section v-if="isModalOpen">

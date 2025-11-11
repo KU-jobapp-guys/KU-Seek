@@ -7,6 +7,7 @@ import type { Job, FilterKeys } from '@/types/jobType'
 import search from '@/assets/icons/search.svg'
 import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchJobs as fetchJobsService } from '@/services/jobService'
 
@@ -15,10 +16,16 @@ const router = useRouter()
 
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
+const bookmarkedJobs = ref<Set<string>>(new Set()) // track bookmarked jobs
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg = 'Action completed successfully!') =>
+  toastRef.value?.addToast(msg, 'success')
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
-const companyFilter = ref<string | undefined>(route.query.company as string) // optional query from url
+const companyFilter = ref<string | undefined>(route.query.company as string)
+
 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
@@ -43,6 +50,16 @@ function handleSelect(id: string) {
   }
 }
 
+function handleBookmark({ id, bookmarked }: { id: string; bookmarked: boolean }) {
+  if (bookmarked) {
+    bookmarkedJobs.value.add(id)
+    showSuccess('Job bookmarked!')
+  } else {
+    bookmarkedJobs.value.delete(id)
+    showSuccess('Bookmark removed!')
+  }
+}
+
 onMounted(() => {
   fetchJobs()
   window.scrollTo({ top: 0 })
@@ -53,19 +70,27 @@ onMounted(() => {
   <Header page="jobBoard" />
 
   <div class="relative -mt-24 md:-mt-40 px-[8vw] md:px-[12vw]">
+    <!-- Filter Box -->
     <FilterBox :initialFilters="{ company: companyFilter }" @applyFilter="fetchJobs" />
 
     <div class="mt-12">
       <div v-if="jobs.length > 0" class="w-full h-[800px] flex gap-x-4">
         <div class="w-full pr-4 h-full gap-y-4 overflow-y-auto">
           <div v-for="job in jobs" :key="job.jobId">
-            <JobBox :job="job" @select="handleSelect" />
+            <JobBox
+              :job="job"
+              :bookmarked="bookmarkedJobs.has(job.jobId)"
+              @select="handleSelect"
+              @bookmark="handleBookmark"
+            />
           </div>
         </div>
+
+        <!-- Right Job Detail View -->
         <div class="w-full h-full bg-[#F9F9F9] rounded-md shadow-2xl hidden md:block">
           <JobFull v-if="selectedJobId" :jobId="selectedJobId as string" />
 
-          <div v-if="!selectedJobId" class="h-full px-8 py-12">
+          <div v-else class="h-full px-8 py-12">
             <div class="flex items-center gap-x-4">
               <ArrowLeftCircle class="w-12 h-12 text-gray-600" />
               <div>
@@ -80,12 +105,15 @@ onMounted(() => {
         </div>
       </div>
 
-      <div v-if="jobs.length === 0" class="mt-24 w-full flex flex-col items-center justify-center">
+      <!-- Empty State -->
+      <div v-else class="mt-24 w-full flex flex-col items-center justify-center">
         <img :src="search" class="h-32 w-32" />
         <p class="text-xl font-bold my-4">No matching results found</p>
         <p>We couldn't find any results that match your search.</p>
         <p>Try adjusting your filters or checking for spelling errors.</p>
       </div>
     </div>
+
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

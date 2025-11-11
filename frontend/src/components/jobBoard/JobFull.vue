@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 import { getUserRole, isOwner } from '@/libs/userUtils'
 import { fetchUserAppliedJobs } from '@/services/applicationService'
 import { IconMap } from '@/configs/contactConfig'
@@ -18,6 +19,11 @@ const userRole = getUserRole()
 const emit = defineEmits<{
   (e: 'edit'): void
 }>()
+
+const savedJobs = ref<Set<string>>(new Set()) // store saved jobIds
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 const loadJob = async (id?: string) => {
   if (!id) {
@@ -40,9 +46,7 @@ onMounted(() => {
 
 watch(
   () => props.jobId,
-  (newId) => {
-    loadJob(newId)
-  },
+  (newId) => loadJob(newId),
 )
 
 const appliedJobIds = ref(new Set<string>())
@@ -61,6 +65,18 @@ const isApplied = computed(() => !!job.value && appliedJobIds.value.has(job.valu
 const goToApply = () => {
   if (job.value && !isApplied.value) {
     router.push(`/job/${job.value.jobId}/apply`)
+  }
+}
+
+const toggleSave = () => {
+  if (!job.value) return
+  const id = job.value.jobId
+  if (savedJobs.value.has(id)) {
+    savedJobs.value.delete(id)
+    showSuccess('Bookmark removed!')
+  } else {
+    savedJobs.value.add(id)
+    showSuccess('Job bookmarked!')
   }
 }
 </script>
@@ -98,12 +114,10 @@ const goToApply = () => {
           <MapPin class="w-4 h-4" />
           <p>{{ job.location }}</p>
         </div>
-
         <div class="flex gap-x-2 items-center text-gray-600">
           <Clock class="w-4 h-4" />
           <p>{{ job.jobType }}</p>
         </div>
-
         <div class="flex gap-x-2 items-center text-gray-600">
           <BriefcaseBusiness class="w-4 h-4" />
           <p>{{ job.jobLevel }}</p>
@@ -124,8 +138,14 @@ const goToApply = () => {
         >
           {{ isApplied ? 'Applied' : 'Apply' }}
         </button>
-        <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
-          Add to Bookmarks
+        <button
+          @click="toggleSave"
+          :class="[
+            savedJobs.has(job.jobId) ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-600',
+            'border border-2 border-gray-600 px-8 py-1 rounded-md',
+          ]"
+        >
+          {{ savedJobs.has(job.jobId) ? 'Saved' : 'Save' }}
         </button>
       </div>
 
@@ -170,5 +190,7 @@ const goToApply = () => {
 
       <p class="w-full text-sm text-gray-500 text-right py-8">{{ getPostTime(job.postTime) }}</p>
     </div>
+
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

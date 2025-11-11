@@ -7,6 +7,8 @@ import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
 import { statusOptions } from '@/configs/statusOption'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
+import { fetchBookmarkId as fetchBookmarkService } from '@/services/bookmarkService'
+import { fetchJob } from '@/services/jobService'
 
 import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
@@ -18,9 +20,10 @@ const openSection = ref<string>('Total Jobs Applied')
 const router = useRouter()
 
 const appliedJobs = ref<Job[]>([])
-const bookmarkedJobs = ref<Job[]>([])
 const recentlyViewedJobs = ref<Job[]>([])
 const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['pending', 'accepted', 'rejected']))
+const bookmarkedJobs = ref<Job[]>([])
+const bookmarkedId = ref<string[]>([])
 
 const toggleSection = (section: string) => {
   openSection.value = section
@@ -71,8 +74,6 @@ async function fetchJobs() {
 
     appliedJobs.value = applications
 
-    const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
-    bookmarkedJobs.value = applications.filter((job) => saved.includes(job.jobId))
 
     recentlyViewedJobs.value = []
   } catch (error) {
@@ -80,28 +81,35 @@ async function fetchJobs() {
   }
 }
 
-function handleBookmark(payload: { id: string; bookmarked: boolean }) {
-  const { id, bookmarked } = payload
-  const job =
-    appliedJobs.value.find((j) => j.jobId === id) ||
-    recentlyViewedJobs.value.find((j) => j.jobId === id) ||
-    bookmarkedJobs.value.find((j) => j.jobId === id)
-
-  if (!job) return
-
-  if (bookmarked) {
-    if (!bookmarkedJobs.value.some((j) => j.jobId === id)) {
-      bookmarkedJobs.value.push(job)
-    }
-  } else {
-    bookmarkedJobs.value = bookmarkedJobs.value.filter((j) => j.jobId !== id)
+async function fetchBookmark() {
+  try {
+    bookmarkedId.value = await fetchBookmarkService()
+    const jobs = await Promise.all(
+      (bookmarkedId.value || []).map((jobId) => fetchJob(jobId))
+    )
+    bookmarkedJobs.value = jobs.filter((job): job is Job => job !== null)
+  } catch {
+    bookmarkedId.value = []
+    bookmarkedJobs.value = []
   }
+}
 
-  localStorage.setItem('bookmarkedJobs', JSON.stringify(bookmarkedJobs.value.map((j) => j.jobId)))
+// const isBookmarked = (jobId: string) => bookmarkedId.value.includes(jobId.toString())
+const isBookmarked = ((jobId: string) => {
+  return Object.values(bookmarkedId.value).includes(jobId.toString())
+})
+
+function handleBookmark(payload: {jobId: string, bm: boolean}) {
+  if (isBookmarked(payload.jobId) && !payload.bm) {
+    bookmarkedId.value = bookmarkedId.value.filter(id => id !== payload.jobId)
+  } else if (!isBookmarked(payload.jobId) && payload.bm) {
+    bookmarkedId.value.push(payload.jobId)
+  }
 }
 
 onMounted(() => {
   fetchJobs()
+  fetchBookmark()
 })
 </script>
 
@@ -165,7 +173,7 @@ onMounted(() => {
                 v-for="job in filteredAppliedJobs"
                 :key="job.jobId"
                 :job="job"
-                :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"
+                :bookmarked="isBookmarked(job.jobId)"
                 @select="handleSelect"
                 @bookmark="handleBookmark"
               />
@@ -197,7 +205,7 @@ onMounted(() => {
                 v-for="job in bookmarkedJobs"
                 :key="job.jobId"
                 :job="job"
-                :bookmarked="true"
+                :bookmarked="isBookmarked(job.jobId)"
                 @select="handleSelect"
                 @bookmark="handleBookmark"
               />
@@ -226,7 +234,7 @@ onMounted(() => {
                 v-for="job in recentlyViewedJobs"
                 :key="job.jobId"
                 :job="job"
-                :bookmarked="bookmarkedJobs.some((j) => j.jobId === job.jobId)"
+                :bookmarked="isBookmarked(job.jobId)"
                 @select="handleSelect"
                 @bookmark="handleBookmark"
               />

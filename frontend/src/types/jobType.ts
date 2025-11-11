@@ -13,9 +13,12 @@ export interface Job {
   tags?: string[]
   salaryMin: number
   salaryMax: number
+  endDate?: string
+  workHours?: string
   status: string
   totalApplicants: number
   pendingApplicants: number
+  capacity: number
 }
 
 export type FilterKeys = 'role' | 'skills' | 'company' | 'jobLevel' | 'location' | 'jobType'

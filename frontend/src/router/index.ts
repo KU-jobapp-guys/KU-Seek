@@ -16,6 +16,8 @@ import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 import AnnouncementsView from '@/views/AnnouncementsView.vue'
 import Registration from '@/views/RegistrationView.vue'
+import SettingView from '@/views/SettingView.vue'
+
 import JobManagement from '@/views/JobManagement.vue'
 
 const router = createRouter({
@@ -56,6 +58,11 @@ const router = createRouter({
       path: '/professor/profile/:id',
       name: 'professorProfile',
       component: ProfessorProfile,
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      component: SettingView,
     },
     {
       path: '/student/dashboard',

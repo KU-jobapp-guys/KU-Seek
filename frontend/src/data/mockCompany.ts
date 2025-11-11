@@ -4,6 +4,7 @@ export const mockCompany: CompanyProfile[] = [
   {
     id: '1',
     name: 'Urban Mobility Tech',
+    age: 24,
     type: 'Tech House',
     website: 'https://linecorp.com/en/',
     industry: 'Artificial Intelligence & Machine Learning',
@@ -20,6 +21,7 @@ export const mockCompany: CompanyProfile[] = [
   {
     id: '2',
     name: 'AgriNext Solutions',
+    age: 24,
     type: 'Startup',
     website: 'https://agrinext.io',
     industry: 'Agriculture & Biotechnology',
@@ -36,6 +38,7 @@ export const mockCompany: CompanyProfile[] = [
   {
     id: '3',
     name: 'HealthPlus Digital',
+    age: 24,
     type: 'Corporate',
     website: 'https://healthplus.com',
     industry: 'Healthcare & Wellness',
@@ -53,6 +56,7 @@ export const mockCompany: CompanyProfile[] = [
     id: '4',
     name: 'EcoDrive Motors',
     type: 'Tech House',
+    age: 24,
     website: '',
     industry: '',
     workFields: [],
@@ -67,6 +71,7 @@ export const mockCompany: CompanyProfile[] = [
   {
     id: '5',
     name: 'FinSphere Analytics',
+    age: 24,
     type: 'Startup',
     website: 'https://finsphere.ai',
     industry: 'Financial Services & AI',

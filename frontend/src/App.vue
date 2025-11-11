@@ -23,10 +23,10 @@ watch(userRole, (newRole) => {
 </script>
 
 <template>
-  <NavBar v-model:role="userRole as UserRole" />
+  <NavBar />
 
   <div class="min-h-screen mt-8 md:mt-16">
-    <RouterView v-model:role="userRole"/>
+    <RouterView />
   </div>
 
   <div id="footer">

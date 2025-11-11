@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-40 z-[40] flex items-center justify-center">
-    <div role="status">
+  <div class="fixed inset-0 bg-black bg-opacity-60 z-[40] flex items-center justify-center">
+    <div role="status" class="flex flex-col gap-4 items-center">
       <svg
         aria-hidden="true"
         class="inline w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-green-600"
@@ -17,7 +17,7 @@
           fill="currentFill"
         />
       </svg>
-      <span class="sr-only">Loading...</span>
+      <span class="text-white text-2xl font-bold">Loading...</span>
     </div>
   </div>
 </template>

@@ -9,7 +9,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 const router = useRouter()
-const emit = defineEmits(['update:role'])
 
 async function logout() {
     try {
@@ -30,7 +29,7 @@ async function logout() {
             localStorage.removeItem("access_token")
             localStorage.removeItem("userRole")
             localStorage.removeItem("user_jwt")
-            emit('update:role', 'visitor')
+            window.dispatchEvent(new Event('userRoleChanged'))
             router.replace({path: '/'})
         } else {
             backToPreviousPage()

@@ -69,7 +69,7 @@ export async function fetchJob(jobId: string | number): Promise<Job | null> {
   return null
 }
 
-async function fetchCsrfToken(base: string): Promise<string> {
+export async function fetchCsrfToken(base: string): Promise<string> {
   try {
     const res = await fetch(`${base}/api/v1/csrf-token`, { credentials: 'include' })
     if (!res.ok) return ''
@@ -80,7 +80,7 @@ async function fetchCsrfToken(base: string): Promise<string> {
   }
 }
 
-function getAuthHeader(): Record<string, string> {
+export function getAuthHeader(): Record<string, string> {
   const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
   return token ? { access_token: token } : {}
 }

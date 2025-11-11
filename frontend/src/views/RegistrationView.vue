@@ -1,6 +1,5 @@
 <template>
-  <TOSModal v-model="showModal" @closetos="closeTOS" @agreetos="handleSubmit" />
-  <button @click="showTOS">Show TOS</button>
+  <TOSModal v-if="showModal" @closetos="closeTOS" @agreetos="handleSubmit" />
   <div class="relative w-full min-h-screen mt-16 overflow-hidden bg-white flex justify-center items-center">
     <!-- Background -->
     <div class="absolute inset-0 flex">
@@ -303,10 +302,12 @@ function loginWithGoogle() {
 }
 
 function showTOS() {
+  document.body.style.overflow = 'hidden'
   showModal.value = true
 }
 
 function closeTOS() {
+  document.body.style.overflow = ''
   showModal.value = false
 }
 

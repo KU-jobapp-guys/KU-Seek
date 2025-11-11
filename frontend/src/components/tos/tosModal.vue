@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { tosContent } from '@/libs/getTOS';
 
-
 const checkedTOS = ref(false)
 
 const emit = defineEmits<{
@@ -39,7 +38,6 @@ const onScroll = () => {
 <template>
   <teleport to="body">
     <div
-      v-if="modelValue"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
       @click.self="closeModal"
     >

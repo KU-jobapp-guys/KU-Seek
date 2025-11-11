@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, onBeforeUnmount } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { getUserId, useUserStore } from '@/libs/userUtils'

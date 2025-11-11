@@ -9,7 +9,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 const router = useRouter()
-const emit = defineEmits(['update:role'])
 
 async function logout() {
     try {

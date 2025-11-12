@@ -14,7 +14,8 @@ export async function getProfileData(user_id: string): Promise<Profile | null> {
       console.error('Fetching profile failed with status:', res.status)
       return null
     }
-    return res.json() as Promise<Profile>
+    const data = await res.json() as Profile
+    return data
 
   }
   catch (error) {

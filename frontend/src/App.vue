@@ -3,7 +3,7 @@ import { RouterView } from 'vue-router'
 import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref, onMounted, watch } from 'vue'
-import AdminNavBar from './components/layouts/AdminNavBar.vue'
+import AdminNavBar from './components/admin/AdminNavBar.vue'
 
 type AllUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' | 'admin'
 type NormalUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' 
@@ -28,10 +28,9 @@ watch(userRole, (newRole) => {
   <div class="flex flex-col min-h-screen">
     <header id="navbar">
       <NavBar v-if="userRole !== 'admin'" v-model:role="userRole as NormalUserRole" />
-      <AdminNavBar v-else />
     </header>
 
-    <main class="flex-1 mt-4 md:mt-8">
+    <main class="flex-1" :class="userRole !== 'admin' ? 'mt-4 md:mt-8' : ''">
       <RouterView v-model:role="userRole" />
     </main>
 

@@ -27,10 +27,10 @@ watch(userRole, (newRole) => {
 <template>
   <div class="flex flex-col min-h-screen">
     <header id="navbar">
-      <NavBar v-if="userRole !== 'admin'" v-model:role="userRole as NormalUserRole" />
+      <NavBar v-if="!$route.meta.admin" v-model:role="userRole as NormalUserRole" />
     </header>
 
-    <main class="flex-1" :class="userRole !== 'admin' ? 'mt-4 md:mt-8' : ''">
+    <main class="flex-1" :class="!$route.meta.admin ? 'mt-4 md:mt-8' : ''">
       <RouterView v-model:role="userRole" />
     </main>
 

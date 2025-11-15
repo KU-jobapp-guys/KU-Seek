@@ -1,4 +1,4 @@
-export interface PendingUser {
+export interface User {
   userId: string
   name: string
   type: string
@@ -7,7 +7,7 @@ export interface PendingUser {
   status: string
 }
 
-export interface PendingJob {
+export interface Job {
   jobId: string
   title: string
   company: string

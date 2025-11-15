@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import UserApprovalTab from '@/components/admin/tabs/UserApprovalTab.vue'
 import ManageUserTab from '@/components/admin/tabs/ManageUserTab.vue'
 import ManageJobTab from '@/components/admin/tabs/ManageJobTab.vue'
 import JobApprovalTab from '@/components/admin/tabs/JobApprovalTab.vue'
 import AdminNavBar from '@/components/admin/AdminNavBar.vue'
-import type { PendingJob, PendingUser } from '@/types/adminType'
+import type { User, Job } from '@/types/adminType'
+import { fetchUsers } from '@/services/adminServices'
 
 const router = useRouter()
 const isSideBarOpen = ref<boolean>(true)
+const users = ref<User[] | null>(null)
 
-// Mock Data
-const mockUsers = ref<PendingUser[]>([
-  { userId: '1', name: 'John Doe', reason: 'name not match', type: 'student', status: 'pending', document: '' },
-  { userId: '2', name: 'Jane Smith', reason: 'document blur', type: 'professor', status: 'pending', document: 'transcript.pdf' },
-  { userId: '3', name: 'TechCorp Inc', reason: 'contact@techcorp.com', type: 'company', status: 'suspended', document: ''},
-  { userId: '4', name: 'Bob Wilson', reason: 'not the correct type of document', type: 'student', status: 'pending', document: '' },
-  { userId: '5', name: 'Alice Johnson', reason: 'alice@example.com', type: 'professor', status: 'active', document: '' },
-  { userId: '6', name: 'Mike Brown', reason: 'mike@example.com', type: 'student', status: 'active', document: 'enrollment.pdf' },
-])
+async function loadUsers() {
+  const data = await fetchUsers()
+  if (data) {
+    users.value = data
+  }
+  else {
+    console.log('there is some error fetching user data')
+  }
+}
 
-const mockJobPosts = ref<PendingJob[]>([
+const mockJobPosts = ref<Job[]>([
   { jobId: '1', title: 'Software Engineer', company: 'TechCorp', reason: '2024-10-01', status: 'approved' },
   { jobId: '2', title: 'Product Manager', company: 'StartupXYZ', reason: 'unclear job description', status: 'pending' },
   { jobId: '3', title: 'Data Scientist', company: 'DataCo', reason: '2024-10-20', status: 'rejected' },
@@ -37,9 +39,9 @@ const approvalUserSearch = ref('')
 const approvalJobSearch = ref('')
 
 const pendingUsers = computed(() => {
-  return mockUsers.value.filter(user => user.status === 'pending').filter(user => {
+  return users.value?.filter(user => user.status === 'pending').filter(user => {
     return user.name.toLowerCase().includes(approvalUserSearch.value.toLowerCase())
-  })
+  }) || []
 })
 
 const pendingJobPosts = computed(() => {
@@ -47,6 +49,10 @@ const pendingJobPosts = computed(() => {
     return job.title.toLowerCase().includes(approvalJobSearch.value.toLowerCase()) ||
            job.company.toLowerCase().includes(approvalJobSearch.value.toLowerCase())
   })
+})
+
+onMounted(() => {
+  loadUsers()
 })
 
 </script>
@@ -85,7 +91,7 @@ const pendingJobPosts = computed(() => {
     <div class="w-full h-full flex flex-col">
       <AdminNavBar @sideClick="isSideBarOpen = !isSideBarOpen" />      
       <section class="h-full w-full px-[2vw] md:px-[4vw] py-8 overflow-auto bg-gray-50">
-        <ManageUserTab v-if="currentTab === 'Manage Users'" :data="mockUsers"/>
+        <ManageUserTab v-if="currentTab === 'Manage Users'" :data="users"/>
         <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers"/>
         <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="mockJobPosts"/>
         <JobApprovalTab v-if="currentTab === 'Job Approvals'" :data="pendingJobPosts"/>

@@ -30,7 +30,8 @@ export interface StudentProfile extends BaseProfile{
   gpa?: number | null
   skills: string[]
   interests: string
-  education: {
+  educations: {
+    id: string
     curriculumName: string
     university: string
     major: string

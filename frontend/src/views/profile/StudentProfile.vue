@@ -31,6 +31,7 @@ async function loadStudent(id?: string) {
   }
   
   const data = await getProfileData(id)
+  console.log(data)
   if (data) {   
     studentData.value = data as StudentProfile
   } else {

@@ -32,7 +32,8 @@ const filteredSkills = computed(() => {
 })
 
 const addEducation = () => {
-  editForm.value.education.push({
+  editForm.value.educations.push({
+    id: '',
     curriculumName: '',
     major: '',
     university: '',
@@ -42,8 +43,8 @@ const addEducation = () => {
 }
 
 const removeEducation = (index: number) => {
-  if (editForm.value.education.length > 1) {
-    editForm.value.education.splice(index, 1)
+  if (editForm.value.educations.length > 1) {
+    editForm.value.educations.splice(index, 1)
   }
 }
 
@@ -75,8 +76,8 @@ onMounted(() => {
   if(!editForm.value.skills) {
     editForm.value.skills = []
   }
-  if(!editForm.value.education) {
-    editForm.value.education = []
+  if(!editForm.value.educations) {
+    editForm.value.educations = []
     addEducation()
   }
 })
@@ -217,12 +218,12 @@ onMounted(() => {
       </div>
 
       <div
-        v-for="(edu, eduIndex) in editForm.education"
+        v-for="(edu, eduIndex) in editForm.educations"
         :key="eduIndex"
         :class="['relative', ProfileStyle.contentBox]"
       >
         <button
-          v-if="editForm.education.length > 1"
+          v-if="editForm.educations.length > 1"
           @click="removeEducation(eduIndex)"
           class="absolute top-4 right-4 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
         >

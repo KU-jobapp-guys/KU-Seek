@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ShieldUser, LockKeyhole, User } from 'lucide-vue-next'
 import adminBg from '@/assets/backgrounds/adminBg.png'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 
 const router = useRouter()
 
-const username = ref('')
-const password = ref('')
+const credential = reactive({
+  email: '',
+  password: ''
+})
+
 const error = ref('')
 const isLoading = ref(false)
 const showPassword = ref(false)
@@ -16,37 +20,66 @@ async function handleLogin() {
   error.value = ''
   
   // Validation
-  if (!username.value.trim()) {
-    error.value = 'Username is required'
+  if (!credential.email.trim()) {
+    error.value = 'Email is required'
     return
   }
   
-  if (!password.value) {
+  if (!credential.password) {
     error.value = 'Password is required'
     return
   }
   
   isLoading.value = true
   
+  let csrf_token: string
+  
   try {
-    // Replace this with your actual API call
-    // Example: const response = await loginAdmin(username.value, password.value)
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
     
-    // Mock login - replace with actual authentication
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+    // Get CSRF token
+    const csrf_res = await fetch(`${base}/api/v1/csrf-token`, {
+      method: 'GET',
+      credentials: 'include',
+    })
     
-    // Mock validation
-    if (username.value === 'admin' && password.value === 'admin123') {
-      // Store auth token or session
-      localStorage.setItem('adminToken', 'mock-token-12345')
+    if (csrf_res.ok) {
+      const csrf_json = await csrf_res.json()
+      csrf_token = csrf_json.csrf_token
+      localStorage.setItem('csrf_token', csrf_token)
+    } else {
+      throw new Error('Failed to get CSRF token')
+    }
+    
+    // Create FormData
+    const formData = new FormData()
+    formData.append('email', credential.email)
+    formData.append('password', credential.password)
+    
+    // Login request
+    const res = await fetch(`${base}/api/v1/auth/credentials`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRFToken': csrf_token,
+      },
+      body: formData
+    })
+    
+    if (res.ok) {
+      const data = await res.json()
+      
+      localStorage.setItem('user_jwt', data.access_token)
+      localStorage.setItem('userRole', data.type)
       
       // Redirect to admin dashboard
-      router.push('/admin/dashboard')
+      router.replace({ name: 'admin dashboard' })
     } else {
-      error.value = 'Invalid username or password'
+      const errorData = await res.json().catch(() => ({}))
+      throw new Error(errorData.message || 'Invalid email or password')
     }
   } catch (err) {
-    error.value = 'An error occurred. Please try again.'
+    error.value = err instanceof Error ? err.message : 'An error occurred. Please try again.'
     console.error('Login error:', err)
   } finally {
     isLoading.value = false
@@ -61,6 +94,8 @@ function handleKeyPress(event: KeyboardEvent) {
 </script>
 
 <template>
+  <LoadingScreen v-if="isLoading" />
+  
   <div 
     class="flex h-screen items-center justify-center p-4 bg-cover bg-center" 
     :style="{ backgroundImage: `url(${adminBg})` }"
@@ -92,20 +127,19 @@ function handleKeyPress(event: KeyboardEvent) {
         </div>
 
         <form @submit.prevent="handleLogin" class="space-y-5">
-          <!-- Username Field -->
+          <!-- Email Field -->
           <div>
-            <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
-              Username
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+              Email
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User class="h-5 w-5 text-gray-400" />
               </div>
               <input
-                id="username"
-                v-model="username"
-                type="text"
-                placeholder="Enter your username"
+                id="email"
+                v-model="credential.email"
+                placeholder="Enter your email"
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
                 :disabled="isLoading"
                 @keypress="handleKeyPress"
@@ -124,7 +158,7 @@ function handleKeyPress(event: KeyboardEvent) {
               </div>
               <input
                 id="password"
-                v-model="password"
+                v-model="credential.password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="Enter your password"
                 class="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
@@ -140,10 +174,6 @@ function handleKeyPress(event: KeyboardEvent) {
             :disabled="isLoading"
             class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl mt-8"
           >
-            <svg v-if="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
             <span v-if="!isLoading">Sign In</span>
             <span v-else>Signing in...</span>
           </button>

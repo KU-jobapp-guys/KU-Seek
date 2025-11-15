@@ -1,10 +1,13 @@
 export interface User {
   userId: string
-  name: string
-  type: string
+  firstName: string
+  lastName: string
+  userType: string
   document: string
   reason: string
   status: string
+  createdAt: string
+  approvedBy: string
 }
 
 export interface Job {

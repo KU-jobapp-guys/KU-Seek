@@ -2,13 +2,11 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, UserX, Trash2, CheckCircle, XCircle, AlertTriangle, Clock, FileText, ExternalLink } from 'lucide-vue-next'
-import type { PendingUser } from '@/types/adminType'
+import type { User } from '@/types/adminType'
 
 const router = useRouter()
 
-const { data } = defineProps<{ data: PendingUser[] }>()
-const tabLists = ['Manage Users', 'User Approvals', 'Manage Job Posts', 'Job Approvals']
-const currentTab = ref<string>('Manage Users')
+const { data } = defineProps<{ data: User[] }>()
 
 // Filters
 const userSearchTerm = ref('')
@@ -16,13 +14,12 @@ const userTypeFilter = ref('all')
 const userStatusFilter = ref('all')
 
 const approvalUserSearch = ref('')
-const approvalJobSearch = ref('')
 
 // Filtered Data
 const filteredUsers = computed(() => {
   return data.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(userSearchTerm.value.toLowerCase())
-    const matchesType = userTypeFilter.value === 'all' || user.type === userTypeFilter.value
+    const matchesSearch = user.firstName.toLowerCase().includes(userSearchTerm.value.toLowerCase())
+    const matchesType = userTypeFilter.value === 'all' || user.userType === userTypeFilter.value
     const matchesStatus = userStatusFilter.value === 'all' || user.status === userStatusFilter.value
     
     return matchesSearch && matchesType && matchesStatus
@@ -31,7 +28,7 @@ const filteredUsers = computed(() => {
 
 const pendingUsers = computed(() => {
   return data.filter(user => {
-    return user.name.toLowerCase().includes(approvalUserSearch.value.toLowerCase())
+    return user.firstName.toLowerCase().includes(approvalUserSearch.value.toLowerCase())
   })
 })
 
@@ -40,17 +37,6 @@ const showConfirmModal = ref(false)
 const showDocumentModal = ref(false)
 const selectedDocuments = ref<string[]>([])
 const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
-
-// Navigation
-const navigateToProfile = (userId: string, userType: string) => {
-  router.push(`/${userType}/profile/${userId}`)
-}
-
-const navigateToJob = (jobId: string) => {
-  router.push(`/job/${jobId}`)
-}
-
-// Actions
 
 const deleteUser = (userId: string, event: Event) => {
   event.stopPropagation()
@@ -152,16 +138,16 @@ const getUserTypeColor = (type: string) => {
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-                    {{ user.name.charAt(0) }}
+                    {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
                   </div>
                   <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ user.name }}</div>
+                    <div class="text-sm font-medium text-gray-900">{{ user.firstName + " " + user.lastName }}</div>
                   </div>
                 </div>
               </td>
               <td class="px-2 py-4 whitespace-nowrap">
-                <span :class="['px-3 py-1 text-xs font-medium rounded-full capitalize', getUserTypeColor(user.type)]">
-                  {{ user.type }}
+                <span :class="['px-3 py-1 text-xs font-medium rounded-full capitalize', getUserTypeColor(user.userType)]">
+                  {{ user.userType }}
                 </span>
               </td>
               <td class="py-4 whitespace-nowrap text-sm">

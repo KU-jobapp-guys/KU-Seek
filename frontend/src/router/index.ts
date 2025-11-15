@@ -35,7 +35,7 @@ const router = createRouter({
       meta: {noFooter: true}
     },
     {
-      path: '/admin/dashboard.',
+      path: '/admin/dashboard',
       name: 'admin dashboard',
       component: AdminView,
       meta: {admin: true, noFooter: true}

@@ -17,6 +17,7 @@ async function loadUsers() {
   const data = await fetchUsers()
   if (data) {
     users.value = data
+    console.log('data: ', users.value)
   }
   else {
     console.log('there is some error fetching user data')
@@ -40,7 +41,7 @@ const approvalJobSearch = ref('')
 
 const pendingUsers = computed(() => {
   return users.value?.filter(user => user.status === 'pending').filter(user => {
-    return user.name.toLowerCase().includes(approvalUserSearch.value.toLowerCase())
+    return user.firstName.toLowerCase().includes(approvalUserSearch.value.toLowerCase())
   }) || []
 })
 
@@ -91,7 +92,7 @@ onMounted(() => {
     <div class="w-full h-full flex flex-col">
       <AdminNavBar @sideClick="isSideBarOpen = !isSideBarOpen" />      
       <section class="h-full w-full px-[2vw] md:px-[4vw] py-8 overflow-auto bg-gray-50">
-        <ManageUserTab v-if="currentTab === 'Manage Users'" :data="users"/>
+        <ManageUserTab v-if="currentTab === 'Manage Users'" :data="users?.values"/>
         <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers"/>
         <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="mockJobPosts"/>
         <JobApprovalTab v-if="currentTab === 'Job Approvals'" :data="pendingJobPosts"/>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Search, Trash2 } from 'lucide-vue-next'
+import { Search, XCircle } from 'lucide-vue-next'
 import type { JobRequest } from '@/types/adminType';
 import { updateJobStatus } from '@/services/adminServices';
+import { useToast } from 'vue-toastification';
+import ConfirmationModal from '../ConfirmationModal.vue';
 
 const { data } = defineProps<{ data: JobRequest[] }>()
 const emit = defineEmits<{
@@ -10,6 +12,9 @@ const emit = defineEmits<{
   (e: 'update', userId: string, status: string): void
 }>()
 
+const isModalOpen = ref(false)
+const selectJobId = ref<string>()
+const toast = useToast()
 
 // Filters
 const jobSearchTerm = ref('')
@@ -26,23 +31,29 @@ const filteredJobPosts = computed(() => {
   })
 })
 
-async function deleteJob(jobId: string, event: Event) {
-  event.stopPropagation()
-  const user = data.find(j => j.jobId === jobId)
+async function deleteJob() {
+  isModalOpen.value = false
+
+  if(!selectJobId.value) return
+
+  const user = data.find(j => j.jobId === selectJobId.value)
   if (!user) return
   
-  const res = await updateJobStatus(false, jobId, true)
+  const res = await updateJobStatus(false, selectJobId.value, true)
   if (res.ok) {
-    emit('update', jobId, 'delete')
+    emit('update', selectJobId.value, 'delete')
+    toast.success("Successfully delete job post.")
   }
   else {
-    console.log('there is an error, please try again.')
+    toast.error("There is an error deleting job post. Please try again.")
   }
 }
 
 </script>
 
 <template>
+  <ConfirmationModal v-if="isModalOpen" state="delete" @close="isModalOpen = false" @confirm="deleteJob"/>
+
   <div>
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Manage Job Posts</h1>
@@ -74,7 +85,7 @@ async function deleteJob(jobId: string, event: Event) {
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approved</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visibility</th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -96,12 +107,11 @@ async function deleteJob(jobId: string, event: Event) {
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                 {{ job.visibility }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div class="flex justify-end gap-2">
-                  <button @click="deleteJob(job.jobId, $event)" class="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors" title="Delete">
-                    <Trash2 class="w-4 h-4" />
-                  </button>
-                </div>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button @click="(event: MouseEvent) => { event.stopPropagation(); isModalOpen = true; selectJobId = job.jobId }" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
+                  <XCircle class="w-4 h-4" />
+                  Delete
+                </button>
               </td>
             </tr>
           </tbody>

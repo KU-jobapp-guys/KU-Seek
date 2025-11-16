@@ -4,6 +4,7 @@ import { Search, XCircle } from 'lucide-vue-next'
 import type { UserRequest } from '@/types/adminType'
 import { updateUserStatus } from '@/services/adminServices';
 import ConfirmationModal from '../ConfirmationModal.vue';
+import { useToast } from 'vue-toastification';
 
 const { data } = defineProps<{ data: UserRequest[] }>()
 const emit = defineEmits<{
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 
 const isModalOpen = ref(false)
 const selectUserId = ref<string>()
+const toast = useToast()
 
 // Filters
 const userSearchTerm = ref('')
@@ -28,6 +30,8 @@ const filteredUsers = computed(() => {
 
 
 async function deleteUser() {
+  isModalOpen.value = false
+
   if(!selectUserId.value) return
 
   const user = data.find(u => u.userId === selectUserId.value)
@@ -36,9 +40,10 @@ async function deleteUser() {
   const res = await updateUserStatus(false, selectUserId.value, true)
   if (res.ok) {
     emit('update', selectUserId.value, 'delete')
+    toast.success("Successfully deleted user account.")
   }
   else {
-    console.log('there is an error, please try again.')
+    toast.error("There is an error deleting user account. Please try again.")
   }
 }
 

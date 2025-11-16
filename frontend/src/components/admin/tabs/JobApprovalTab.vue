@@ -3,7 +3,8 @@ import { ref, computed } from 'vue'
 import { Search, CheckCircle, XCircle } from 'lucide-vue-next'
 import type { JobRequest } from '@/types/adminType'
 import { useToast } from 'vue-toastification'
-import { updateJobStatus } from '@/services/adminServices';
+import { updateJobStatus } from '@/services/adminServices'
+import ConfirmationModal from '../ConfirmationModal.vue'
 
 const { data } = defineProps<{ data: JobRequest[] }>()
 const emit = defineEmits<{
@@ -11,36 +12,54 @@ const emit = defineEmits<{
   (e: 'update', jobId: string, status: string): void
 }>()
 
-const jobSearchTerm = ref('')
 const toast = useToast()
+const isModalOpen = ref(false)
+const selectedJobId = ref<string>('')
+
+// Filters
+const jobSearchTerm = ref('')
 
 const filteredJobPosts = computed(() => {
   return data.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(jobSearchTerm.value.toLowerCase()) ||
-                          job.company.toLowerCase().includes(jobSearchTerm.value.toLowerCase())    
-
+    const matchesSearch =
+      job.title.toLowerCase().includes(jobSearchTerm.value.toLowerCase()) ||
+      job.company.toLowerCase().includes(jobSearchTerm.value.toLowerCase())
     return matchesSearch
   })
 })
 
-async function verifyJob(jobId: string, approve: boolean, event: Event) {
-  event.stopPropagation()
+async function verifyJob(jobId: string, approve: boolean, event?: MouseEvent) {
+  isModalOpen.value = false
+
+  if (event) event.stopPropagation()
+
+  if (!jobId) return
+
   const job = data.find(j => j.jobId === jobId)
   if (!job) return
-  
+
   const res = await updateJobStatus(approve, jobId)
   if (res.ok) {
     const newStatus = approve ? 'approved' : 'reject'
     emit('update', jobId, newStatus)
-    toast.success("Successfully update job approval status.")
+    toast.success("Successfully updated job approval status.")
+  } else {
+    toast.error("Error updating job approval status. Please try again.")
   }
-  else {
-    toast.error("There is error updating job approval status. Please try again.")
-  }
+
+}
+
+function openRejectModal(jobId: string, event: MouseEvent) {
+  event.stopPropagation()
+  selectedJobId.value = jobId
+  isModalOpen.value = true
 }
 </script>
 
+
 <template>
+  <ConfirmationModal v-if="isModalOpen && selectedJobId" state="reject" @close="isModalOpen = false" @confirm="verifyJob(selectedJobId, false)"/>
+
   <div>
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
@@ -99,7 +118,7 @@ async function verifyJob(jobId: string, approve: boolean, event: Event) {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                 <div class="flex justify-start gap-2">
-                  <button @click="verifyJob(job.jobId, false, $event)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
+                  <button @click="(event: MouseEvent) => openRejectModal(job.jobId, event)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
                     <XCircle class="w-4 h-4" />
                     Reject
                   </button>

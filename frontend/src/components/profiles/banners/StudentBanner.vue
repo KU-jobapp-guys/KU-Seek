@@ -18,6 +18,10 @@ const emits = defineEmits<{
   (e: 'update:modelValue', data: StudentProfile): void
 }>()
 
+const images = defineModel<{ profile: File | null; banner: File | null }>('images', {
+  default: { profile: null, banner: null }
+})
+
 watch(
   editForm,
   (newVal) => {
@@ -31,6 +35,7 @@ watch(
   <BaseBanner
     :data="studentData"
     v-model="editForm"
+    v-model:images="images"
     role="student"
     :isEditing
     @edit="emits('edit')"

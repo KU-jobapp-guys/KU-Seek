@@ -5,7 +5,8 @@ import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
+import { getProfileData, updateProfileData, updateProfileImages } from '@/services/profileServices'
+import { getFile } from '@/services/fileService'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -22,6 +23,10 @@ const toast = useToast()
 const isLoading = ref(true)
 const isSaveDisabled = ref(false)
 const studentData = ref<StudentProfile | null>(null)
+const uploadImages = ref<{ profile: File | null; banner: File | null }>({
+  profile: null,
+  banner: null
+})
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } = useEditableProfile<StudentProfile>()
 
 async function loadStudent(id?: string) {
@@ -34,6 +39,12 @@ async function loadStudent(id?: string) {
   console.log(data)
   if (data) {   
     studentData.value = data as StudentProfile
+    if (data.profileImg) {
+        studentData.value.profilePhoto = await getFile(data.profileImg) || ''
+    }
+    if (data.profileBanner) {
+        studentData.value.bannerPhoto = await getFile(data.profileBanner) || ''
+    }
   } else {
     router.replace({ name: 'not found' })
     return
@@ -62,6 +73,13 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
+  console.log(uploadImages.value.profile)
+  console.log(uploadImages.value.banner)
+
+  const imgData = await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
+
+  console.log(imgData)
+
   const data = editData.value
 
   if (!data) return
@@ -71,8 +89,9 @@ const save = async () => {
     profilePhoto: data.profilePhoto || '',
     bannerPhoto: data.bannerPhoto || '',
     phoneNumber: data.phoneNumber || '',
+    gpa: data.gpa ?? 0,
     skills: [...(data.skills || [])],
-    education: (data.education || []).map(edu => ({ ...edu })),
+    educations: (data.educations || []).map(edu => ({ ...edu })),
   }
 
   const resData = await updateProfileData(plainData)
@@ -80,6 +99,7 @@ const save = async () => {
   if (resData) {
     saveProfile(resData)
     studentData.value = { ...resData } as StudentProfile
+    loadStudent(route.params.id as string)
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
@@ -88,7 +108,6 @@ const save = async () => {
 
 onMounted(() => {
   loadStudent(route.params.id as string)
-  console.log(route.params.id)
 })
 </script>
 
@@ -100,6 +119,7 @@ onMounted(() => {
     <StudentBanner
       v-if="!isEditing"
       v-model="studentData"
+      v-model:images="uploadImages"
       :studentData="studentData"
       :isEditing="isEditing"
       @loaded="renderReady"
@@ -108,6 +128,7 @@ onMounted(() => {
     <StudentBanner
       v-else-if="editData"
       v-model="editData"
+      v-model:images="uploadImages"
       :studentData="editData"
       :isEditing="isEditing"
       @loaded="renderReady"

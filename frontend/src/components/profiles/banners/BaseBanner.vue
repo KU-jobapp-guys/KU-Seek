@@ -11,6 +11,7 @@ const emits = defineEmits<{
   (e: 'loaded'): void
   (e: 'edit'): void
   (e: 'update:modelValue', data: Profile): void
+  (e: 'update:images', data: { profile: File | null; banner: File | null }): void
 }>()
 
 const props = defineProps<{
@@ -18,11 +19,11 @@ const props = defineProps<{
   data: Profile
   role: 'company' | 'student' | 'professor'
   isEditing: boolean
+  images?: { profile: File | null; banner: File | null }
 }>()
 
 const { data, role } = props
 const editForm = ref<Profile>({ ...props.modelValue })
-
 const bannerLoaded = ref(false)
 const profileLoaded = ref(false)
 const isFullyLoaded = computed(() => bannerLoaded.value && profileLoaded.value)
@@ -50,15 +51,24 @@ const handleImageChange = (e: Event, field: 'bannerPhoto' | 'profilePhoto') => {
   if (!file) return
 
   const previewUrl = URL.createObjectURL(file)
+  
+  const updatedImages = {
+    profile: props.images?.profile || null,
+    banner: props.images?.banner || null
+  }
+  
   if (field === 'bannerPhoto') {
     bannerPreview.value = previewUrl
     editForm.value.bannerPhoto = previewUrl
+    updatedImages.banner = file
   } else {
     profilePreview.value = previewUrl
     editForm.value.profilePhoto = previewUrl
+    updatedImages.profile = file
   }
 
   emits('update:modelValue', { ...editForm.value })
+  emits('update:images', updatedImages)
 }
 </script>
 

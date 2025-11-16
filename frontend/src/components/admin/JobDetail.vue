@@ -26,7 +26,7 @@ const loadJob = async (id?: string) => {
   }
 
   const list = await fetchJobs()
-  job.value = list.find((j) => j.jobId === id) || null
+  job.value = list.find((j) => j.jobId === String(id)) || null
 
   if (!job.value) {
     router.replace({ name: 'not found' })
@@ -35,7 +35,6 @@ const loadJob = async (id?: string) => {
 
 onMounted(() => {
   loadJob(props.jobId)
-  loadApplied()
 })
 
 watch(
@@ -45,24 +44,6 @@ watch(
   },
 )
 
-const appliedJobIds = ref(new Set<string>())
-
-const loadApplied = async () => {
-  try {
-    const list = await fetchUserAppliedJobs()
-    appliedJobIds.value = new Set(list.map((j) => j.jobId))
-  } catch (err) {
-    console.error('Failed to load applied jobs', err)
-  }
-}
-
-const isApplied = computed(() => !!job.value && appliedJobIds.value.has(job.value.jobId))
-
-const goToApply = () => {
-  if (job.value && !isApplied.value) {
-    router.push(`/job/${job.value.jobId}/apply`)
-  }
-}
 </script>
 
 <template>
@@ -79,17 +60,11 @@ const goToApply = () => {
 
     <div class="px-12 mt-24">
       <div class="flex justify-between items-center">
-        <router-link
+        <p
           :to="`/job/${job.jobId}`"
-          class="text-2xl font-bold underline cursor-pointer"
-          >{{ job.role }}</router-link
+          class="text-2xl font-bold"
+          >{{ job.role }}</p
         >
-        <PenBox
-          :stroke-width="1.5"
-          class="inline-block w-8 h-8 text-gray-600 hover:text-gray-400 hover:cursor-pointer"
-          @click="emit('edit')"
-          v-if="(isOwner(job.company) || true) && job.status === 'rejected'"
-        />
       </div>
       <p class="text-gray-600">{{ job.company }}</p>
 
@@ -113,20 +88,6 @@ const goToApply = () => {
           <Banknote class="w-4 h-4" />
           <p>{{ job.salaryMin }} - {{ job.salaryMax }} THB/month</p>
         </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div v-if="userRole === 'student'" class="mt-4 flex gap-x-2">
-        <button
-          @click="goToApply"
-          :disabled="isApplied"
-          :class="isApplied ? 'bg-gray-400 text-white px-8 py-1 rounded-md cursor-not-allowed' : 'bg-gradient-to-r from-green-600 to-green-700 hover:to-green-600 text-white px-8 py-1 rounded-md'"
-        >
-          {{ isApplied ? 'Applied' : 'Apply' }}
-        </button>
-        <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
-          Add to Bookmarks
-        </button>
       </div>
 
       <p class="mt-12">{{ job.description }}</p>

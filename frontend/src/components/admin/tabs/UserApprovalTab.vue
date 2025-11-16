@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { Search, CheckCircle, XCircle, ExternalLink } from 'lucide-vue-next'
 import type { User } from '@/types/adminType'
-import { reviewUser } from '@/services/adminServices';
+import { updateUserStatus } from '@/services/adminServices';
 
 const { data } = defineProps<{ data: User[] }>()
 const emit = defineEmits<{
@@ -23,24 +23,13 @@ const filteredUsers = computed(() => {
   })
 })
 
-// Modals
-const showConfirmModal = ref(false)
-const showDocumentModal = ref(false)
-const selectedDocuments = ref<string[]>([])
-const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
-
-const viewDocuments = (documents: string[], event: Event) => {
-  event.stopPropagation()
-  selectedDocuments.value = documents
-  showDocumentModal.value = true
-}
 
 async function verifyUser(userId: string, approve: boolean, event: Event) {
   event.stopPropagation()
   const user = data.find(u => u.userId === userId)
   if (!user) return
   
-  const res = await reviewUser(approve, userId)
+  const res = await updateUserStatus(approve, userId)
   if (res.ok) {
     const newStatus = approve ? 'approved' : 'reject'
     emit('update', userId, newStatus)

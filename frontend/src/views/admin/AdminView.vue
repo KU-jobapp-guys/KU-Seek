@@ -8,10 +8,15 @@ import AdminNavBar from '@/components/admin/AdminNavBar.vue'
 import type { User, Job } from '@/types/adminType'
 import { fetchUsers, fetchJobs } from '@/services/adminServices'
 import JobDetail from '@/components/admin/JobDetail.vue'
+import { CircleArrowLeft } from 'lucide-vue-next'
 
 const isSideBarOpen = ref<boolean>(true)
 const users = ref<User[] | null>(null)
 const jobs = ref<Job[] | null>([])
+
+// Job detail view state
+const selectedJobId = ref<string | null>(null)
+const isJobDetailView = ref<boolean>(false)
 
 async function loadUsers() {
   const data = await fetchUsers()
@@ -44,6 +49,32 @@ function updateUserData(userId: string, status: string) {
   if (status !== 'approved') {
     users.value = users.value.filter(u => u.status !==  status)
   }
+}
+
+function updateJobData(jobId: string, status: string) {
+  if (!jobs.value) return;
+
+  const job = jobs.value.find(j => j.jobId === jobId);
+  if (job) {
+    job.status = status;
+  }
+
+  if (status !== 'approved') {
+    jobs.value = jobs.value.filter(u => u.status !==  status)
+  }
+}
+
+// Handle job click to show detail view
+function handleJobClick(jobId: string) {
+  console.log('imhere: ', jobId)
+  selectedJobId.value = jobId
+  isJobDetailView.value = true
+}
+
+// Handle back button to return to tab view
+function handleBackToList() {
+  isJobDetailView.value = false
+  selectedJobId.value = null
 }
 
 const tabLists = ['Manage Users', 'User Approvals', 'Manage Job Posts', 'Job Approvals']
@@ -95,7 +126,7 @@ onMounted(() => {
             'text-left text-base px-8 py-3 transition-all duration-200 hover:bg-blue-200 relative',
             tab === currentTab ? 'bg-blue-200 border-l-4 border-blue-600 font-semibold text-blue-900' : 'text-gray-700'
           ]"
-          @click="currentTab = tab"
+          @click="currentTab = tab; isJobDetailView = false"
         >
           {{ tab }}
           <span v-if="tab === 'User Approvals' && pendingUsers.length > 0" class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
@@ -112,11 +143,25 @@ onMounted(() => {
     <div class="w-full h-full flex flex-col">
       <AdminNavBar @sideClick="isSideBarOpen = !isSideBarOpen" />      
       <section class="h-full w-full px-[2vw] md:px-[4vw] py-8 overflow-auto bg-gray-50">
-        <ManageUserTab v-if="currentTab === 'Manage Users'" :data="normalUsers" @update="updateUserData"/>
-        <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers" @update="updateUserData"/>
-        <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="jobs || []"/>
-        <JobApprovalTab v-if="currentTab === 'Job Approvals'" :data="pendingJobPosts"/>
-        <JobDetail jobId=""/>
+        <!-- Job Detail View -->
+        <div v-if="isJobDetailView && selectedJobId">
+          <button 
+            @click="handleBackToList"
+            class="flex items-center gap-2 mb-6 text-gray-500 text-xl hover:text-gray-700"
+          >
+            <CircleArrowLeft class="w-6 h-6" />
+            Back
+          </button>
+          <JobDetail :jobId="selectedJobId" />
+        </div>
+
+        <!-- Tab Views -->
+        <template v-else>
+          <ManageUserTab v-if="currentTab === 'Manage Users'" :data="normalUsers" @update="updateUserData" />
+          <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers" @update="updateUserData" />
+          <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="jobs || []" @viewJob="handleJobClick" @update="updateJobData" />
+          <JobApprovalTab v-if="currentTab === 'Job Approvals'" :data="pendingJobPosts" @viewJob="handleJobClick" @update="updateJobData" />
+        </template>
       </section>
     </div>
     

@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Search, UserX, Trash2, CheckCircle, XCircle, AlertTriangle, Clock, FileText, ExternalLink } from 'lucide-vue-next'
+import { Search, Trash2 } from 'lucide-vue-next'
 import type { Job } from '@/types/adminType';
-
-const router = useRouter()
+import { updateJobStatus } from '@/services/adminServices';
 
 const { data } = defineProps<{ data: Job[] }>()
+const emit = defineEmits<{
+  (e: 'viewJob', jobId: string): void
+  (e: 'update', userId: string, status: string): void
+}>()
 
 
 // Filters
-const userSearchTerm = ref('')
-const userTypeFilter = ref('all')
-const userStatusFilter = ref('all')
-
 const jobSearchTerm = ref('')
 const jobStatusFilter = ref('all')
-
-const approvalUserSearch = ref('')
-const approvalJobSearch = ref('')
-
 
 
 const filteredJobPosts = computed(() => {
@@ -32,53 +26,20 @@ const filteredJobPosts = computed(() => {
   })
 })
 
-const pendingJobPosts = computed(() => {
-  return data.filter(job => job.status === 'pending').filter(job => {
-    return job.title.toLowerCase().includes(approvalJobSearch.value.toLowerCase()) ||
-           job.company.toLowerCase().includes(approvalJobSearch.value.toLowerCase())
-  })
-})
-
-// Modals
-const showConfirmModal = ref(false)
-const showDocumentModal = ref(false)
-const selectedDocuments = ref<string[]>([])
-const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
-
-// Navigation
-const navigateToProfile = (userId: string, userType: string) => {
-  router.push(`/${userType}/profile/${userId}`)
-}
-
-const navigateToJob = (jobId: string) => {
-  router.push(`/job/${jobId}`)
-}
-
-const deleteUser = (userId: string, event: Event) => {
+async function deleteJob(jobId: string, event: Event) {
   event.stopPropagation()
+  const user = data.find(j => j.jobId === jobId)
+  if (!user) return
   
-  showConfirmModal.value = true
+  const res = await updateJobStatus(false, jobId, true)
+  if (res.ok) {
+    emit('update', jobId, 'delete')
+  }
+  else {
+    console.log('there is an error, please try again.')
+  }
 }
 
-const deleteJobPost = (jobId: string, event: Event) => {
-  event.stopPropagation()
-  showConfirmModal.value = true
-}
-
-
-const approveJobPost = (jobId: string, approve: boolean, event: Event) => {
-  event.stopPropagation()
-  
-}
-
-const confirmAction = () => {
-  if (!confirmModalData.value) return
-  
-  const { action, type, item } = confirmModalData.value
-  
-  showConfirmModal.value = false
-  confirmModalData.value = null
-}
 </script>
 
 <template>
@@ -90,8 +51,8 @@ const confirmAction = () => {
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="relative">
+      <div class="grid grid-cols-1 gap-4">
+        <div class="relative w-full">
           <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             v-model="jobSearchTerm"
@@ -120,7 +81,7 @@ const confirmAction = () => {
             <tr 
               v-for="job in filteredJobPosts" 
               :key="job.jobId" 
-              @click="navigateToJob(job.jobId)"
+              @click="emit('viewJob', job.jobId)"
               class="hover:bg-blue-50 cursor-pointer transition-colors"
             >
               <td class="px-6 py-4">
@@ -130,14 +91,14 @@ const confirmAction = () => {
                 <div class="text-sm text-gray-700">{{ job.company }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ job.approvedAt }}
+                {{ new Date(job.approvedAt).toLocaleDateString() }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                 {{ job.visibility }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div class="flex justify-end gap-2">
-                  <button @click="deleteJobPost(job.jobId, $event)" class="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors" title="Delete">
+                  <button @click="deleteJob(job.jobId, $event)" class="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors" title="Delete">
                     <Trash2 class="w-4 h-4" />
                   </button>
                 </div>

@@ -1,81 +1,39 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Search, CheckCircle, XCircle, Clock } from 'lucide-vue-next'
+import { Search, CheckCircle, XCircle } from 'lucide-vue-next'
 import type { Job } from '@/types/adminType'
+import { updateJobStatus } from '@/services/adminServices';
 
-const router = useRouter()
 const { data } = defineProps<{ data: Job[] }>()
+const emit = defineEmits<{
+  (e: 'viewJob', jobId: string): void
+  (e: 'update', jobId: string, status: string): void
+}>()
 
 const jobSearchTerm = ref('')
-const jobStatusFilter = ref('all')
-
-const approvalJobSearch = ref('')
 
 const filteredJobPosts = computed(() => {
-  return data.filter(job => job.status !== 'pending').filter(job => {
+  return data.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(jobSearchTerm.value.toLowerCase()) ||
-                         job.company.toLowerCase().includes(jobSearchTerm.value.toLowerCase())
-    const matchesStatus = jobStatusFilter.value === 'all' || job.status === jobStatusFilter.value
-    
-    return matchesSearch && matchesStatus
+                          job.company.toLowerCase().includes(jobSearchTerm.value.toLowerCase())    
+
+    return matchesSearch
   })
 })
 
-const pendingJobPosts = computed(() => {
-  return data.filter(job => job.status === 'pending').filter(job => {
-    return job.title.toLowerCase().includes(approvalJobSearch.value.toLowerCase()) ||
-           job.company.toLowerCase().includes(approvalJobSearch.value.toLowerCase())
-  })
-})
-
-// Modals
-const showConfirmModal = ref(false)
-const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
-
-const navigateToJob = (jobId: string) => {
-  router.push(`/job/${jobId}`)
-}
-
-// Actions
-const deleteJobPost = (jobId: string, event: Event) => {
-  event.stopPropagation()
-  confirmModalData.value = { 
-    action: 'delete', 
-    type: 'job', 
-    item: data.find(j => j.jobId === jobId) 
-  }
-  showConfirmModal.value = true
-}
-
-const approveJobPost = (jobId: string, approve: boolean, event: Event) => {
+async function verifyJob(jobId: string, approve: boolean, event: Event) {
   event.stopPropagation()
   const job = data.find(j => j.jobId === jobId)
-  if (job) {
-    job.status = approve ? 'approved' : 'rejected'
-    console.log(`Job ${jobId} ${approve ? 'approved' : 'rejected'}`)
+  if (!job) return
+  
+  const res = await updateJobStatus(approve, jobId)
+  if (res.ok) {
+    const newStatus = approve ? 'approved' : 'reject'
+    emit('update', jobId, newStatus)
   }
-}
-
-const confirmAction = () => {
-  if (!confirmModalData.value) return
-  
-  const { action, type, item } = confirmModalData.value
-  
-  if (type === 'job') {
-    if (action === 'delete') {
-      console.log(`Deleted job post ${item.id}`)
-    } else if (action === 'suspend') {
-      const job = data.find(j => j.jobId === item.id)
-      if (job) {
-        job.status = 'suspended'
-        console.log(`Job post ${item.id} suspended`)
-      }
-    }
+  else {
+    console.log('there is an error, please try again.')
   }
-  
-  showConfirmModal.value = false
-  confirmModalData.value = null
 }
 </script>
 
@@ -84,8 +42,8 @@ const confirmAction = () => {
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
         Job Approvals
-        <span v-if="pendingJobPosts.length > 0" class="bg-red-500 text-white text-base font-bold rounded-full px-3 py-1">
-          {{ pendingJobPosts.length }}
+        <span v-if="data.length > 0" class="bg-red-500 text-white text-base font-bold rounded-full px-3 py-1">
+          {{ data.length }}
         </span>
       </h1>
       <p class="text-gray-600">Review and approve pending job postings • Click row to view full details</p>
@@ -96,7 +54,7 @@ const confirmAction = () => {
       <div class="relative">
         <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
-          v-model="approvalJobSearch"
+          v-model="jobSearchTerm"
           type="text"
           placeholder="Search by job title, company name..."
           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -119,9 +77,9 @@ const confirmAction = () => {
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr 
-              v-for="job in pendingJobPosts" 
+              v-for="job in filteredJobPosts" 
               :key="job.jobId"
-              @click="navigateToJob(job.jobId)" 
+              @click="emit('viewJob', job.jobId)" 
               class="hover:bg-blue-50 cursor-pointer transition-colors"
             >
               <td class="px-6 py-4">
@@ -138,11 +96,11 @@ const confirmAction = () => {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                 <div class="flex justify-start gap-2">
-                  <button @click="approveJobPost(job.jobId, false, $event)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
+                  <button @click="verifyJob(job.jobId, false, $event)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
                     <XCircle class="w-4 h-4" />
                     Reject
                   </button>
-                  <button @click="approveJobPost(job.jobId, true, $event)" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 text-sm font-medium">
+                  <button @click="verifyJob(job.jobId, true, $event)" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 text-sm font-medium">
                     <CheckCircle class="w-4 h-4" />
                     Approve
                   </button>
@@ -154,8 +112,8 @@ const confirmAction = () => {
       </div>
     </div>
 
-    <div v-if="pendingJobPosts.length === 0" class="text-center py-16 bg-white rounded-lg border border-gray-200 mt-6">
-      <CheckCircle class="w-16 h-16 text-green-500 mx-auto mb-4" />
+    <div v-if="filteredJobPosts.length === 0" class="text-center py-16 bg-white rounded-lg border border-gray-200 mt-6">
+      <CheckCircle class="w-16 h-16 text-gray-400 mx-auto mb-4" />
       <p class="text-lg font-medium text-gray-900">All caught up!</p>
       <p class="text-gray-500 mt-2">No pending job approvals</p>
     </div>

@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { Search, XCircle } from 'lucide-vue-next'
 import type { User } from '@/types/adminType'
-import { reviewUser } from '@/services/adminServices'
-
-const router = useRouter()
+import { updateUserStatus } from '@/services/adminServices';
 
 const { data } = defineProps<{ data: User[] }>()
 const emit = defineEmits<{
@@ -25,21 +22,13 @@ const filteredUsers = computed(() => {
   })
 })
 
-// Modals
-const showConfirmModal = ref(false)
-const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
-
-// Navigation
-const navigateToProfile = (userId: string, userType: string) => {
-  router.push(`/${userType}/profile/${userId}`)
-}
 
 async function deleteUser(userId: string, event: Event) {
   event.stopPropagation()
   const user = data.find(u => u.userId === userId)
   if (!user) return
   
-  const res = await reviewUser(false, userId, true)
+  const res = await updateUserStatus(false, userId, true)
   if (res.ok) {
     emit('update', userId, 'delete')
   }
@@ -103,7 +92,6 @@ const getUserTypeColor = (type: string) => {
             <tr 
               v-for="user in filteredUsers" 
               :key="user.userId" 
-              @click="navigateToProfile(user.userId, user.requestedType)"
               class="hover:bg-blue-50 cursor-pointer transition-colors"
             >
               <td class="px-6 py-4 whitespace-nowrap">

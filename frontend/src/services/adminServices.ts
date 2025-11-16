@@ -22,7 +22,7 @@ export async function fetchUsers(): Promise<User[] | null> {
   return data as User[]
 }
 
-export async function reviewUser(approve: boolean, userId: string, toDelete: boolean = false) {
+export async function updateUserStatus(approve: boolean, userId: string, toDelete: boolean = false) {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/admin/users`)
 
@@ -81,4 +81,31 @@ export async function fetchJobs(): Promise<Job[] | null> {
   }))
 
   return jobs
+}
+
+export async function updateJobStatus(approve: boolean, jobId: string, toDelete: boolean = false) {
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+  const url = new URL(`${base}/api/v1/admin/jobs`)
+
+  const csrfToken = await fetchCsrfToken(base)
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...getAuthHeader(),
+  }
+  if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
+
+  const form = [{
+    "job_id": jobId,
+    "is_accepted": approve,
+    "delete": toDelete
+  }]
+
+  const res = await fetch(url.toString(), {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(form),
+    credentials: 'include',
+  })
+
+  return res
 }

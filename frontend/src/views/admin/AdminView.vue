@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import UserApprovalTab from '@/components/admin/tabs/UserApprovalTab.vue'
 import ManageUserTab from '@/components/admin/tabs/ManageUserTab.vue'
 import ManageJobTab from '@/components/admin/tabs/ManageJobTab.vue'
@@ -8,8 +7,8 @@ import JobApprovalTab from '@/components/admin/tabs/JobApprovalTab.vue'
 import AdminNavBar from '@/components/admin/AdminNavBar.vue'
 import type { User, Job } from '@/types/adminType'
 import { fetchUsers, fetchJobs } from '@/services/adminServices'
+import JobDetail from '@/components/admin/JobDetail.vue'
 
-const router = useRouter()
 const isSideBarOpen = ref<boolean>(true)
 const users = ref<User[] | null>(null)
 const jobs = ref<Job[] | null>([])
@@ -18,7 +17,6 @@ async function loadUsers() {
   const data = await fetchUsers()
   if (data) {
     users.value = data
-    console.log("Users: ", data)
   }
   else {
     console.log('there is some error fetching user data')
@@ -118,6 +116,7 @@ onMounted(() => {
         <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers" @update="updateUserData"/>
         <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="jobs || []"/>
         <JobApprovalTab v-if="currentTab === 'Job Approvals'" :data="pendingJobPosts"/>
+        <JobDetail jobId=""/>
       </section>
     </div>
     

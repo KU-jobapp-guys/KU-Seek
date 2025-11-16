@@ -93,7 +93,7 @@ const confirmAction = () => {
 
     <!-- Search -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-      <div class="relative max-w-md">
+      <div class="relative">
         <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
           v-model="approvalJobSearch"
@@ -112,7 +112,8 @@ const confirmAction = () => {
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Denial Reason</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -130,7 +131,10 @@ const confirmAction = () => {
                 <div class="text-sm text-gray-700">{{ job.company }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-700">{{ job.reason }}</div>
+                <div class="text-sm text-gray-700">{{ new Date(job.createdAt).toLocaleDateString() }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-700">{{ job.denialReason }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                 <div class="flex justify-start gap-2">

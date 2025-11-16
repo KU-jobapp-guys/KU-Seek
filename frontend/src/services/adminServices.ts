@@ -66,7 +66,19 @@ export async function fetchJobs(): Promise<Job[] | null> {
     return []
   }
 
-  const data = await res.json()
-  console.log("fetch data: ", data)
-  return data as Job[]
+   const data = await res.json()
+
+  // Assuming data is an array of job request objects
+  const jobs: Job[] = data.map((item: any) => ({
+    jobId: item.job.id,
+    title: item.job.title,
+    company: item.company.companyName,
+    denialReason: item.denialReason,
+    status: item.status,
+    approvedAt: item.approvedAt,
+    createdAt: item.createdAt,
+    visibility: item.job.visibility,
+  }))
+
+  return jobs
 }

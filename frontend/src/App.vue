@@ -3,7 +3,6 @@ import { RouterView } from 'vue-router'
 import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref, onMounted, watch } from 'vue'
-import AdminNavBar from './components/admin/AdminNavBar.vue'
 
 type AllUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' | 'admin'
 type NormalUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' 

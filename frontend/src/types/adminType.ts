@@ -13,7 +13,9 @@ export interface Job {
   jobId: string
   title: string
   company: string
-  applicants: number
   status: string
-  reason: string  
+  denialReason: string
+  visibility: boolean
+  createdAt: string
+  approvedAt: string
 }

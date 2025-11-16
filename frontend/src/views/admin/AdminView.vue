@@ -8,7 +8,7 @@ import AdminNavBar from '@/components/admin/AdminNavBar.vue'
 import type { UserRequest, JobRequest } from '@/types/adminType'
 import { fetchUsers, fetchJobs } from '@/services/adminServices'
 import JobDetail from '@/components/admin/JobDetail.vue'
-import { CircleArrowLeft } from 'lucide-vue-next'
+import { CircleArrowLeft, Menu, X } from 'lucide-vue-next'
 
 const isSideBarOpen = ref<boolean>(true)
 const users = ref<UserRequest[] | null>(null)
@@ -102,6 +102,15 @@ const pendingJobPosts = computed(() => {
   }) || []
 })
 
+function handleTabChange(tab: string) {
+  currentTab.value = tab
+  isJobDetailView.value = false
+  // Close sidebar on mobile after selecting a tab
+  if (window.innerWidth < 1024) {
+    isSideBarOpen.value = false
+  }
+}
+
 onMounted(() => {
   loadUsers()
   loadJobs()
@@ -110,9 +119,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full h-screen bg-orange-500">
-    <!-- Sidebar -->
-    <section v-if="isSideBarOpen" class="flex flex-col bg-gradient-to-b from-blue-50 to-blue-100 h-full w-[20vw] py-8 border-r border-blue-200">
+  <div class="flex flex-col lg:flex-row w-full h-screen bg-orange-500">
+    <!-- Sidebar - Desktop Only -->
+    <section 
+      v-if="isSideBarOpen"
+      class="hidden lg:flex flex-col bg-gradient-to-b from-blue-50 to-blue-100 h-full w-[20vw] py-8 border-r border-blue-200"
+    >
       <div class="flex flex-col px-4 mb-4 gap-y-0 text-2xl font-bold leading-none py-4 border-b-2 border-blue-300">
         <h1>Admin</h1>
         <h1 class="text-gray-800">KU SEEK</h1>
@@ -126,7 +138,7 @@ onMounted(() => {
             'text-left text-base px-8 py-3 transition-all duration-200 hover:bg-blue-200 relative',
             tab === currentTab ? 'bg-blue-200 border-l-4 border-blue-600 font-semibold text-blue-900' : 'text-gray-700'
           ]"
-          @click="currentTab = tab; isJobDetailView = false"
+          @click="handleTabChange(tab)"
         >
           {{ tab }}
           <span v-if="tab === 'User Approvals' && pendingUsers.length > 0" class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
@@ -140,23 +152,56 @@ onMounted(() => {
     </section>
 
     <!-- Main Content -->
-    <div class="w-full h-full flex flex-col">
-      <AdminNavBar @sideClick="isSideBarOpen = !isSideBarOpen" />      
-      <section class="h-full w-full px-[2vw] md:px-[4vw] py-8 overflow-auto bg-gray-50">
+    <div class="relative w-full h-full flex flex-col lg:flex-1">
+      <AdminNavBar @sideClick="isSideBarOpen = !isSideBarOpen" />
+      
+      <div 
+        v-if="isSideBarOpen" 
+        class="fixed inset-0 bg-black/40 lg:hidden z-10"
+        @click="isSideBarOpen = false"
+      />
+
+      <!-- Mobile Menu -->
+      <div 
+        v-if="isSideBarOpen"
+        class="lg:hidden bg-gradient-to-b from-blue-50 to-blue-100 border-b border-blue-200 shadow-lg z-20"
+      >
+        <div class="flex flex-col gap-1 py-2">
+          <button
+            v-for="tab in tabLists"
+            :key="tab"
+            :class="[
+              'text-left text-base px-6 py-3 transition-all duration-200 hover:bg-blue-200 relative',
+              tab === currentTab ? 'bg-blue-200 border-l-4 border-blue-600 font-semibold text-blue-900' : 'text-gray-700'
+            ]"
+            @click="handleTabChange(tab)"
+          >
+            {{ tab }}
+            <span v-if="tab === 'User Approvals' && pendingUsers.length > 0" class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+              {{ pendingUsers.length }}
+            </span>
+            <span v-if="tab === 'Job Approvals' && pendingJobPosts.length > 0" class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+              {{ pendingJobPosts.length }}
+            </span>
+          </button>
+        </div>
+      </div>  
+
+      <section class="h-full w-full absolute z-0 pt-24 px-4 sm:px-6 md:px-8 lg:px-[4vw] overflow-auto bg-gray-50">
         <!-- Job Detail View -->
         <div v-if="isJobDetailView && selectedJobId">
           <button 
             @click="handleBackToList"
-            class="flex items-center gap-2 mb-6 text-gray-500 text-xl hover:text-gray-700"
+            class="flex items-center gap-2 mb-4 lg:mb-6 text-gray-500 text-lg lg:text-xl hover:text-gray-700"
           >
-            <CircleArrowLeft class="w-6 h-6" />
+            <CircleArrowLeft class="w-5 h-5 lg:w-6 lg:h-6" />
             Back
           </button>
           <JobDetail :jobId="selectedJobId" />
         </div>
 
         <!-- Tab Views -->
-        <template v-else>
+        <template v-else class="">
           <ManageUserTab v-if="currentTab === 'Manage Users'" :data="normalUsers" @update="updateUserData" />
           <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers" @update="updateUserData" />
           <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="jobs || []" @viewJob="handleJobClick" @update="updateJobData" />

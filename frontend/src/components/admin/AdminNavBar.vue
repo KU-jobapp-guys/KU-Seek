@@ -9,7 +9,7 @@ const emit = defineEmits<{
 
 <template>
   <nav
-    class="h-16 w-full bg-gradient-to-r from-[#03A96B] to-[#01432A] flex items-center justify-between px-[4vw] text-white z-[60]"
+    class="h-16 w-full shrink-0 bg-gradient-to-r from-[#03A96B] to-[#01432A] flex items-center justify-between px-[4vw] text-white z-[60]"
   >
     <div class="flex gap-x-4">
       <Menu class="w-8 h-8 cursor-pointer" @click="emit('sideClick')" />

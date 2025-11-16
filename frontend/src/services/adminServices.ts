@@ -19,6 +19,7 @@ export async function fetchUsers(): Promise<UserRequest[] | null> {
   }
 
   const data = await res.json()
+  console.log("user data: ", data)
   return data as UserRequest[]
 }
 
@@ -93,6 +94,21 @@ export async function updateJobStatus(approve: boolean, jobId: string, toDelete:
     method: 'POST',
     headers,
     body: JSON.stringify(form),
+    credentials: 'include',
+  })
+
+  return res
+}
+
+export async function getVerificationDocument(fileId: string) {
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+  const url = new URL(`${base}/api/v1/file/${fileId}`)
+
+  const res = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      ...getAuthHeader(),
+    },
     credentials: 'include',
   })
 

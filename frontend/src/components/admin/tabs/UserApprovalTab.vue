@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { Search, CheckCircle, XCircle, ExternalLink } from 'lucide-vue-next'
 import type { UserRequest } from '@/types/adminType'
-import { updateUserStatus } from '@/services/adminServices';
+import { updateUserStatus, getVerificationDocument } from '@/services/adminServices';
 import { useToast } from 'vue-toastification'
 import ConfirmationModal from '../ConfirmationModal.vue';
 
@@ -65,6 +65,22 @@ function openRejectModal(id: string) {
   console.log("selectId: ", id)
   selectedUserId.value = id
   isModalOpen.value = true
+}
+
+async function viewDocument(fileId: string) {
+  if (!fileId) return
+  console.log("file: ", fileId)
+  const res = await getVerificationDocument(fileId)
+
+  if (!res.ok) {
+    toast.error("Failed to load document.")
+    return
+  }
+
+  const blob = await res.blob()
+  const blobUrl = URL.createObjectURL(blob)
+  window.open(blobUrl, '_blank')
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
 }
 </script>
 
@@ -135,9 +151,14 @@ function openRejectModal(id: string) {
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ new Date(user.createdAt).toLocaleDateString() }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">{{ user.denialReason }}</td>
+              <td class="px-6 py-4 whitespace-normal text-sm break-words" style="max-width: 200px;">
+                {{ user.denialReason }}
+              </td>              
               <td class="px-6 py-4 whitespace-nowrap">
-                <button class="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <button 
+                  class="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  @click="viewDocument(user.verificationDocument)"
+                >
                   <ExternalLink class="w-4 h-4" />
                   view document
                 </button>

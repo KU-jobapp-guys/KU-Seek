@@ -2,7 +2,7 @@ export interface UserRequest {
   userId: string
   name: string
   requestedType: string
-  document: string
+  verificationDocument: string
   denialReason: string
   status: string
   createdAt: string

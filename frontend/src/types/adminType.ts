@@ -1,19 +1,19 @@
 export interface User {
   userId: string
-  firstName: string
-  lastName: string
-  userType: string
+  name: string
+  requestedType: string
   document: string
-  reason: string
+  denialReason: string
   status: string
   createdAt: string
-  approvedBy: string
+  approvedAt: string
 }
 
 export interface Job {
   jobId: string
   title: string
   company: string
+  applicants: number
   status: string
   reason: string  
 }

@@ -2,15 +2,10 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, CheckCircle, XCircle, Clock } from 'lucide-vue-next'
-import type { PendingJob } from '@/types/adminType'
+import type { Job } from '@/types/adminType'
 
 const router = useRouter()
-const { data } = defineProps<{ data: PendingJob[] }>()
-
-// Filters
-const userSearchTerm = ref('')
-const userTypeFilter = ref('all')
-const userStatusFilter = ref('all')
+const { data } = defineProps<{ data: Job[] }>()
 
 const jobSearchTerm = ref('')
 const jobStatusFilter = ref('all')
@@ -36,8 +31,6 @@ const pendingJobPosts = computed(() => {
 
 // Modals
 const showConfirmModal = ref(false)
-const showDocumentModal = ref(false)
-const selectedDocuments = ref<string[]>([])
 const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
 
 const navigateToJob = (jobId: string) => {

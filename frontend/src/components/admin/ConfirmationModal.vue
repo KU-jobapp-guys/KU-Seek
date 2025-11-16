@@ -80,79 +80,7 @@ const showDocumentModal = ref(false)
 const selectedDocuments = ref<string[]>([])
 const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
 
-// Navigation
-const navigateToProfile = (userId: string, userType: string) => {
-  router.push(`/${userType}/profile/${userId}`)
-}
 
-const navigateToJob = (jobId: string) => {
-  router.push(`/job/${jobId}`)
-}
-
-// Actions
-const suspendUser = (userId: string, event: Event) => {
-  event.stopPropagation()
-  confirmModalData.value = { 
-    action: 'suspend', 
-    type: 'user', 
-    item: mockUsers.value.find(u => u.id === userId) 
-  }
-  showConfirmModal.value = true
-}
-
-const deleteUser = (userId: string, event: Event) => {
-  event.stopPropagation()
-  confirmModalData.value = { 
-    action: 'delete', 
-    type: 'user', 
-    item: mockUsers.value.find(u => u.id === userId) 
-  }
-  showConfirmModal.value = true
-}
-
-const viewDocuments = (documents: string[], event: Event) => {
-  event.stopPropagation()
-  selectedDocuments.value = documents
-  showDocumentModal.value = true
-}
-
-const verifyUser = (userId: string, approve: boolean, event: Event) => {
-  event.stopPropagation()
-  const user = mockUsers.value.find(u => u.id === userId)
-  if (user) {
-    user.verified = approve
-    console.log(`User ${userId} verification ${approve ? 'approved' : 'rejected'}`)
-  }
-}
-
-const deleteJobPost = (jobId: string, event: Event) => {
-  event.stopPropagation()
-  confirmModalData.value = { 
-    action: 'delete', 
-    type: 'job', 
-    item: mockJobPosts.value.find(j => j.id === jobId) 
-  }
-  showConfirmModal.value = true
-}
-
-const suspendJobPost = (jobId: string, event: Event) => {
-  event.stopPropagation()
-  confirmModalData.value = { 
-    action: 'suspend', 
-    type: 'job', 
-    item: mockJobPosts.value.find(j => j.id === jobId) 
-  }
-  showConfirmModal.value = true
-}
-
-const approveJobPost = (jobId: string, approve: boolean, event: Event) => {
-  event.stopPropagation()
-  const job = mockJobPosts.value.find(j => j.id === jobId)
-  if (job) {
-    job.status = approve ? 'approved' : 'rejected'
-    console.log(`Job ${jobId} ${approve ? 'approved' : 'rejected'}`)
-  }
-}
 
 const confirmAction = () => {
   if (!confirmModalData.value) return
@@ -185,26 +113,6 @@ const confirmAction = () => {
   
   showConfirmModal.value = false
   confirmModalData.value = null
-}
-
-const getUserTypeColor = (type: string) => {
-  const colors = {
-    student: 'bg-blue-100 text-blue-700',
-    professor: 'bg-purple-100 text-purple-700',
-    company: 'bg-green-100 text-green-700'
-  }
-  return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-700'
-}
-
-const getStatusColor = (status: string) => {
-  const colors = {
-    active: 'bg-green-100 text-green-700',
-    suspended: 'bg-red-100 text-red-700',
-    approved: 'bg-green-100 text-green-700',
-    pending: 'bg-yellow-100 text-yellow-700',
-    rejected: 'bg-red-100 text-red-700'
-  }
-  return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-700'
 }
 </script>
 

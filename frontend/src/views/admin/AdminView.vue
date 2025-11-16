@@ -5,14 +5,14 @@ import ManageUserTab from '@/components/admin/tabs/ManageUserTab.vue'
 import ManageJobTab from '@/components/admin/tabs/ManageJobTab.vue'
 import JobApprovalTab from '@/components/admin/tabs/JobApprovalTab.vue'
 import AdminNavBar from '@/components/admin/AdminNavBar.vue'
-import type { User, Job } from '@/types/adminType'
+import type { UserRequest, JobRequest } from '@/types/adminType'
 import { fetchUsers, fetchJobs } from '@/services/adminServices'
 import JobDetail from '@/components/admin/JobDetail.vue'
 import { CircleArrowLeft } from 'lucide-vue-next'
 
 const isSideBarOpen = ref<boolean>(true)
-const users = ref<User[] | null>(null)
-const jobs = ref<Job[] | null>([])
+const users = ref<UserRequest[] | null>(null)
+const jobs = ref<JobRequest[] | null>([])
 
 // Job detail view state
 const selectedJobId = ref<string | null>(null)

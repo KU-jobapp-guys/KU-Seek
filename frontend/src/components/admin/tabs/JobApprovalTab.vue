@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Search, CheckCircle, XCircle } from 'lucide-vue-next'
-import type { Job } from '@/types/adminType'
+import type { JobRequest } from '@/types/adminType'
 import { updateJobStatus } from '@/services/adminServices';
 
-const { data } = defineProps<{ data: Job[] }>()
+const { data } = defineProps<{ data: JobRequest[] }>()
 const emit = defineEmits<{
   (e: 'viewJob', jobId: string): void
   (e: 'update', jobId: string, status: string): void

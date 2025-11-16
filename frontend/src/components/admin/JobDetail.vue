@@ -1,23 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import type { Job } from '@/types/jobType'
 import { fetchJobs } from '@/services/jobService'
 import { useRouter } from 'vue-router'
-import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
+import { MapPin, Clock, Banknote, BriefcaseBusiness } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
-import { getUserRole, isOwner } from '@/libs/userUtils'
-import { fetchUserAppliedJobs } from '@/services/applicationService'
 import { IconMap } from '@/configs/contactConfig'
 
 const props = defineProps<{ jobId: string }>()
 const router = useRouter()
 const job = ref<Job | null>(null)
-const userRole = getUserRole()
-
-const emit = defineEmits<{
-  (e: 'edit'): void
-}>()
 
 const loadJob = async (id?: string) => {
   if (!id) {

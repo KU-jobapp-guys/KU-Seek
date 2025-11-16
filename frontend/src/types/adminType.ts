@@ -1,4 +1,4 @@
-export interface User {
+export interface UserRequest {
   userId: string
   name: string
   requestedType: string
@@ -9,7 +9,7 @@ export interface User {
   approvedAt: string
 }
 
-export interface Job {
+export interface JobRequest {
   jobId: string
   title: string
   company: string

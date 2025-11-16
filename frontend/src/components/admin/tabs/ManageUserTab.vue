@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Search, XCircle } from 'lucide-vue-next'
-import type { User } from '@/types/adminType'
+import type { UserRequest } from '@/types/adminType'
 import { updateUserStatus } from '@/services/adminServices';
 
-const { data } = defineProps<{ data: User[] }>()
+const { data } = defineProps<{ data: UserRequest[] }>()
 const emit = defineEmits<{
   (e: 'update', userId: string, status: string): void
 }>()

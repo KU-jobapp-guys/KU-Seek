@@ -1,7 +1,7 @@
 import { getAuthHeader, fetchCsrfToken } from "./helperService"
-import type { User, Job } from "@/types/adminType"
+import type { UserRequest, JobRequest } from "@/types/adminType"
 
-export async function fetchUsers(): Promise<User[] | null> {
+export async function fetchUsers(): Promise<UserRequest[] | null> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/admin/users`)
 
@@ -19,7 +19,7 @@ export async function fetchUsers(): Promise<User[] | null> {
   }
 
   const data = await res.json()
-  return data as User[]
+  return data as UserRequest[]
 }
 
 export async function updateUserStatus(approve: boolean, userId: string, toDelete: boolean = false) {
@@ -49,7 +49,7 @@ export async function updateUserStatus(approve: boolean, userId: string, toDelet
   return res
 }
 
-export async function fetchJobs(): Promise<Job[] | null> {
+export async function fetchJobs(): Promise<JobRequest[] | null> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/admin/jobs`)
 
@@ -66,21 +66,10 @@ export async function fetchJobs(): Promise<Job[] | null> {
     return []
   }
 
-   const data = await res.json()
+  const data = await res.json()
+  console.log("data: ", data)
 
-  // Assuming data is an array of job request objects
-  const jobs: Job[] = data.map((item: any) => ({
-    jobId: item.job.id,
-    title: item.job.title,
-    company: item.company.companyName,
-    denialReason: item.denialReason,
-    status: item.status,
-    approvedAt: item.approvedAt,
-    createdAt: item.createdAt,
-    visibility: item.job.visibility,
-  }))
-
-  return jobs
+  return data as JobRequest[]
 }
 
 export async function updateJobStatus(approve: boolean, jobId: string, toDelete: boolean = false) {

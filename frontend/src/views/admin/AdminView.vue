@@ -8,7 +8,7 @@ import AdminNavBar from '@/components/admin/AdminNavBar.vue'
 import type { UserRequest, JobRequest } from '@/types/adminType'
 import { fetchUsers, fetchJobs } from '@/services/adminServices'
 import JobDetail from '@/components/admin/JobDetail.vue'
-import { CircleArrowLeft, Menu, X } from 'lucide-vue-next'
+import { CircleArrowLeft } from 'lucide-vue-next'
 
 const isSideBarOpen = ref<boolean>(true)
 const users = ref<UserRequest[] | null>(null)
@@ -201,12 +201,12 @@ onMounted(() => {
         </div>
 
         <!-- Tab Views -->
-        <template v-else class="">
+        <div v-else class="">
           <ManageUserTab v-if="currentTab === 'Manage Users'" :data="normalUsers" @update="updateUserData" />
           <UserApprovalTab v-if="currentTab === 'User Approvals'" :data="pendingUsers" @update="updateUserData" />
           <ManageJobTab v-if="currentTab === 'Manage Job Posts'" :data="jobs || []" @viewJob="handleJobClick" @update="updateJobData" />
           <JobApprovalTab v-if="currentTab === 'Job Approvals'" :data="pendingJobPosts" @viewJob="handleJobClick" @update="updateJobData" />
-        </template>
+        </div>
       </section>
     </div>
     

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import router from '@/router';
 import { LogOut } from 'lucide-vue-next';
 import { Menu } from 'lucide-vue-next';
 

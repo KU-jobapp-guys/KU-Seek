@@ -3,11 +3,17 @@ import { ref, computed } from 'vue'
 import { Search, CheckCircle, XCircle, ExternalLink } from 'lucide-vue-next'
 import type { UserRequest } from '@/types/adminType'
 import { updateUserStatus } from '@/services/adminServices';
+import { useToast } from 'vue-toastification'
+import ConfirmationModal from '../ConfirmationModal.vue';
 
 const { data } = defineProps<{ data: UserRequest[] }>()
 const emit = defineEmits<{
   (e: 'update', userId: string, status: string): void
 }>()
+
+const toast = useToast()
+const isModalOpen = ref(false)
+const selectedUserId = ref<string>('')
 
 // Filters
 const userSearchTerm = ref('')
@@ -24,8 +30,15 @@ const filteredUsers = computed(() => {
 })
 
 
-async function verifyUser(userId: string, approve: boolean, event: Event) {
-  event.stopPropagation()
+async function verifyUser(userId: string, approve: boolean, event?: Event) {
+  isModalOpen.value = false
+  event?.stopPropagation()
+
+  console.log("userId: ", userId)
+
+  if (!userId) return
+  
+
   const user = data.find(u => u.userId === userId)
   if (!user) return
   
@@ -33,9 +46,10 @@ async function verifyUser(userId: string, approve: boolean, event: Event) {
   if (res.ok) {
     const newStatus = approve ? 'approved' : 'reject'
     emit('update', userId, newStatus)
+    toast.success("Successfully update user approval status.")
   }
   else {
-    console.log('there is an error, please try again.')
+    toast.error("There is some error updating user approval status. Please try again.")
   }
 }
 
@@ -47,11 +61,19 @@ const getUserTypeColor = (type: string) => {
   }
   return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-700'
 }
+
+function openRejectModal(id: string) {
+  console.log("selectId: ", id)
+  selectedUserId.value = id
+  isModalOpen.value = true
+}
 </script>
 
 <template>
   <!-- User Approvals Tab -->
   <div>
+    <ConfirmationModal v-if="isModalOpen && selectedUserId" state="reject" @close="isModalOpen = false" @confirm="verifyUser(selectedUserId, false)"/>
+
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
         User Approvals
@@ -123,7 +145,7 @@ const getUserTypeColor = (type: string) => {
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex gap-2">
-                  <button @click="verifyUser(user.userId, false, $event)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
+                  <button @click="openRejectModal(user.userId)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
                     <XCircle class="w-4 h-4" />
                     Reject
                   </button>

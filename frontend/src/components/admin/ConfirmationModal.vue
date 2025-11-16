@@ -1,147 +1,77 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { Search, UserX, Trash2, CheckCircle, XCircle, AlertTriangle, Clock, FileText, ExternalLink } from 'lucide-vue-next'
+import { X, TriangleAlert } from 'lucide-vue-next'
 
-const router = useRouter()
+const { state } = defineProps<{
+  state: 'delete' | 'reject'
+}>()
 
-// Mock Data
-const mockUsers = ref([
-  { id: '1', name: 'John Doe', email: 'john@example.com', type: 'student', status: 'active', verified: true, joinDate: '2024-01-15', documents: [] },
-  { id: '2', name: 'Jane Smith', email: 'jane@example.com', type: 'professor', status: 'active', verified: false, joinDate: '2024-02-20', documents: ['transcript.pdf', 'id_card.pdf'] },
-  { id: '3', name: 'TechCorp Inc', email: 'contact@techcorp.com', type: 'company', status: 'suspended', verified: true, joinDate: '2024-03-10', documents: [] },
-  { id: '4', name: 'Bob Wilson', email: 'bob@example.com', type: 'student', status: 'active', verified: false, joinDate: '2024-04-05', documents: ['student_id.pdf'] },
-  { id: '5', name: 'Alice Johnson', email: 'alice@example.com', type: 'professor', status: 'active', verified: true, joinDate: '2024-05-12', documents: [] },
-  { id: '6', name: 'Mike Brown', email: 'mike@example.com', type: 'student', status: 'active', verified: false, joinDate: '2024-06-01', documents: ['enrollment.pdf', 'transcript.pdf'] },
-])
+const emits = defineEmits<{
+  (e: 'close'): void
+  (e: 'confirm'): void
+}>()
 
-const mockJobPosts = ref([
-  { id: '1', title: 'Software Engineer', company: 'TechCorp', postedDate: '2024-10-01', status: 'approved', applicants: 25 },
-  { id: '2', title: 'Product Manager', company: 'StartupXYZ', postedDate: '2024-10-15', status: 'pending', applicants: 12 },
-  { id: '3', title: 'Data Scientist', company: 'DataCo', postedDate: '2024-10-20', status: 'rejected', applicants: 8 },
-  { id: '4', title: 'UI/UX Designer', company: 'DesignHub', postedDate: '2024-10-25', status: 'pending', applicants: 15 },
-  { id: '5', title: 'Backend Developer', company: 'CodeFactory', postedDate: '2024-11-01', status: 'approved', applicants: 30 },
-  { id: '6', title: 'Frontend Developer', company: 'WebStudio', postedDate: '2024-11-05', status: 'pending', applicants: 18 },
-])
-
-const tabLists = ['Manage Users', 'User Approvals', 'Manage Job Posts', 'Job Approvals']
-const currentTab = ref<string>('Manage Users')
-
-// Filters
-const userSearchTerm = ref('')
-const userTypeFilter = ref('all')
-const userStatusFilter = ref('all')
-
-const jobSearchTerm = ref('')
-const jobStatusFilter = ref('all')
-
-const approvalUserSearch = ref('')
-const approvalJobSearch = ref('')
-
-// Filtered Data
-const filteredUsers = computed(() => {
-  return mockUsers.value.filter(user => user.verified).filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(userSearchTerm.value.toLowerCase()) ||
-                         user.email.toLowerCase().includes(userSearchTerm.value.toLowerCase())
-    const matchesType = userTypeFilter.value === 'all' || user.type === userTypeFilter.value
-    const matchesStatus = userStatusFilter.value === 'all' || user.status === userStatusFilter.value
-    
-    return matchesSearch && matchesType && matchesStatus
-  })
-})
-
-const pendingUsers = computed(() => {
-  return mockUsers.value.filter(user => !user.verified).filter(user => {
-    return user.name.toLowerCase().includes(approvalUserSearch.value.toLowerCase()) ||
-           user.email.toLowerCase().includes(approvalUserSearch.value.toLowerCase())
-  })
-})
-
-const filteredJobPosts = computed(() => {
-  return mockJobPosts.value.filter(job => job.status !== 'pending').filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(jobSearchTerm.value.toLowerCase()) ||
-                         job.company.toLowerCase().includes(jobSearchTerm.value.toLowerCase())
-    const matchesStatus = jobStatusFilter.value === 'all' || job.status === jobStatusFilter.value
-    
-    return matchesSearch && matchesStatus
-  })
-})
-
-const pendingJobPosts = computed(() => {
-  return mockJobPosts.value.filter(job => job.status === 'pending').filter(job => {
-    return job.title.toLowerCase().includes(approvalJobSearch.value.toLowerCase()) ||
-           job.company.toLowerCase().includes(approvalJobSearch.value.toLowerCase())
-  })
-})
-
-// Modals
-const showConfirmModal = ref(false)
-const showDocumentModal = ref(false)
-const selectedDocuments = ref<string[]>([])
-const confirmModalData = ref<{ action: string, type: string, item: any } | null>(null)
-
-
-
-const confirmAction = () => {
-  if (!confirmModalData.value) return
-  
-  const { action, type, item } = confirmModalData.value
-  
-  if (type === 'user') {
-    if (action === 'delete') {
-      mockUsers.value = mockUsers.value.filter(u => u.id !== item.id)
-      console.log(`Deleted user ${item.id}`)
-    } else if (action === 'suspend') {
-      const user = mockUsers.value.find(u => u.id === item.id)
-      if (user) {
-        user.status = user.status === 'suspended' ? 'active' : 'suspended'
-        console.log(`User ${item.id} status: ${user.status}`)
-      }
-    }
-  } else if (type === 'job') {
-    if (action === 'delete') {
-      mockJobPosts.value = mockJobPosts.value.filter(j => j.id !== item.id)
-      console.log(`Deleted job post ${item.id}`)
-    } else if (action === 'suspend') {
-      const job = mockJobPosts.value.find(j => j.id === item.id)
-      if (job) {
-        job.status = 'suspended'
-        console.log(`Job post ${item.id} suspended`)
-      }
-    }
-  }
-  
-  showConfirmModal.value = false
-  confirmModalData.value = null
+const content = {
+  'delete': {
+    title: 'Delete Account',
+    message: 'This account and all associated data will be permanently deleted. This action cannot be undone.',
+  },
+  'reject': {
+    title: 'Reject Verification',
+    message: 'Are you sure you want to reject this verification?',
+  },
 }
 </script>
 
-
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-          <AlertTriangle class="w-6 h-6 text-red-600" />
+  <div class="fixed inset-0 flex items-center justify-center z-10 p-4">
+    <!-- Overlay Background -->
+    <div
+      class="absolute inset-0 bg-black/40 backdrop-blur-md"
+      @click="emits('close')"
+    />
+
+    <!-- Modal Content -->
+    <div class="relative bg-white/95 backdrop-blur-xl rounded-lg shadow-2xl z-50 max-w-md w-full border border-gray-200/50 overflow-hidden">
+      <button
+        @click="emits('close')"
+        class="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center z-10 transition-colors duration-200 group"
+      >
+        <X class="w-4 h-4 text-gray-600 group-hover:text-gray-800" />
+      </button>
+      
+      <div class="px-8 pt-8 pb-6 relative">
+        <div class="absolute top-0 left-0 right-0 h-2 bg-red-500"/>
+            
+        <div class="w-14 h-14 rounded-2xl bg-red-500 flex items-center justify-center mb-5 shadow-lg shadow-red-500/30">
+          <TriangleAlert class="w-7 h-7 text-white" />
         </div>
-        <h3 class="text-xl font-bold text-gray-900">Confirm Action</h3>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">
+          {{ content[state].title }}
+        </h3>
+
+        <p class="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+          {{ content[state].message }}
+        </p>
       </div>
-      
-      <p class="text-gray-600 mb-6">
-        Are you sure you want to {{ confirmModalData?.action }} this {{ confirmModalData?.type }}?
-        <span v-if="confirmModalData?.item" class="font-semibold block mt-2">
-          {{ confirmModalData.type === 'user' ? confirmModalData.item.name : confirmModalData.item.title }}
-        </span>
-      </p>
-      
-      <div class="flex gap-3">
-        <button @click="showConfirmModal = false" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-          Cancel
-        </button>
-        <button @click="confirmAction" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-          Confirm
-        </button>
+
+      <div class="px-8 pb-8 pt-2">
+        <div class="flex flex-col gap-3">
+          <button
+            class="w-full rounded-xl bg-red-500 py-3 px-4 text-white font-semibold hover:bg-red-600"
+            @click="$emit('confirm')"
+          >
+            Confirm
+          </button>
+          <button
+            class="w-full rounded-xl border-2 border-gray-200 py-3 px-4 text-gray-700 font-medium hover:bg-gray-100 hover:border-gray-300"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
+
   </div>
 </template>

@@ -119,11 +119,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row w-full h-screen bg-orange-500">
+  <div class="flex flex-col lg:flex-row w-full h-screen">
     <!-- Sidebar - Desktop Only -->
     <section 
       v-if="isSideBarOpen"
-      class="hidden lg:flex flex-col bg-gradient-to-b from-blue-50 to-blue-100 h-full w-[20vw] py-8 border-r border-blue-200"
+      class="z-20 hidden lg:flex flex-col bg-gradient-to-b from-blue-50 to-blue-100 h-full w-[20vw] py-8 border-r border-blue-200"
     >
       <div class="flex flex-col px-4 mb-4 gap-y-0 text-2xl font-bold leading-none py-4 border-b-2 border-blue-300">
         <h1>Admin</h1>

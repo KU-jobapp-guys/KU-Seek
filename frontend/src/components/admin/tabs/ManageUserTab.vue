@@ -3,11 +3,15 @@ import { ref, computed } from 'vue'
 import { Search, XCircle } from 'lucide-vue-next'
 import type { UserRequest } from '@/types/adminType'
 import { updateUserStatus } from '@/services/adminServices';
+import ConfirmationModal from '../ConfirmationModal.vue';
 
 const { data } = defineProps<{ data: UserRequest[] }>()
 const emit = defineEmits<{
   (e: 'update', userId: string, status: string): void
 }>()
+
+const isModalOpen = ref(false)
+const selectUserId = ref<string>()
 
 // Filters
 const userSearchTerm = ref('')
@@ -23,14 +27,15 @@ const filteredUsers = computed(() => {
 })
 
 
-async function deleteUser(userId: string, event: Event) {
-  event.stopPropagation()
-  const user = data.find(u => u.userId === userId)
+async function deleteUser() {
+  if(!selectUserId.value) return
+
+  const user = data.find(u => u.userId === selectUserId.value)
   if (!user) return
   
-  const res = await updateUserStatus(false, userId, true)
+  const res = await updateUserStatus(false, selectUserId.value, true)
   if (res.ok) {
-    emit('update', userId, 'delete')
+    emit('update', selectUserId.value, 'delete')
   }
   else {
     console.log('there is an error, please try again.')
@@ -48,7 +53,9 @@ const getUserTypeColor = (type: string) => {
 </script>
 
 <template>
-  <div>
+  <ConfirmationModal v-if="isModalOpen" state="delete" @close="isModalOpen = false" @confirm="deleteUser"/>
+
+  <div class="w-full h-full">
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Manage Users</h1>
       <p class="text-gray-600">Click on a user row to view their profile</p>
@@ -111,7 +118,7 @@ const getUserTypeColor = (type: string) => {
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ new Date(user.approvedAt).toLocaleDateString() }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button @click="deleteUser(user.userId, $event)" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
+                <button @click="isModalOpen = true, selectUserId=user.userId" class="px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium">
                   <XCircle class="w-4 h-4" />
                   Delete
                 </button>

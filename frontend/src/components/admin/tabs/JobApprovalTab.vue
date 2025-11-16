@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { Search, CheckCircle, XCircle } from 'lucide-vue-next'
 import type { JobRequest } from '@/types/adminType'
+import { useToast } from 'vue-toastification'
 import { updateJobStatus } from '@/services/adminServices';
 
 const { data } = defineProps<{ data: JobRequest[] }>()
@@ -11,6 +12,7 @@ const emit = defineEmits<{
 }>()
 
 const jobSearchTerm = ref('')
+const toast = useToast()
 
 const filteredJobPosts = computed(() => {
   return data.filter(job => {
@@ -30,9 +32,10 @@ async function verifyJob(jobId: string, approve: boolean, event: Event) {
   if (res.ok) {
     const newStatus = approve ? 'approved' : 'reject'
     emit('update', jobId, newStatus)
+    toast.success("Successfully update job approval status.")
   }
   else {
-    console.log('there is an error, please try again.')
+    toast.error("There is error updating job approval status. Please try again.")
   }
 }
 </script>

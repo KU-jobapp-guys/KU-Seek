@@ -42,10 +42,10 @@ async function deleteJob() {
   const res = await updateJobStatus(false, selectJobId.value, true)
   if (res.ok) {
     emit('update', selectJobId.value, 'delete')
-    toast.success("Successfully delete job post.")
+    toast.success("The job post has been successfully deleted.")
   }
   else {
-    toast.error("There is an error deleting job post. Please try again.")
+    toast.error("Failed to delete the job post. Please try again later.")
   }
 }
 

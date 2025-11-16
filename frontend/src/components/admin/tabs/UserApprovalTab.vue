@@ -46,10 +46,9 @@ async function verifyUser(userId: string, approve: boolean, event?: Event) {
   if (res.ok) {
     const newStatus = approve ? 'approved' : 'reject'
     emit('update', userId, newStatus)
-    toast.success("Successfully update user approval status.")
-  }
+    toast.success("The user's approval status has been successfully updated.")  }
   else {
-    toast.error("There is some error updating user approval status. Please try again.")
+    toast.error("Failed to update the user's approval status. Please try again later.")
   }
 }
 

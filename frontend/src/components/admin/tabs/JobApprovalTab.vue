@@ -42,9 +42,9 @@ async function verifyJob(jobId: string, approve: boolean, event?: MouseEvent) {
   if (res.ok) {
     const newStatus = approve ? 'approved' : 'reject'
     emit('update', jobId, newStatus)
-    toast.success("Successfully updated job approval status.")
+    toast.success("The job approval status has been successfully updated.")
   } else {
-    toast.error("Error updating job approval status. Please try again.")
+    toast.error("Failed to update the job approval status. Please try again later.")
   }
 
 }

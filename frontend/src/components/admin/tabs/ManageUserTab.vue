@@ -40,10 +40,10 @@ async function deleteUser() {
   const res = await updateUserStatus(false, selectUserId.value, true)
   if (res.ok) {
     emit('update', selectUserId.value, 'delete')
-    toast.success("Successfully deleted user account.")
+    toast.success("The user account has been successfully deleted.")
   }
   else {
-    toast.error("There is an error deleting user account. Please try again.")
+    toast.error("Failed to delete the user account. Please try again later.")
   }
 }
 

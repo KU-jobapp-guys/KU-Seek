@@ -9,7 +9,8 @@ import { useEditableProfile } from '@/libs/profileEditing'
 import { getProfileData, updateProfileData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockJobs } from '@/data/mockJobs'
+import { mockCompany } from '@/data/mockCompany'
+import { fetchJobs } from '@/services/jobService'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import CompanyEdit from '@/components/profiles/edits/CompanyEdit.vue'
 import CompanyView from '@/components/profiles/views/CompanyView.vue'
@@ -28,7 +29,7 @@ const companyJobs = ref<Job[]>([])
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<CompanyProfile>()
 
-async function loadCompany(id?: string) {
+const loadCompany = async (id?: string) => {
   if (!id) {
     router.replace({ name: 'not found' })
     return
@@ -42,7 +43,16 @@ async function loadCompany(id?: string) {
     router.replace({ name: 'not found' })
     return
   }
-  companyJobs.value = mockJobs.filter((j) => j.company === companyData.value?.name)
+
+  // Fetch jobs from backend and filter by this company's name
+  try {
+    const jobs = await fetchJobs()
+    const companyName = companyData.value?.name ?? ''
+    companyJobs.value = jobs.filter((j) => j.company === companyName)
+  } catch (err) {
+    console.error('Failed to load company jobs', err)
+    companyJobs.value = []
+  }
 }
 
 const isNewProfile = computed(() => {
@@ -86,8 +96,8 @@ const renderReady = () => {
   isLoading.value = false
 }
 
-onMounted(() => {
-  loadCompany(route.params.id as string)
+onMounted(async () => {
+  await loadCompany(route.params.id as string)
   window.scrollTo({ top: 0 })
 })
 

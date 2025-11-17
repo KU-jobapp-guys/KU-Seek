@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Header from '@/components/layouts/AppHeader.vue'
+import { fetchUserAppliedJobs } from '@/services/applicationService'
 import JobCard from '@/components/jobBoard/JobBox.vue'
 import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
 import { statusOptions } from '@/configs/statusOption'
@@ -11,7 +12,7 @@ import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
 import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
 
-type ApplicationStatus = 'pending' | 'approved' | 'rejected'
+type ApplicationStatus = 'pending' | 'accepted' | 'rejected'
 
 const openSection = ref<string>('Total Jobs Applied')
 const router = useRouter()
@@ -19,7 +20,7 @@ const router = useRouter()
 const appliedJobs = ref<Job[]>([])
 const bookmarkedJobs = ref<Job[]>([])
 const recentlyViewedJobs = ref<Job[]>([])
-const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['pending', 'approved', 'rejected']))
+const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['pending', 'accepted', 'rejected']))
 
 const toggleSection = (section: string) => {
   openSection.value = section
@@ -35,7 +36,7 @@ const toggleStatus = (status: ApplicationStatus) => {
 }
 
 function clearFilters() {
-  selectedStatuses.value = new Set(['pending', 'approved', 'rejected'])
+  selectedStatuses.value = new Set(['pending', 'accepted', 'rejected'])
 }
 
 const handleSelect = (id: string) => {
@@ -53,7 +54,7 @@ const stats = computed(() => {
 const statusCounts = computed(() => {
   return {
     pending: appliedJobs.value.filter((j) => j.status === 'pending').length,
-    approved: appliedJobs.value.filter((j) => j.status === 'approved').length,
+    accepted: appliedJobs.value.filter((j) => j.status === 'accepted').length,
     rejected: appliedJobs.value.filter((j) => j.status === 'rejected').length,
   }
 })
@@ -66,14 +67,14 @@ const filteredAppliedJobs = computed(() => {
 
 async function fetchJobs() {
   try {
-    import('@/data/mockJobs').then(({ mockJobs }) => {
-      appliedJobs.value = mockJobs.slice(0, 5)
-      recentlyViewedJobs.value = mockJobs.slice(7, 10)
+    const applications = await fetchUserAppliedJobs()
 
-      // Restore bookmarked jobs from localStorage
-      const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
-      bookmarkedJobs.value = mockJobs.filter((job) => saved.includes(job.jobId))
-    })
+    appliedJobs.value = applications
+
+    const saved = JSON.parse(localStorage.getItem('bookmarkedJobs') || '[]')
+    bookmarkedJobs.value = applications.filter((job) => saved.includes(job.jobId))
+
+    recentlyViewedJobs.value = []
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
   }

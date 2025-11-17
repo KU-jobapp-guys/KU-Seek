@@ -2,6 +2,13 @@ import type { Profile } from "@/types/profileType"
 import { getAuthHeader } from "./helperServices"
 import type { Company } from "@/types/companyType"
 
+interface ConnectionResponse {
+  company_id: number
+  created_at: string
+  id: number
+  professor_id: number
+}
+
 export async function getProfileData(user_id: string): Promise<Profile | null> {
   try {
     const res = await fetch(`http://localhost:8000/api/v1/users/${user_id}/profile`, {
@@ -126,7 +133,7 @@ export async function fetchConnections(): Promise<string[] | null> {
     const data = await response.json();
 
     // Extract only company_id
-    const companyIds = data.map((item: any) => String(item.company_id));
+    const companyIds = data.map((item: ConnectionResponse) => String(item.company_id));
 
     return companyIds;
   } catch (error) {

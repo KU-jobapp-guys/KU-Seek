@@ -1,26 +1,31 @@
 <script setup lang="ts">
-import { mockCompany } from '@/data/mockCompany'
 import { X, Check } from 'lucide-vue-next'
-import { onMounted, ref, computed } from 'vue'
-import type { CompanyProfile } from '@/types/profileType'
+import { ref, computed } from 'vue'
 import ConnectCompany from './ConnectCompany.vue'
+import type { Company } from '@/types/companyType'
+import { fetchCsrfToken, getAuthHeader } from '@/services/helperServices'
+import { useToast } from 'vue-toastification'
 
-const allCompanies = ref<CompanyProfile[]>([])
 const searchTerm = ref('')
 const selectedCompanyId = ref<string | null>(null)
 
+const toast = useToast()
+
+const { companies } = defineProps<{ companies: Company[] }>();
+
 const emit = defineEmits<{
-  close: []
+  (e: 'close'): void
+  (e: 'addConnection', companyId: string): void
 }>()
 
 const filteredCompanies = computed(() => {
   if (!searchTerm.value.trim()) {
-    return allCompanies.value
+    return companies
   }
   
   const lowercasedTerm = searchTerm.value.toLowerCase()
-  return allCompanies.value.filter((company) =>
-    company.name.toLowerCase().includes(lowercasedTerm)
+  return companies.filter((company) =>
+    company.companyName.toLowerCase().includes(lowercasedTerm)
   )
 })
 
@@ -28,19 +33,41 @@ const selectCompany = (companyId: string) => {
   selectedCompanyId.value = companyId
 }
 
-const confirmConnection = () => {
-  console.log('Confirmed connection with company ID:', selectedCompanyId.value)
+async function confirmConnection() {
+  if (!selectedCompanyId.value) return
+
+  try {
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+
+    const csrfToken = await fetchCsrfToken(base)
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...getAuthHeader(),
+    }
+    if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
+
+    const res = await fetch(`${base}/api/v1/connections`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        company_id: Number(selectedCompanyId.value),
+      }),
+      credentials: 'include'
+    })
+
+    if (res.ok) {
+      emit('addConnection', selectedCompanyId.value)
+      toast.success("Successfully added new connection.")
+    } else {
+      toast.error("Failed to add new connection. Please try again.")
+    }
+
+  } catch (err) {
+    console.error('Error creating connection', err)
+  }
+
   emit('close')
 }
-
-const loadAllCompanies = () => {
-  // In real implementation, fetch from API
-  allCompanies.value = mockCompany
-}
-
-onMounted(() => {
-  loadAllCompanies()
-})
 </script>
 
 <template>
@@ -95,11 +122,11 @@ onMounted(() => {
 
           <div
             v-for="company in filteredCompanies"
-            :key="company.id"
-            @click="selectCompany(company.id)"
+            :key="company.companyId"
+            @click="selectCompany(company.companyId)"
             :class="[
               'cursor-pointer rounded-xl overflow-hidden',
-              selectedCompanyId === company.id
+              selectedCompanyId === company.companyId
                 ? 'ring-2 ring-orange-500 shadow-md'
                 : 'hover:ring-2 hover:ring-gray-300'
             ]"
@@ -107,7 +134,7 @@ onMounted(() => {
             <div class="relative">
               <!-- Selected Indicator -->
               <div
-                v-if="selectedCompanyId === company.id"
+                v-if="selectedCompanyId === company.companyId"
                 class="absolute top-3 right-3 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center z-10 shadow-lg"
               >
                 <Check class="w-5 h-5 text-white" />

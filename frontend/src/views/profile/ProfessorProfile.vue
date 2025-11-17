@@ -6,11 +6,9 @@ import { Save, X, Plus } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import type { Company } from '@/types/companyType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { fetchAllCompanies, fetchConnections, getProfileData, updateProfileData } from '@/services/profileServices'
+import { fetchAllCompanies, fetchConnections, getProfileData, updateUserData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockCompany } from '@/data/mockCompany'
-import { getAuthHeader } from '@/services/helperServices'
 
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
@@ -77,7 +75,6 @@ async function loadConnections() {
   }
 }
 
-
 const renderReady = () => {
   isLoading.value = false
 }
@@ -110,9 +107,10 @@ const save = async () => {
     phoneNumber: data.phoneNumber || '',
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok) {
+    const resData = (await res.json()) as ProfessorProfile
     saveProfile(resData)
     professorData.value = { ...resData } as ProfessorProfile
     toast.success('Profile updated successfully')
@@ -147,7 +145,7 @@ onMounted(async () => {
 
 <template>
   <LoadingScreen v-if="isLoading" />
-  <AddConnectionModal v-if="isAddingConnection" :companies="otherCompanies || []" @close="isAddingConnection = false" @confirm="addConnection"/>
+  <AddConnectionModal v-if="isAddingConnection" :companies="otherCompanies || []" @close="isAddingConnection = false" @addConnection="addConnection"/>
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
     <ProfessorBanner
@@ -222,7 +220,7 @@ onMounted(async () => {
             </button>
 
             <div v-for="c in connectCompanies" :key="c.companyId">
-              <ConnectCompany :company="c" @select="router.push(`/company/profile/${c.companyId}`)"/>
+              <ConnectCompany :company="c" @select="router.push(`/company/profile/${c.userId}`)"/>
             </div>
           </div>
         </div>

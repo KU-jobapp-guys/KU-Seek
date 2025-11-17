@@ -5,7 +5,7 @@ import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
+import { getProfileData, updateUserData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -75,9 +75,10 @@ const save = async () => {
     education: (data.education || []).map(edu => ({ ...edu })),
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok) {
+    const resData = (await res.json()) as StudentProfile
     saveProfile(resData)
     studentData.value = { ...resData } as StudentProfile
     toast.success('Profile updated successfully')

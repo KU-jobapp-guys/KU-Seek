@@ -6,7 +6,7 @@ import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
+import { getProfileData, updateUserData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockCompany } from '@/data/mockCompany'
@@ -81,11 +81,12 @@ const save = async () => {
     bannerPhoto: data.bannerPhoto || '',
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok) {
+    const resData = (await res.json()) as CompanyProfile
     saveProfile(resData)
-    companyData.value = { ...resData } as CompanyProfile
+    companyData.value = { ...resData } 
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')

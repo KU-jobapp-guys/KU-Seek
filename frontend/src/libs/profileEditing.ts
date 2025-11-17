@@ -43,9 +43,9 @@ export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
       }, 100)
       return false
     }
-
-    targetData.value = editData.value
-    // send data to backend here
+    
+    return true
+  }
 
   const saveProfile = (newData: Profile) => {
     isEditing.value = false

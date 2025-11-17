@@ -177,7 +177,7 @@ onMounted(async () => {
           leave-to-class="transform opacity-0 scale-95"
         >
           <MenuItems
-            v-if="openMenu === 'profile' && (!props.role || props.role === 'visitor')"
+            v-if="openMenu === 'profile'"
             static
             class="absolute right-0 mt-4 w-48 origin-top-right rounded-md bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none"
           >

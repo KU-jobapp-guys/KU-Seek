@@ -1,4 +1,5 @@
 export interface Company {
+  userId: string
   companyId: string
   companyName: string
   jobCount: number

@@ -22,8 +22,6 @@ const router = useRouter()
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
 
-const bookmarkedJobs = ref<Set<string>>(new Set()) // track bookmarked jobs
-
 const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
 const showSuccess = (msg = 'Action completed successfully!') =>
   toastRef.value?.addToast(msg, 'success')

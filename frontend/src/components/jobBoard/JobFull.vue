@@ -25,9 +25,7 @@ const emit = defineEmits<{
   (e: 'bookmark', payload: { jobId: string, bm: boolean }): void
 }>()
 
-const savedJobs = ref<Set<string>>(new Set()) // store saved jobIds
 const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
-
 const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 

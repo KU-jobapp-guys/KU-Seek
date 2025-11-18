@@ -5,19 +5,18 @@ import { Banknote, Bookmark, BookmarkCheck, MapPin } from 'lucide-vue-next'
 import { getPostTime } from '@/libs/getPostTime'
 import { getStatusColor } from '@/libs/getStatusStyle'
 
-
 const props = withDefaults(
   defineProps<{
     job: Job
-    bookmarked: boolean
+    bookmarked?: boolean
     showBookmark?: boolean
   }>(),
-  { showBookmark: true },
+  { showBookmark: true, bookmarked: false },
 )
 
 const emit = defineEmits<{
   (e: 'select', id: string): void
-  (e: 'bookmark', payload: { jobId: string, bm: boolean }): void
+  (e: 'bookmark', payload: { id: string; bookmarked: boolean }): void
 }>()
 
 const isBookmarked = ref(props.bookmarked)
@@ -32,9 +31,9 @@ function handleJobSelected() {
   emit('select', props.job.jobId)
 }
 
-async function toggleBookmark() {
-  // isBookmarked.value = !isBookmarked.value
-  emit('bookmark', { jobId: props.job.jobId, bm: !isBookmarked.value })
+function toggleBookmark() {
+  isBookmarked.value = !isBookmarked.value
+  emit('bookmark', { id: props.job.jobId, bookmarked: isBookmarked.value })
 }
 </script>
 

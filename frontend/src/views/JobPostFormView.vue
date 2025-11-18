@@ -31,23 +31,16 @@ type FormPayload = {
 
 const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
 
-    const defaults = {
-      workHours: '9:00 AM - 5:00 PM',
-      jobLevel: 'Mid-level',
-      capacity: 1,
-      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    }
-
     const anyPayload = formPayload as Record<string, unknown>
     const bodyPayload = {
       title: String(anyPayload.role ?? anyPayload.title ?? ''),
       description: String(anyPayload.description ?? ''),
       location: String(anyPayload.location ?? ''),
-      workHours: String(anyPayload.workHours ?? anyPayload.work_hours ?? defaults.workHours),
+      workHours: String(anyPayload.workHours ?? anyPayload.work_hours),
       jobType: String((anyPayload.jobType ?? anyPayload.job_type ?? '')).toLowerCase(),
-      jobLevel: String(anyPayload.jobLevel ?? anyPayload.job_level ?? defaults.jobLevel),
-      capacity: Number(anyPayload.capacity ?? defaults.capacity),
-      endDate: String(anyPayload.endDate ?? anyPayload.end_date ?? defaults.endDate),
+      jobLevel: String(anyPayload.jobLevel ?? anyPayload.job_level),
+      capacity: Number(anyPayload.capacity),
+      endDate: String(anyPayload.endDate ?? anyPayload.end_date),
       salaryMin: Number(anyPayload.salaryMin ?? anyPayload.salary_min ?? 0),
       salaryMax: Number(anyPayload.salaryMax ?? anyPayload.salary_max ?? 0),
       skillNames: Array.isArray(anyPayload.skillNames)

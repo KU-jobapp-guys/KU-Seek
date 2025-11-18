@@ -3,7 +3,8 @@ import { ref, watch, onMounted, computed } from 'vue'
 import type { Job } from '@/types/jobType'
 import { fetchJobs } from '@/services/jobService'
 import { useRouter } from 'vue-router'
-import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
+import { MapPin, Bookmark, BookmarkCheck, Clock,
+  Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
 import ToastContainer from '@/components/additions/ToastContainer.vue'
@@ -11,19 +12,24 @@ import { getUserRole, isOwner } from '@/libs/userUtils'
 import { fetchUserAppliedJobs } from '@/services/applicationService'
 import { IconMap } from '@/configs/contactConfig'
 
-const props = defineProps<{ jobId: string }>()
+
+const props = defineProps<{ jobId: string, bookmarked: boolean }>()
+
 const router = useRouter()
 const job = ref<Job | null>(null)
+const isBookmarked = ref<boolean>(props.bookmarked)
 const userRole = getUserRole()
 
 const emit = defineEmits<{
   (e: 'edit'): void
+  (e: 'bookmark', payload: { jobId: string, bm: boolean }): void
 }>()
 
 const savedJobs = ref<Set<string>>(new Set()) // store saved jobIds
 const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
 
 const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+
 
 const loadJob = async (id?: string) => {
   if (!id) {
@@ -49,6 +55,13 @@ watch(
   (newId) => loadJob(newId),
 )
 
+watch(
+  () => props.bookmarked,
+  (newBm) => {
+    isBookmarked.value = newBm
+  },
+)
+
 const appliedJobIds = ref(new Set<string>())
 
 const loadApplied = async () => {
@@ -68,17 +81,16 @@ const goToApply = () => {
   }
 }
 
-const toggleSave = () => {
-  if (!job.value) return
-  const id = job.value.jobId
-  if (savedJobs.value.has(id)) {
-    savedJobs.value.delete(id)
-    showSuccess('Bookmark removed!')
-  } else {
-    savedJobs.value.add(id)
+async function toggleBookmark() {
+    emit('bookmark', { jobId: props.jobId, bm: !isBookmarked.value })
+  
+    if (!isBookmarked.value) {
     showSuccess('Job bookmarked!')
+  } else {
+    showSuccess('Bookmark removed!')
   }
 }
+
 </script>
 
 <template>
@@ -138,15 +150,12 @@ const toggleSave = () => {
         >
           {{ isApplied ? 'Applied' : 'Apply' }}
         </button>
-        <button
-          @click="toggleSave"
-          :class="[
-            savedJobs.has(job.jobId) ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-600',
-            'border border-2 border-gray-600 px-8 py-1 rounded-md',
-          ]"
-        >
-          {{ savedJobs.has(job.jobId) ? 'Saved' : 'Save' }}
-        </button>
+
+        <component
+          :is="isBookmarked ? BookmarkCheck : Bookmark"
+          class="h-9 w-8 cursor-pointer text-blue-500 hover:scale-110 transition-transform"
+          @click.stop="toggleBookmark"
+        />
       </div>
 
       <p class="mt-12">{{ job.description }}</p>

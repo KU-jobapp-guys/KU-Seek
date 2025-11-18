@@ -16,6 +16,7 @@ export interface Job {
   status: string
   totalApplicants: number
   pendingApplicants: number
+  bookmarked: boolean
 }
 
 export type FilterKeys = 'role' | 'skills' | 'company' | 'jobLevel' | 'location' | 'jobType'

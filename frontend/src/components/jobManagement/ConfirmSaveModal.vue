@@ -42,20 +42,24 @@ const emit = defineEmits<{
       @click="emit('handleModalClick', 'cancel')"
     ></div>
 
-    <!-- Modal -->
-    <div
-      class="relative bg-white rounded-2xl shadow-2xl z-50 max-w-2xl w-full max-h-[90vh] flex flex-col"
-    >
-      <X
+    <!-- Modal Content -->
+    <div class="relative bg-white/95 backdrop-blur-xl rounded-lg shadow-2xl z-50 max-w-xl w-full border border-gray-200/50 overflow-hidden">
+      <button
         @click="emit('handleModalClick', 'cancel')"
-        class="absolute top-4 right-4 w-5 h-5 rounded-full text-gray-500 hover:text-gray-400 z-10"
-      />
+        class="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center z-10 transition-colors duration-200 group"
+      >
+        <X class="w-4 h-4 text-gray-600 group-hover:text-gray-800" />
+      </button>
+      
+      <div class="px-8 pt-8 pb-6 relative border-b border-gray-300">
+        <div class="absolute top-0 left-0 right-0 h-2 bg-gray-300"/>
 
-      <!-- Header -->
-      <div class="px-6 pt-6 pb-4 border-b border-gray-200">
-        <h3 class="text-2xl font-bold text-gray-900 pr-8">Confirm Changes</h3>
-        <p class="text-gray-600 mt-1">
-          You're about to update {{ totalChanges }} applicant{{ totalChanges !== 1 ? 's' : '' }}
+        <h3 class="text-2xl font-bold text-gray-900 mb-3">
+          Update Applicants Status
+        </h3>
+
+        <p class="text-gray-600 text-sm">
+          You're about to update the status of {{ totalChanges }} applicant<span v-if="totalChanges > 1">s</span>.
         </p>
       </div>
 

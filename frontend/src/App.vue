@@ -30,7 +30,7 @@ watch(userRole, (newRole) => {
     </header>
 
     <main class="flex-1" :class="!$route.meta.admin ? 'mt-4 md:mt-8' : ''">
-      <RouterView v-model:role="userRole" />
+      <RouterView />
     </main>
 
     <footer id="footer" v-if="!$route.meta.noFooter">

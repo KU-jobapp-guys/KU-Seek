@@ -114,7 +114,7 @@ function openRejectModal(jobId: string, event: MouseEvent) {
                 <div class="text-sm text-gray-700">{{ new Date(job.createdAt).toLocaleDateString() }}</div>
               </td>
               <td class="px-6 py-4 whitespace-normal text-sm break-words" style="max-width: 200px;">
-                {{ user.denialReason }}
+                {{ job.denialReason }}
               </td>   
               <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                 <div class="flex justify-start gap-2">

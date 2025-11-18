@@ -12,6 +12,8 @@ const router = useRouter()
 const emit = defineEmits(['update:role'])
 
 async function logout() {
+
+    const returnPath = localStorage.getItem("userRole") === 'admin' ? '/admin' : '/'
     try {
         const csrfToken = localStorage.getItem("csrf_token")
         if (!csrfToken) {
@@ -31,7 +33,7 @@ async function logout() {
             localStorage.removeItem("userRole")
             localStorage.removeItem("user_jwt")
             emit('update:role', 'visitor')
-            router.replace({path: '/'})
+            router.replace({path: returnPath})
         } else {
             backToPreviousPage()
             return

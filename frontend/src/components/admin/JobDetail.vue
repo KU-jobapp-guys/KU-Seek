@@ -40,7 +40,7 @@ watch(
 </script>
 
 <template>
-  <div v-if="job" class="h-full w-full shadow-xl relative overflow-y-auto">
+  <div v-if="job" class="h-full w-full shadow-xl relative overflow-y-auto mb-16">
     <div class="relative w-full h-[240px] bg-gray-600 rounded-t-md"></div>
 
     <div class="absolute left-8 -translate-y-1/2">

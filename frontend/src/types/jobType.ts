@@ -19,6 +19,7 @@ export interface Job {
   totalApplicants: number
   pendingApplicants: number
   capacity: number
+  bookmarked: boolean
 }
 
 export type FilterKeys = 'role' | 'skills' | 'company' | 'jobLevel' | 'location' | 'jobType'

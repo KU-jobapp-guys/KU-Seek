@@ -17,6 +17,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false,
     contacts: [
       {
         type: 'email',
@@ -40,6 +41,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'fintech-backend-5e6f',
@@ -57,6 +59,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'creative-uiux-7g8h',
@@ -74,6 +77,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'greenenergy-devops-9i0j',
@@ -91,6 +95,7 @@ export const mockJobs: Job[] = [
     status: 'pending',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'meditech-data-1k2l',
@@ -108,6 +113,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'logistics-qa-3m4n',
@@ -125,6 +131,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'fintech-qa-5o6p',
@@ -142,6 +149,7 @@ export const mockJobs: Job[] = [
     status: 'pending',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'edutech-frontend-7q8r',
@@ -159,6 +167,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 4,
     totalApplicants: 4,
+    bookmarked: false
   },
   {
     jobId: 'marketing-creative-9s0t',
@@ -176,6 +185,7 @@ export const mockJobs: Job[] = [
     status: 'pending',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'urban-frontend-1a2b',
@@ -193,6 +203,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'urban-backend-2b3c',
@@ -210,6 +221,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'urban-uiux-3c4d',
@@ -227,6 +239,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'urban-devops-4d5e',
@@ -244,6 +257,7 @@ export const mockJobs: Job[] = [
     status: 'pending',
     pendingApplicants: 0,
     totalApplicants: 0,
+    bookmarked: false
   },
   {
     jobId: 'urban-datasci-5e6f',
@@ -261,6 +275,7 @@ export const mockJobs: Job[] = [
     status: 'approved',
     pendingApplicants: 3,
     totalApplicants: 6,
+    bookmarked: false
   },
   {
     jobId: 'urban-pm-6f7g',
@@ -274,7 +289,8 @@ export const mockJobs: Job[] = [
     jobType: 'Full-time',
     skills: ['Product Strategy', 'Agile', 'Leadership', 'Analytics'],
     tags: ['Remote Work'],
-    contacts: [
+    bookmarked: false,
+    contacts: [ 
       {
         type: 'email',
         link: 'info@urbanmobilitytech.com',

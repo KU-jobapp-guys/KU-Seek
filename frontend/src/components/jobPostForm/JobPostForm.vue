@@ -213,9 +213,12 @@ const handleCancel = (): void => {
   emit('cancel')
 }
 
-const isEmpty = (value: any) => {
+const isEmpty = (value: unknown): boolean => {
   if (Array.isArray(value)) return value.length === 0
-  return !value || value.toString().trim() === ''
+  if (value == null) return true
+  if (typeof value === 'string') return value.trim() === ''
+  if (typeof value === 'number') return value === 0
+  return false
 }
 
 watch(

@@ -17,7 +17,6 @@ const emit = defineEmits<{
 const contactTypes = ['Email', 'Phone', 'Facebook', 'LinkedIn', 'Website']
 
 const newContact = ref<Contact>({ type: '', link: '' })
-const error = ref('')
 
 // Validators
 const validatePhone = (v: string) => /^[0-9]{9,10}$/.test(v)

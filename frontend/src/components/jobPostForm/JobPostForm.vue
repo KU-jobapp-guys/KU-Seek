@@ -213,6 +213,11 @@ const handleCancel = (): void => {
   emit('cancel')
 }
 
+const isEmpty = (value: any) => {
+  if (Array.isArray(value)) return value.length === 0
+  return !value || value.toString().trim() === ''
+}
+
 watch(
   () => props.initialData,
   () => {
@@ -284,13 +289,21 @@ onMounted(() => {
 
     <!-- Form wrapper -->
     <form @submit.prevent="handleSubmit" class="max-w-5xl mx-auto -mt-10 space-y-6">
+
       <!-- Basic Information -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
-        
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Basic Information
+        </h2>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Company -->
           <div class="flex flex-col space-y-1">
-            <label class="text-sm font-medium text-gray-700">Company Name</label>
+            <label class="text-sm font-medium text-gray-700">
+              Company Name
+              <span v-if="isEmpty(jobPost.company)" class="text-red-500">*</span>
+            </label>
             <input
               id="companyName"
               v-model="jobPost.company"
@@ -301,18 +314,36 @@ onMounted(() => {
             />
           </div>
 
-          <BaseInput
-            v-model="jobPost.role"
-            label="Job Title"
-            placeholder="e.g. Frontend Developer"
-          />
-          <BaseInput
-            v-model="jobPost.location"
-            label="Location"
-            placeholder="e.g. Bangkok, Thailand"
-          />
+          <!-- Job Title -->
           <div class="flex flex-col">
-            <label class="text-sm font-medium text-gray-700 mb-1">Job Type</label>
+            <label class="text-sm font-medium text-gray-700">
+              Job Title
+              <span v-if="isEmpty(jobPost.role)" class="text-red-500">*</span>
+            </label>
+            <BaseInput
+              v-model="jobPost.role"
+              placeholder="e.g. Frontend Developer"
+            />
+          </div>
+
+          <!-- Location -->
+          <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700">
+              Location
+              <span v-if="isEmpty(jobPost.location)" class="text-red-500">*</span>
+            </label>
+            <BaseInput
+              v-model="jobPost.location"
+              placeholder="e.g. Bangkok, Thailand"
+            />
+          </div>
+
+          <!-- Job Type -->
+          <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700 mb-1">
+              Job Type
+              <span v-if="isEmpty(jobPost.jobType)" class="text-red-500">*</span>
+            </label>
             <select
               v-model="jobPost.jobType"
               class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -324,13 +355,17 @@ onMounted(() => {
               <option value="Contract">Contract</option>
             </select>
           </div>
-          
+
+          <!-- Job Level -->
           <div class="flex flex-col">
-            <label class="text-sm font-medium text-gray-700 mb-1">Job Level</label>
+            <label class="text-sm font-medium text-gray-700 mb-1">
+              Job Level
+              <span v-if="isEmpty(jobPost.jobLevel)" class="text-red-500">*</span>
+            </label>
             <select
               v-model="jobPost.jobLevel"
               class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          >
+            >
               <option disabled value="" class="text-gray-400">Select job level</option>
               <option value="Junior">Junior</option>
               <option value="Mid-Level">Mid-Level</option>
@@ -338,58 +373,78 @@ onMounted(() => {
             </select>
           </div>
 
+          <!-- Capacity -->
           <div class="flex flex-col space-y-1">
+            <label class="text-sm font-medium text-gray-700">
+              Capacity
+              <span v-if="isEmpty(jobPost.capacity)" class="text-red-500">*</span>
+            </label>
             <BaseInput
               v-model="jobPost.capacity"
-              label="Capacity"
               placeholder="e.g. 4, 5, 6"
             />
             <p v-if="capacityError" class="text-red-500 text-sm mt-1">{{ capacityError }}</p>
           </div>
 
-          <SalaryInput
-            v-model:salaryMin="jobPost.salaryMin"
-            v-model:salaryMax="jobPost.salaryMax"
-            @validity="isSalaryValid = $event"
-          />
-
-          <div class="flex flex-col">
-            <CalendarInput v-model="jobPost.endDate" />
+          <!-- Salary -->
+          <div class="flex flex-col col-span-1 md:col-span-2">
+            <label class="text-sm font-medium text-gray-700">
+              Salary Range
+              <span v-if="isEmpty(jobPost.salaryMin) || isEmpty(jobPost.salaryMax)" class="text-red-500">*</span>
+            </label>
+            <SalaryInput
+              v-model:salaryMin="jobPost.salaryMin"
+              v-model:salaryMax="jobPost.salaryMax"
+              @validity="isSalaryValid = $event"
+            />
           </div>
 
+          <!-- End Date -->
           <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700">
+              Application End Date
+              <span v-if="isEmpty(jobPost.endDate)" class="text-red-500">*</span>
+            </label>
+            <CalendarInput v-model="jobPost.endDate" />
+            <p v-if="endDateError" class="text-red-500 text-sm mt-1">{{ endDateError }}</p>
+          </div>
+
+          <!-- Work Hours -->
+          <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700">
+              Work Hours
+              <span v-if="isEmpty(jobPost.workHours)" class="text-red-500">*</span>
+            </label>
             <TimeInput v-model="jobPost.workHours" :emitCombined="true" />
             <p v-if="workHoursError" class="text-red-500 text-sm mt-1">{{ workHoursError }}</p>
           </div>
 
-          
         </div>
       </section>
 
       <!-- Job Description -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Job Description</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Job Description
+          <span v-if="isEmpty(jobPost.description)" class="text-red-500">*</span>
+        </h2>
         <BaseTextarea
           v-model="jobPost.description"
           placeholder="Describe the role, responsibilities, requirements, and benefits..."
         />
       </section>
 
-      <!-- Work Fields -->
+      <!-- Required Skills -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Required Skills</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Required Skills
+          <span v-if="isEmpty(jobPost.skills)" class="text-red-500">*</span>
+        </h2>
         <SearchableTagInput
           v-model="jobPost.skills"
           :suggestions="[
-            'React',
-            'Vue',
-            'Angular',
-            'Node.js',
-            'Python',
-            'Django',
-            'Machine Learning',
-            'AWS',
-            'SQL',
+            'React','Vue','Angular','Node.js','Python','Django',
+            'Machine Learning','AWS','SQL'
           ]"
           placeholder="Search or add a skill..."
         />
@@ -397,13 +452,19 @@ onMounted(() => {
 
       <!-- Tags -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Tags</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Tags
+          <span v-if="isEmpty(jobPost.tags)" class="text-red-500">*</span>
+        </h2>
         <TagInput v-model="jobPost.tags" placeholder="e.g. Urgent, Remote, Internship" />
       </section>
 
       <!-- Contacts -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
-        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Contacts</h2>
+        <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
+          Contacts
+          <span v-if="isEmpty(jobPost.contacts)" class="text-red-500">*</span>
+        </h2>
         <ContactField v-model="jobPost.contacts" />
       </section>
 
@@ -417,6 +478,7 @@ onMounted(() => {
         >
           Cancel
         </button>
+
         <button
           type="submit"
           :disabled="!isFormValid"
@@ -425,6 +487,8 @@ onMounted(() => {
           {{ isEditMode ? 'Update Job' : 'Post Job' }}
         </button>
       </div>
+
     </form>
   </div>
 </template>
+

@@ -8,7 +8,10 @@ import { Search, Filter, ChevronDown, Plus } from 'lucide-vue-next'
 import { CompanyStats } from '@/configs/dashboardStatConfig.ts'
 import type { Job } from '@/types/jobType'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 const jobLists = ref<Job[]>([])
 const searchQuery = ref('')
@@ -52,6 +55,7 @@ const filteredJobs = computed(() => {
 function clearFilters() {
   searchQuery.value = ''
   statusFilter.value = 'all'
+  showSuccess('Reset filters successfully!')
 }
 
 const stats = computed(() => {
@@ -167,5 +171,6 @@ onMounted(() => {
         </div>
       </div>
     </section>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

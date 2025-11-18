@@ -13,7 +13,10 @@ import {
   fetchBookmarkId as fetchBookmarkService, 
   postBookmark as postBookmarkService, 
   deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 const route = useRoute()
 const router = useRouter()
@@ -62,10 +65,12 @@ async function handleBookmark(payload: {jobId: string, bm: boolean}) {
   if (isBookmarked(payload.jobId) && !payload.bm) {
     if (await deleteBookmarkService(payload.jobId)) {
       bookmarked.value = bookmarked.value.filter(id => id !== payload.jobId)
+      showSuccess('Bookmark removed!')
     }
   } else if (!isBookmarked(payload.jobId) && payload.bm) {
     if (await postBookmarkService(payload.jobId)) {
       bookmarked.value.push(payload.jobId)
+      showSuccess('Job bookmarked!')
     }
   }
 
@@ -128,5 +133,6 @@ onMounted(() => {
         <p>Try adjusting your filters or checking for spelling errors.</p>
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

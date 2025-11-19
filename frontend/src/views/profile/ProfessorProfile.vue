@@ -1,38 +1,77 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Save, X } from 'lucide-vue-next'
+import { useToast } from 'vue-toastification'
+import { Save, X, Plus } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
+import type { Company } from '@/types/companyType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { fetchAllCompanies, fetchConnections, getProfileData, updateUserData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockProfessor } from '@/data/mockProfessor'
-import { mockCompany } from '@/data/mockCompany'
+
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
 import ProfessorView from '@/components/profiles/views/ProfessorView.vue'
 import ProfessorEdit from '@/components/profiles/edits/ProfessorEdit.vue'
 import ConnectCompany from '@/components/profiles/ConnectCompany.vue'
 import NoProfile from '@/components/profiles/NoProfile.vue'
+import AddConnectionModal from '@/components/profiles/AddConnectionModal.vue'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 
 const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<ProfessorProfile>()
+const isAddingConnection = ref(false)
 
-const loadProfessor = (id?: string) => {
+const allCompanies = ref<Company[]>()
+const connectCompanies = ref<Company[]>()
+
+const tabList = ['Overview', 'Connection']
+const activeTab = ref('Overview')
+
+const switchTab = (tab: string) => {
+  activeTab.value = tab
+}
+
+async function loadProfessor(id?: string) {
   if (!id) {
     router.replace({ name: 'not found' })
     return
   }
 
-  professorData.value = mockProfessor.find((c) => c.id === id) || null
-
-  if (!professorData.value) {
+  const data = await getProfileData(id)
+  
+  if (data) {   
+    professorData.value = data as ProfessorProfile
+  } else {
     router.replace({ name: 'not found' })
+    return
+  }
+}
+
+async function loadAllCompanies() {
+  const data = await fetchAllCompanies();
+  if (data) {
+    allCompanies.value = data;
+  } else {
+    allCompanies.value = [];
+  }
+}
+
+async function loadConnections() {
+  const connectId = await fetchConnections()
+  if (connectId != null) {
+    connectCompanies.value = allCompanies.value?.filter(c =>
+      connectId.includes(c.companyId)
+    )
+  }
+  else {
+    connectCompanies.value = []
   }
 }
 
@@ -53,24 +92,60 @@ const edit = () => {
 const cancel = () => {
   cancelEdit()
 }
-const save = () => {
-  saveProfile(professorData)
-}
 
-onMounted(() => {
-  loadProfessor(route.params.id as string)
+const save = async () => {
+  if (!checkProfile()) return
+
+  const data = editData.value
+
+  if (!data) return
+
+  const plainData: ProfessorProfile = {
+    ...data,
+    profilePhoto: data.profilePhoto || '',
+    bannerPhoto: data.bannerPhoto || '',
+    phoneNumber: data.phoneNumber || '',
+  }
+
+  const res = await updateUserData(plainData)
+  
+  if (res && res.ok) {
+    const resData = (await res.json()) as ProfessorProfile
+    saveProfile(resData)
+    professorData.value = { ...resData } as ProfessorProfile
+    toast.success('Profile updated successfully')
+  } else {
+    toast.error('Failed to update profile. Please try again.')
+  }
+}
+const addConnection = (companyId: string) => {
+  const newCompany = allCompanies.value?.find(c => c.companyId === companyId);
+  if (newCompany) {
+    connectCompanies.value?.push(newCompany);
+  }
+};
+
+const otherCompanies = computed(() => {
+  return allCompanies.value?.filter(
+    c => !connectCompanies.value?.some(conn => conn.companyId === c.companyId)
+  );
+});
+
+onMounted(async () => {
+  await loadProfessor(route.params.id as string)
+  await loadAllCompanies()
+
+  if (!isNewProfile.value) {
+    await loadConnections()
+  }
+  isLoading.value = false
 })
 
-const tabList = ['Overview', 'Connection']
-const activeTab = ref('Overview')
-
-const switchTab = (tab: string) => {
-  activeTab.value = tab
-}
 </script>
 
 <template>
   <LoadingScreen v-if="isLoading" />
+  <AddConnectionModal v-if="isAddingConnection" :companies="otherCompanies || []" @close="isAddingConnection = false" @addConnection="addConnection"/>
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
     <ProfessorBanner
@@ -131,8 +206,21 @@ const switchTab = (tab: string) => {
 
           <!-- Connection Tab -->
           <div v-if="activeTab === 'Connection'" class="space-y-4 max-h-[410px] overflow-y-auto">
-            <div v-for="c in mockCompany" v-bind:key="c.id">
-              <ConnectCompany :company="c" />
+            <!-- Add Connection Card -->
+            <button
+              @click="isAddingConnection = true"
+              class="w-full border-2 border-dashed border-green-600 hover:border-green-700 hover:bg-green-50/70 rounded-xl p-4 flex flex-col items-center justify-center gap-3 group"
+            >
+              <div class="w-16 h-16 bg-green-100 group-hover:bg-green-200 rounded-full flex items-center justify-center">
+                <Plus class="w-8 h-8 text-green-600" />
+              </div>
+              <span class="text-lg font-semibold text-green-600 group-hover:text-green-700">
+                Add New Connection
+              </span>
+            </button>
+
+            <div v-for="c in connectCompanies" :key="c.companyId">
+              <ConnectCompany :company="c" @select="router.push(`/company/profile/${c.userId}`)"/>
             </div>
           </div>
         </div>

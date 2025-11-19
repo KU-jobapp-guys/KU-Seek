@@ -10,7 +10,7 @@ import { getPostTime } from '@/libs/getPostTime'
 import { getUserRole, isOwner } from '@/libs/userUtils'
 import { fetchUserAppliedJobs } from '@/services/applicationService'
 import { IconMap } from '@/configs/contactConfig'
-import {postBookmark as postBookmarkService, deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
+
 
 const props = defineProps<{ jobId: string, bookmarked: boolean }>()
 
@@ -78,18 +78,9 @@ const goToApply = () => {
 }
 
 async function toggleBookmark() {
-  if (isBookmarked.value) {
-    if (await deleteBookmarkService(props.jobId)) {
-      isBookmarked.value = !isBookmarked.value
-      emit('bookmark', { jobId: props.jobId, bm: isBookmarked.value })
-    }
-  } else {
-    if (await postBookmarkService(props.jobId)) {
-      isBookmarked.value = !isBookmarked.value
-      emit('bookmark', { jobId: props.jobId, bm: isBookmarked.value })
-    }
-  }
+    emit('bookmark', { jobId: props.jobId, bm: !isBookmarked.value })
 }
+
 </script>
 
 <template>

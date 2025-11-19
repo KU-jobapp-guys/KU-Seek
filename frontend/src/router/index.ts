@@ -9,12 +9,15 @@ import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import CompanyProfile from '@/views/profile/CompanyProfile.vue'
 import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
+import LogoutView from '@/views/LogoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 import AnnouncementsView from '@/views/AnnouncementsView.vue'
 import Registration from '@/views/RegistrationView.vue'
+import SettingView from '@/views/SettingView.vue'
+
 import JobManagement from '@/views/JobManagement.vue'
 
 const router = createRouter({
@@ -55,6 +58,11 @@ const router = createRouter({
       path: '/professor/profile/:id',
       name: 'professorProfile',
       component: ProfessorProfile,
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      component: SettingView,
     },
     {
       path: '/student/dashboard',
@@ -110,6 +118,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: LogoutView,
     },
     {
       path: '/:pathMatch(.*)*',

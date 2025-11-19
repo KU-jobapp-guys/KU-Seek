@@ -7,7 +7,7 @@ import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { getFile } from '@/services/fileService'
-import { getProfileData, updateUserData, updateProfileImages, updateProfileData } from '@/services/profileServices'
+import { getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { fetchJobs } from '@/services/jobService'
@@ -140,9 +140,8 @@ const save = async () => {
     return
   }
 
-  const resData = await updateProfileData(plainData)
   const res = await updateUserData(plainData)
-  
+
   if (res && res.ok) {
     const resData = (await res.json()) as CompanyProfile
     saveProfile(resData)
@@ -206,7 +205,6 @@ const displayedJobs = computed(() => {
       v-model="editData"
       v-model:images="uploadImages"
       :companyData="editData"
-      :images="{ profile: profileImageFile, banner: bannerImageFile }"
       @update:images="onUpdateImages"
       @loaded="renderReady"
       :isEditing

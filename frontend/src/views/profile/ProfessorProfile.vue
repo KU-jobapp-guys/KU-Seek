@@ -7,7 +7,7 @@ import type { ProfessorProfile } from '@/types/profileType'
 import type { Company } from '@/types/companyType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { getFile } from '@/services/fileService'
-import { fetchAllCompanies, updateProfileData, fetchConnections, getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
+import { fetchAllCompanies, fetchConnections, getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 

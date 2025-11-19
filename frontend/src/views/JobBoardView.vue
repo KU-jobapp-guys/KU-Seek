@@ -30,11 +30,14 @@ const companyFilter = ref<string | undefined>(route.query.company as string) // 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
 
-  const mapped = await fetchJobsService()
+  const mapped = await fetchJobsService({ ...(filters.value as Record<string, string>), status: 'accepted' })
 
-  jobs.value = mapped.filter((j: Job) => {
+  const accepted = mapped.filter((j: Job) => String((j as unknown as Record<string, unknown>).status ?? '').toLowerCase() === 'accepted')
+
+  jobs.value = accepted.filter((j: Job) => {
     return Object.entries(filters.value).every(([key, value]) => {
       if (!value) return true
+      if (key === 'status') return true
       const field = (j as unknown as Record<string, unknown>)[key]
       return String(field ?? '')
         .toLowerCase()

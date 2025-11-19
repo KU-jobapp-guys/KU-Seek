@@ -9,14 +9,17 @@ const props = defineProps<{
   modelValue: CompanyProfile
   companyData: CompanyProfile
   isEditing: boolean
+  images?: { profile: File | null; banner: File | null }
 }>()
 
 const emits = defineEmits<{
   (e: 'edit'): void
+  (e: 'loaded'): void
   (e: 'update:modelValue', data: CompanyProfile): void
+  (e: 'update:images', data: { profile: File | null; banner: File | null }): void
 }>()
 
-const { companyData, isEditing } = props
+const { companyData, isEditing, images } = props
 const editForm = ref<CompanyProfile>({ ...props.modelValue })
 
 watch(
@@ -41,7 +44,11 @@ const goToJobBoard = () => {
     role="company"
     v-model="editForm"
     :isEditing
+    :images="images"
     @edit="emits('edit')"
+    @loaded="emits('loaded')"
+    @update:modelValue="(v) => emits('update:modelValue', v as CompanyProfile)"
+    @update:images="(imgs) => emits('update:images', imgs)"
   >
     <div class="flex flex-col gap-y-4 md:flex-row md:justify-between md:items-end w-full">
       <div>

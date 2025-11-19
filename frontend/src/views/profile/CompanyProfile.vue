@@ -7,6 +7,8 @@ import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
 import { getProfileData, updateProfileData } from '@/services/profileServices'
+import { getFile } from '@/services/fileService'
+import { updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { fetchJobs } from '@/services/jobService'
@@ -24,6 +26,14 @@ const toast = useToast()
 const isLoading = ref(true)
 const companyData = ref<CompanyProfile | null>(null)
 const companyJobs = ref<Job[]>([])
+const profileImageFile = ref<File | null>(null)
+const bannerImageFile = ref<File | null>(null)
+
+const onUpdateImages = (imgs: { profile: File | null; banner: File | null }) => {
+  console.debug('CompanyProfile.onUpdateImages', imgs)
+  profileImageFile.value = imgs.profile || null
+  bannerImageFile.value = imgs.banner || null
+}
 
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<CompanyProfile>()
@@ -38,6 +48,33 @@ async function loadCompany(id?: string) {
   
   if (data) {   
     companyData.value = data as CompanyProfile
+    // If backend returns file IDs for images, fetch blobs and convert to object URLs
+    try {
+      // common field names used elsewhere: profileImg / profileBanner
+      // also support profile_img / banner_img or direct photo fields
+      const d = data as unknown as Record<string, unknown>
+      let profileId = ''
+      if (typeof d['profileImg'] === 'string') profileId = d['profileImg'] as string
+      else if (typeof d['profile_img'] === 'string') profileId = d['profile_img'] as string
+      else if (typeof d['profilePhoto'] === 'string') profileId = d['profilePhoto'] as string
+
+      let bannerId = ''
+      if (typeof d['profileBanner'] === 'string') bannerId = d['profileBanner'] as string
+      else if (typeof d['banner_img'] === 'string') bannerId = d['banner_img'] as string
+      else if (typeof d['bannerPhoto'] === 'string') bannerId = d['bannerPhoto'] as string
+
+      if (profileId) {
+        const p = await getFile(profileId)
+        if (p) companyData.value.profilePhoto = p
+      }
+
+      if (bannerId) {
+        const b = await getFile(bannerId)
+        if (b) companyData.value.bannerPhoto = b
+      }
+    } catch (err) {
+      console.error('Failed to fetch company images', err)
+    }
   } else {
     router.replace({ name: 'not found' })
     return
@@ -80,11 +117,28 @@ const save = async () => {
     bannerPhoto: data.bannerPhoto || '',
   }
 
+  try {
+    if (profileImageFile.value || bannerImageFile.value) {
+      const uploaded = (await updateProfileImages(profileImageFile.value, bannerImageFile.value)) as
+        | { profile_url?: string; banner_url?: string }
+        | null
+      if (uploaded) {
+        if (uploaded.profile_url) plainData.profilePhoto = uploaded.profile_url
+        if (uploaded.banner_url) plainData.bannerPhoto = uploaded.banner_url
+      }
+    }
+  } catch (err) {
+    console.error('Failed uploading images', err)
+    toast.error('Failed to upload images. Please try again.')
+    return
+  }
+
   const resData = await updateProfileData(plainData)
   
   if (resData) {
     saveProfile(resData)
     companyData.value = { ...resData } as CompanyProfile
+    await loadCompany(route.params.id as string)
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
@@ -131,6 +185,8 @@ const displayedJobs = computed(() => {
       v-if="!isEditing"
       v-model="companyData"
       :companyData="companyData"
+      :images="{ profile: profileImageFile, banner: bannerImageFile }"
+      @update:images="onUpdateImages"
       @loaded="renderReady"
       @edit="edit"
       :isEditing
@@ -139,6 +195,8 @@ const displayedJobs = computed(() => {
       v-else-if="editData"
       v-model="editData"
       :companyData="editData"
+      :images="{ profile: profileImageFile, banner: bannerImageFile }"
+      @update:images="onUpdateImages"
       @loaded="renderReady"
       :isEditing
     />

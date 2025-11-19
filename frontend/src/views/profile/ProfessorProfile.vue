@@ -6,6 +6,7 @@ import { Save, X, Plus } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import type { Company } from '@/types/companyType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { getFile } from '@/services/fileService'
 import { fetchAllCompanies, fetchConnections, getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
@@ -53,6 +54,29 @@ async function loadProfessor(id?: string) {
   
   if (data) {   
     professorData.value = data as ProfessorProfile
+    try {
+      const d = data as unknown as Record<string, unknown>
+      let profileId = ''
+      if (typeof d['profileImg'] === 'string') profileId = d['profileImg'] as string
+      else if (typeof d['profile_img'] === 'string') profileId = d['profile_img'] as string
+      else if (typeof d['profilePhoto'] === 'string') profileId = d['profilePhoto'] as string
+
+      let bannerId = ''
+      if (typeof d['profileBanner'] === 'string') bannerId = d['profileBanner'] as string
+      else if (typeof d['banner_img'] === 'string') bannerId = d['banner_img'] as string
+      else if (typeof d['bannerPhoto'] === 'string') bannerId = d['bannerPhoto'] as string
+
+      if (profileId) {
+        const p = await getFile(profileId)
+        if (p) professorData.value.profilePhoto = p
+      }
+      if (bannerId) {
+        const b = await getFile(bannerId)
+        if (b) professorData.value.bannerPhoto = b
+      }
+    } catch (err) {
+      console.error('Failed to fetch professor images', err)
+    }
   } else {
     router.replace({ name: 'not found' })
     return
@@ -121,6 +145,8 @@ const save = async () => {
   if (res && res.ok ) {
     const resData = (await res.json()) as ProfessorProfile
     saveProfile(resData)
+    professorData.value = { ...resData } as ProfessorProfile
+    await loadProfessor(route.params.id as string)
     professorData.value = { ...resData }
     toast.success('Profile updated successfully')
   } else {

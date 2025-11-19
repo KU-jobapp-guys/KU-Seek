@@ -31,16 +31,13 @@ const removeWorkField = (index: number) => {
 }
 
 const toggleDropdownField = (field: string) => {
-  let useToggle = showSizeDropdown
-  let notUseToggle = showIndustryDropdown
-
   if (field === 'industry') {
-    useToggle = showIndustryDropdown
-    notUseToggle = showSizeDropdown
+    showIndustryDropdown.value = !showIndustryDropdown.value
+    showSizeDropdown.value = false
+  } else {
+    showSizeDropdown.value = !showSizeDropdown.value
+    showIndustryDropdown.value = false
   }
-
-  useToggle.value = !useToggle.value
-  notUseToggle.value = false
 }
 
 const selectSize = (size: string) => {

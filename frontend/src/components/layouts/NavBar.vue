@@ -55,7 +55,7 @@ const syncUserRole = () => {
 onMounted(async () => {
   syncUserRole()
   window.addEventListener('userRoleChanged', syncUserRole)
-  if (!userStore.profileImage) {
+  if (!userStore.profileImage && userRole.value !== 'visitor') {
     console.log('No user data in store, fetching...')
     const userData = await getProfileData(userId)
     userStore.setUserData({

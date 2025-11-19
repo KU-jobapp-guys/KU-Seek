@@ -20,22 +20,22 @@ const { companyData } = props
     </div>
 
     <div class="flex flex-col md:pl-4 gap-y-1">
-      <p v-if="companyData.company_website">
+      <p v-if="companyData.website">
         <span class="font-medium block md:inline">Website: </span>
-        <a :href="companyData.company_website" class="underline">{{ companyData.company_name }}</a>
+        <a :href="companyData.website" class="underline">{{ companyData.name }}</a>
       </p>
       <p>
         <span class="font-medium block md:inline">Industry: </span>
-        {{ companyData.company_industry }}
+        {{ companyData.industry }}
       </p>
       <p>
         <span class="font-medium block md:inline">Specialities: </span>
-        {{ (companyData.company_workFields || []).join(', ') }}
+        {{ (companyData.workFields || []).join(', ') }}
       </p>
-      <p><span class="font-medium">Company Size:</span> {{ companyData.company_size }}</p>
+      <p><span class="font-medium">Company Size:</span> {{ companyData.size }}</p>
       <p>
         <span class="font-medium block md:inline">Primary Location:</span>
-        {{ companyData.full_location }}
+        {{ companyData.fullLocation }}
       </p>
     </div>
 

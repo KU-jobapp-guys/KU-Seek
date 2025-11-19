@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { getUserId, useUserStore } from '@/libs/userUtils'
+import { getProfileData } from '@/services/profileServices'
 import defaultProfile from '@/assets/images/defaultProfile.png'
 
 
@@ -56,12 +57,11 @@ onMounted(async () => {
   window.addEventListener('userRoleChanged', syncUserRole)
   if (!userStore.profileImage) {
     console.log('No user data in store, fetching...')
-    // const userData = await fetchUserProfile()
-    // userStore.setUserData({
-    //   image: userData.profileImage,
-    //   name: userData.name,
-    //   email: userData.email
-    // })
+    const userData = await getProfileData(userId)
+    userStore.setUserData({
+      image: userData?.profilePhoto,
+      email: userData?.email 
+    })
   }
 })
 

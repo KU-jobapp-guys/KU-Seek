@@ -3,7 +3,7 @@ import { X, Check } from 'lucide-vue-next'
 import { ref, computed } from 'vue'
 import ConnectCompany from './ConnectCompany.vue'
 import type { Company } from '@/types/companyType'
-import { fetchCsrfToken, getAuthHeader } from '@/services/helperServices'
+import { fetchCsrfToken, getAuthHeader } from '@/services/utills'
 import { useToast } from 'vue-toastification'
 
 const searchTerm = ref('')

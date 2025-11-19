@@ -8,3 +8,8 @@ export async function fetchCsrfToken(base: string): Promise<string> {
     return ''
   }
 }
+
+export function getAuthHeader(): Record<string, string> {
+  const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
+  return token ? { access_token: token } : {}
+}

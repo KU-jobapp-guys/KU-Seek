@@ -4,12 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { Save, X, Plus } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
+import type { Company } from '@/types/companyType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
 import { getFile } from '@/services/fileService'
+import { fetchAllCompanies, updateProfileData, fetchConnections, getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockCompany } from '@/data/mockCompany'
 
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import ProfessorBanner from '@/components/profiles/banners/ProfessorBanner.vue'
@@ -25,10 +25,17 @@ const toast = useToast()
 
 const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
+const uploadImages = ref<{ profile: File | null; banner: File | null }>({
+  profile: null,
+  banner: null
+})
+
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<ProfessorProfile>()
 const isAddingConnection = ref(false)
 
+const allCompanies = ref<Company[]>()
+const connectCompanies = ref<Company[]>()
 
 const tabList = ['Overview', 'Connection']
 const activeTab = ref('Overview')
@@ -76,6 +83,27 @@ async function loadProfessor(id?: string) {
   }
 }
 
+async function loadAllCompanies() {
+  const data = await fetchAllCompanies();
+  if (data) {
+    allCompanies.value = data;
+  } else {
+    allCompanies.value = [];
+  }
+}
+
+async function loadConnections() {
+  const connectId = await fetchConnections()
+  if (connectId != null) {
+    connectCompanies.value = allCompanies.value?.filter(c =>
+      connectId.includes(c.companyId)
+    )
+  }
+  else {
+    connectCompanies.value = []
+  }
+}
+
 const renderReady = () => {
   isLoading.value = false
 }
@@ -97,6 +125,10 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
+  if (uploadImages.value.profile || uploadImages.value.banner) {
+    await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
+  }
+
   const data = editData.value
 
   if (!data) return
@@ -108,31 +140,53 @@ const save = async () => {
     phoneNumber: data.phoneNumber || '',
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok ) {
+    const resData = (await res.json()) as ProfessorProfile
     saveProfile(resData)
     professorData.value = { ...resData } as ProfessorProfile
     await loadProfessor(route.params.id as string)
+    professorData.value = { ...resData }
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
   }
 }
+const addConnection = (companyId: string) => {
+  const newCompany = allCompanies.value?.find(c => c.companyId === companyId);
+  if (newCompany) {
+    connectCompanies.value?.push(newCompany);
+  }
+};
 
-onMounted(() => {
-  loadProfessor(route.params.id as string)
+const otherCompanies = computed(() => {
+  return allCompanies.value?.filter(
+    c => !connectCompanies.value?.some(conn => conn.companyId === c.companyId)
+  );
+});
+
+onMounted(async () => {
+  await loadProfessor(route.params.id as string)
+  await loadAllCompanies()
+
+  if (!isNewProfile.value) {
+    await loadConnections()
+  }
+  isLoading.value = false
 })
+
 </script>
 
 <template>
   <LoadingScreen v-if="isLoading" />
-  <AddConnectionModal v-if="isAddingConnection" @close="isAddingConnection = false" />
+  <AddConnectionModal v-if="isAddingConnection" :companies="otherCompanies || []" @close="isAddingConnection = false" @addConnection="addConnection"/>
 
   <div v-if="professorData" class="px-[6vw] md:px-[12vw] py-16">
     <ProfessorBanner
       v-if="!isEditing"
       v-model="professorData"
+      v-model:images="uploadImages"
       :professorData="professorData"
       @loaded="renderReady"
       @edit="edit"
@@ -141,6 +195,7 @@ onMounted(() => {
     <ProfessorBanner
       v-else-if="editData"
       v-model="editData"
+      v-model:images="uploadImages"
       :professorData="editData"
       @loaded="renderReady"
       :isEditing
@@ -201,8 +256,8 @@ onMounted(() => {
               </span>
             </button>
 
-            <div v-for="c in mockCompany" :key="c.id">
-              <ConnectCompany :company="c" @select="router.push(`/company/profile/${c.id}`)"/>
+            <div v-for="c in connectCompanies" :key="c.companyId">
+              <ConnectCompany :company="c" @select="router.push(`/company/profile/${c.userId}`)"/>
             </div>
           </div>
         </div>

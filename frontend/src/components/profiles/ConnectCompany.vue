@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { CompanyProfile } from '@/types/profileType'
+import type { Company } from '@/types/companyType';
+import defaultCompany from '@/assets/images/defaultCompany.png'
 
 const props = defineProps<{ 
-  company: CompanyProfile
+  company: Company
 }>()
 
 const emit = defineEmits<{
@@ -38,7 +39,7 @@ const { company } = props
         <div class="flex flex-col">
           <span class="flex gap-x-4 items-start md:items-center">
 
-            <h1 class="font-bold text-2xl mb-2">{{ company.name }}</h1>
+            <h1 class="font-bold text-2xl mb-2">{{ company.companyName }}</h1>
             <p class="flex text-white px-2 bg-blue-500 gap-x-1 rounded-full">
               14 <span class="hidden md:block"> Jobs</span>
             </p>
@@ -47,7 +48,7 @@ const { company } = props
           <p class="text-gray-500">{{ company.location }}</p>
         </div>
         <img
-          :src="company.profilePhoto"
+          :src="company.profilePhoto || defaultCompany"
           class="hidden md:block w-28 h-28 rounded-full border-[4px] border-gray-400 overflow-hidden bg-black"
           alt="Profile"
         />

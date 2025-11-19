@@ -31,7 +31,6 @@ export interface StudentProfile extends BaseProfile{
   skills: string[]
   interests: string
   educations: {
-    id: string
     curriculumName: string
     university: string
     major: string

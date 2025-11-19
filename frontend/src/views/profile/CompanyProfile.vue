@@ -6,9 +6,8 @@ import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
 import { getFile } from '@/services/fileService'
-import { updateProfileImages } from '@/services/profileServices'
+import { getProfileData, updateUserData, updateProfileImages, updateProfileData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { fetchJobs } from '@/services/jobService'
@@ -34,6 +33,10 @@ const onUpdateImages = (imgs: { profile: File | null; banner: File | null }) => 
   profileImageFile.value = imgs.profile || null
   bannerImageFile.value = imgs.banner || null
 }
+const uploadImages = ref<{ profile: File | null; banner: File | null }>({
+  profile: null,
+  banner: null
+})
 
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<CompanyProfile>()
@@ -107,6 +110,10 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
+  if (uploadImages.value.profile || uploadImages.value.banner) {
+    await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
+  }
+
   const data = editData.value
 
   if (!data) return
@@ -134,11 +141,14 @@ const save = async () => {
   }
 
   const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok) {
+    const resData = (await res.json()) as CompanyProfile
     saveProfile(resData)
     companyData.value = { ...resData } as CompanyProfile
     await loadCompany(route.params.id as string)
+    companyData.value = { ...resData } 
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
@@ -194,6 +204,7 @@ const displayedJobs = computed(() => {
     <CompanyBanner
       v-else-if="editData"
       v-model="editData"
+      v-model:images="uploadImages"
       :companyData="editData"
       :images="{ profile: profileImageFile, banner: bannerImageFile }"
       @update:images="onUpdateImages"

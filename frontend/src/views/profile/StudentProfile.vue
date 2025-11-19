@@ -5,8 +5,7 @@ import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { StudentProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData, updateProfileImages } from '@/services/profileServices'
-import { getFile } from '@/services/fileService'
+import { getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
@@ -36,19 +35,13 @@ async function loadStudent(id?: string) {
   }
   
   const data = await getProfileData(id)
-  console.log(data)
   if (data) {   
     studentData.value = data as StudentProfile
-    if (data.profileImg) {
-        studentData.value.profilePhoto = await getFile(data.profileImg) || ''
-    }
-    if (data.profileBanner) {
-        studentData.value.bannerPhoto = await getFile(data.profileBanner) || ''
-    }
   } else {
     router.replace({ name: 'not found' })
     return
   }
+  isLoading.value = false
 }
 
 const renderReady = () => {
@@ -73,12 +66,9 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
-  console.log(uploadImages.value.profile)
-  console.log(uploadImages.value.banner)
-
-  const imgData = await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
-
-  console.log(imgData)
+  if (uploadImages.value.profile || uploadImages.value.banner) {
+    await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
+  }
 
   const data = editData.value
 
@@ -94,12 +84,13 @@ const save = async () => {
     educations: (data.educations || []).map(edu => ({ ...edu })),
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok ) {
+    const resData = (await res.json()) as StudentProfile
     saveProfile(resData)
-    studentData.value = { ...resData } as StudentProfile
-    loadStudent(route.params.id as string)
+
+    studentData.value = { ...resData }
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
@@ -119,7 +110,6 @@ onMounted(() => {
     <StudentBanner
       v-if="!isEditing"
       v-model="studentData"
-      v-model:images="uploadImages"
       :studentData="studentData"
       :isEditing="isEditing"
       @loaded="renderReady"

@@ -1,5 +1,5 @@
 import type { Job } from '@/types/jobType'
-import { fetchCsrfToken } from './utills'
+import { fetchCsrfToken, getAuthHeader } from './utills'
 
 
 export async function fetchJobs(filters?: Record<string, string>): Promise<Job[]> {
@@ -68,11 +68,6 @@ export async function fetchJob(jobId: string | number): Promise<Job | null> {
   }
 
   return null
-}
-
-function getAuthHeader(): Record<string, string> {
-  const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
-  return token ? { access_token: token } : {}
 }
 
 export async function fetchCompanyJobs(): Promise<Job[]> {

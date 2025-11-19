@@ -9,12 +9,19 @@ import { ArrowLeftCircle } from 'lucide-vue-next'
 import JobFull from '@/components/jobBoard/JobFull.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchJobs as fetchJobsService } from '@/services/jobService'
+import { 
+  fetchBookmarkId as fetchBookmarkService, 
+  postBookmark as postBookmarkService, 
+  deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
+
 
 const route = useRoute()
 const router = useRouter()
 
 const jobs = ref<Job[]>([])
 const selectedJobId = ref<string>('')
+const bookmarked = ref<string[]>([]);
+const handlingBookmark = ref<boolean>(false)
 
 type Filters = Record<FilterKeys, string>
 const filters = ref<Partial<Filters>>({})
@@ -23,11 +30,14 @@ const companyFilter = ref<string | undefined>(route.query.company as string) // 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
 
-  const mapped = await fetchJobsService()
+  const mapped = await fetchJobsService({ ...(filters.value as Record<string, string>), status: 'accepted' })
 
-  jobs.value = mapped.filter((j: Job) => {
+  const accepted = mapped.filter((j: Job) => String((j as unknown as Record<string, unknown>).status ?? '').toLowerCase() === 'accepted')
+
+  jobs.value = accepted.filter((j: Job) => {
     return Object.entries(filters.value).every(([key, value]) => {
       if (!value) return true
+      if (key === 'status') return true
       const field = (j as unknown as Record<string, unknown>)[key]
       return String(field ?? '')
         .toLowerCase()
@@ -35,6 +45,39 @@ async function fetchJobs(newFilters: Partial<Filters> = {}) {
     })
   })
 }
+
+async function fetchBookmark() {
+  try {
+    bookmarked.value = await fetchBookmarkService()
+  } catch {
+    bookmarked.value = []
+  }
+}
+
+async function handleBookmark(payload: {jobId: string, bm: boolean}) {
+  console.log(handlingBookmark.value)
+  if (handlingBookmark.value) return
+
+  handlingBookmark.value = true
+
+  console.log(payload)
+
+  if (isBookmarked(payload.jobId) && !payload.bm) {
+    if (await deleteBookmarkService(payload.jobId)) {
+      bookmarked.value = bookmarked.value.filter(id => id !== payload.jobId)
+    }
+  } else if (!isBookmarked(payload.jobId) && payload.bm) {
+    if (await postBookmarkService(payload.jobId)) {
+      bookmarked.value.push(payload.jobId)
+    }
+  }
+
+  handlingBookmark.value = false
+}
+
+const isBookmarked = ((jobId: string) => {
+  return bookmarked.value.includes(jobId.toString())
+})
 
 function handleSelect(id: string) {
   selectedJobId.value = id
@@ -45,6 +88,7 @@ function handleSelect(id: string) {
 
 onMounted(() => {
   fetchJobs()
+  fetchBookmark()
   window.scrollTo({ top: 0 })
 })
 </script>
@@ -59,12 +103,12 @@ onMounted(() => {
       <div v-if="jobs.length > 0" class="w-full h-[800px] flex gap-x-4">
         <div class="w-full pr-4 h-full gap-y-4 overflow-y-auto">
           <div v-for="job in jobs" :key="job.jobId">
-            <JobBox :job="job" @select="handleSelect" />
+            <JobBox :job="job" :bookmarked="isBookmarked(job.jobId)" @select="handleSelect" @bookmark="handleBookmark" />
           </div>
         </div>
         <div class="w-full h-full bg-[#F9F9F9] rounded-md shadow-2xl hidden md:block">
-          <JobFull v-if="selectedJobId" :jobId="selectedJobId as string" />
-
+          <JobFull v-if="selectedJobId" :jobId="selectedJobId" :bookmarked="isBookmarked(selectedJobId)" @bookmark="handleBookmark" />
+          
           <div v-if="!selectedJobId" class="h-full px-8 py-12">
             <div class="flex items-center gap-x-4">
               <ArrowLeftCircle class="w-12 h-12 text-gray-600" />

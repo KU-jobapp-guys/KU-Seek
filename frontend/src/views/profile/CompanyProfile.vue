@@ -90,10 +90,10 @@ const save = async () => {
 
   const res = await updateUserData(plainData)
   
-  if (res && res.ok ) {
+  if (res && res.ok) {
     const resData = (await res.json()) as CompanyProfile
     saveProfile(resData)
-    companyData.value = { ...resData }
+    companyData.value = { ...resData } 
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')

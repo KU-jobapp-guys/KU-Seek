@@ -3,21 +3,27 @@ import { ref, watch, onMounted, computed } from 'vue'
 import type { Job } from '@/types/jobType'
 import { fetchJobs } from '@/services/jobService'
 import { useRouter } from 'vue-router'
-import { MapPin, Clock, Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
+import { MapPin, Bookmark, BookmarkCheck, Clock,
+  Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
 import { techStackColors } from '@/configs/techStackConfig'
 import { getPostTime } from '@/libs/getPostTime'
 import { getUserRole, isOwner } from '@/libs/userUtils'
 import { fetchUserAppliedJobs } from '@/services/applicationService'
 import { IconMap } from '@/configs/contactConfig'
 
-const props = defineProps<{ jobId: string }>()
+
+const props = defineProps<{ jobId: string, bookmarked: boolean }>()
+
 const router = useRouter()
 const job = ref<Job | null>(null)
+const isBookmarked = ref<boolean>(props.bookmarked)
 const userRole = getUserRole()
 
 const emit = defineEmits<{
   (e: 'edit'): void
+  (e: 'bookmark', payload: { jobId: string, bm: boolean }): void
 }>()
+
 
 const loadJob = async (id?: string) => {
   if (!id) {
@@ -45,6 +51,13 @@ watch(
   },
 )
 
+watch(
+  () => props.bookmarked,
+  (newBm) => {
+    isBookmarked.value = newBm
+  },
+)
+
 const appliedJobIds = ref(new Set<string>())
 
 const loadApplied = async () => {
@@ -63,6 +76,11 @@ const goToApply = () => {
     router.push(`/job/${job.value.jobId}/apply`)
   }
 }
+
+async function toggleBookmark() {
+    emit('bookmark', { jobId: props.jobId, bm: !isBookmarked.value })
+}
+
 </script>
 
 <template>
@@ -124,9 +142,11 @@ const goToApply = () => {
         >
           {{ isApplied ? 'Applied' : 'Apply' }}
         </button>
-        <button class="hover:bg-gray-200 border-2 border-gray-600 px-8 py-1 rounded-md">
-          Add to Bookmarks
-        </button>
+        <component
+          :is="isBookmarked ? BookmarkCheck : Bookmark"
+          class="h-9 w-8 cursor-pointer text-blue-500 hover:scale-110 transition-transform"
+          @click.stop="toggleBookmark"
+        />
       </div>
 
       <p class="mt-12">{{ job.description }}</p>

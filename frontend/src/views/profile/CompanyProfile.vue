@@ -6,7 +6,7 @@ import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
+import { getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { fetchJobs } from '@/services/jobService'
@@ -24,6 +24,10 @@ const toast = useToast()
 const isLoading = ref(true)
 const companyData = ref<CompanyProfile | null>(null)
 const companyJobs = ref<Job[]>([])
+const uploadImages = ref<{ profile: File | null; banner: File | null }>({
+  profile: null,
+  banner: null
+})
 
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<CompanyProfile>()
@@ -70,6 +74,10 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
+  if (uploadImages.value.profile || uploadImages.value.banner) {
+    await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
+  }
+
   const data = editData.value
 
   if (!data) return
@@ -80,11 +88,12 @@ const save = async () => {
     bannerPhoto: data.bannerPhoto || '',
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok ) {
+    const resData = (await res.json()) as CompanyProfile
     saveProfile(resData)
-    companyData.value = { ...resData } as CompanyProfile
+    companyData.value = { ...resData }
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
@@ -138,6 +147,7 @@ const displayedJobs = computed(() => {
     <CompanyBanner
       v-else-if="editData"
       v-model="editData"
+      v-model:images="uploadImages"
       :companyData="editData"
       @loaded="renderReady"
       :isEditing

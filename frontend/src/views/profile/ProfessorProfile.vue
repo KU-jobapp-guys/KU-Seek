@@ -5,8 +5,7 @@ import { useToast } from 'vue-toastification'
 import { Save, X, Plus } from 'lucide-vue-next'
 import type { ProfessorProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
-import { getProfileData, updateProfileData } from '@/services/profileServices'
-import type { Profile } from '@/types/profileType'
+import { getProfileData, updateUserData, updateProfileImages } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import { mockCompany } from '@/data/mockCompany'
@@ -25,6 +24,11 @@ const toast = useToast()
 
 const isLoading = ref(true)
 const professorData = ref<ProfessorProfile | null>(null)
+const uploadImages = ref<{ profile: File | null; banner: File | null }>({
+  profile: null,
+  banner: null
+})
+
 const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<ProfessorProfile>()
 const isAddingConnection = ref(false)
@@ -74,6 +78,10 @@ const cancel = () => {
 const save = async () => {
   if (!checkProfile()) return
 
+  if (uploadImages.value.profile || uploadImages.value.banner) {
+    await updateProfileImages(uploadImages.value.profile, uploadImages.value.banner)
+  }
+
   const data = editData.value
 
   if (!data) return
@@ -85,11 +93,12 @@ const save = async () => {
     phoneNumber: data.phoneNumber || '',
   }
 
-  const resData = await updateProfileData(plainData)
+  const res = await updateUserData(plainData)
   
-  if (resData) {
+  if (res && res.ok ) {
+    const resData = (await res.json()) as ProfessorProfile
     saveProfile(resData)
-    professorData.value = { ...resData } as ProfessorProfile
+    professorData.value = { ...resData }
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')
@@ -109,6 +118,7 @@ onMounted(() => {
     <ProfessorBanner
       v-if="!isEditing"
       v-model="professorData"
+      v-model:images="uploadImages"
       :professorData="professorData"
       @loaded="renderReady"
       @edit="edit"
@@ -117,6 +127,7 @@ onMounted(() => {
     <ProfessorBanner
       v-else-if="editData"
       v-model="editData"
+      v-model:images="uploadImages"
       :professorData="editData"
       @loaded="renderReady"
       :isEditing

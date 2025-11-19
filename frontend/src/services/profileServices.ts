@@ -3,59 +3,76 @@ import { fetchCsrfToken } from "./utills"
 
 export async function getProfileData(user_id: string): Promise<Profile | null> {
   try {
-    const res = await fetch(`http://localhost:8000/api/v1/users/me`, {
-      method: "GET",
-      credentials: "include",
+    const res = await fetch(`http://localhost:8000/api/v1/users/${user_id}/profile`, {
+      method: 'GET',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
-        "access_token": localStorage.getItem("user_jwt") || "",
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || ''
       },
     })
     if (!res.ok) {
-      console.error("Fetching profile failed with status:", res.status)
+      console.error('Fetching profile failed with status:', res.status)
       return null
     }
-    const data = await res.json() as Profile
-    return data
-
-  } catch (error) {
-    console.error("Fetching profile error:", error)
+    return res.json() as Promise<Profile>
+  }
+  catch (error) {
+    console.error('Fetching profile error:', error)
     return null
   }
 }
 
-export async function updateProfileData(plainData: Profile): Promise<Profile | null> {
+export async function getSettingData(): Promise<Profile | null> {
   try {
-    // Replace all null values with ''
-    const cleanedData = Object.fromEntries(
-      Object.entries(plainData).map(([key, value]) => [key, value === null ? "" : value])
-    );
-
-    delete cleanedData.id
-    if (cleanedData.gender === "") delete cleanedData.gender
-    if (cleanedData.age === "") delete cleanedData.age
-
-    const base = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000"
-    const csrfToken = await fetchCsrfToken(base)
-
-    console.log("Updating profile with data:", cleanedData)
-    const res = await fetch(`http://localhost:8000/api/v1/users/profile`, {
-      method: "PATCH",
-      credentials: "include",
+    const res = await fetch(`http://localhost:8000/api/v1/settings`, {
+      method: 'GET',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
-        "access_token": localStorage.getItem("user_jwt") || "",
-        "X-CSRFToken": String(csrfToken),
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || ''
       },
-      body: JSON.stringify(cleanedData),
     })
     if (!res.ok) {
-      console.error("Updating profile failed with status:", res.status)
+      console.error('Fetching settings failed with status:', res.status)
       return null
     }
     return res.json() as Promise<Profile>
-  } catch (error) {
-    console.error("Updating profile error:", error)
+  }
+  catch (error) {
+    console.error('Fetching profile error:', error)
+    return null
+  }
+}
+
+export async function updateUserData(plainData: Partial<Profile>)  {
+  try {
+    // Replace all null values with ''
+    const cleanedData = Object.fromEntries(
+        Object.entries(plainData).map(([key, value]) => [key, value === null ? '' : value])
+    );
+
+    if (cleanedData.gender == '') delete cleanedData.gender
+    if (cleanedData.age == '') delete cleanedData.age
+    if (cleanedData.gpa == '') delete cleanedData.gpa
+
+    delete cleanedData.id
+
+    console.log('Updating profile with data:', cleanedData)
+    const res = await fetch(`http://localhost:8000/api/v1/users/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || '',
+        'X-CSRFToken': localStorage.getItem('csrf_token') || '',
+      },
+      body: JSON.stringify(cleanedData)
+    })
+    return res
+  }
+  catch (error) {
+    console.error('Updating profile error:', error)
     return null
   }
 }

@@ -20,6 +20,8 @@ export interface Job {
   pendingApplicants: number
   capacity: number
   bookmarked: boolean
+  bannerPhoto?: string
+  profilePhoto?: string
 }
 
 export type FilterKeys = 'role' | 'skills' | 'company' | 'jobLevel' | 'location' | 'jobType'

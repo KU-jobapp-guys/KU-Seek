@@ -28,7 +28,7 @@ const companyLocked = ref(false)
 
 // Form state
 const jobPost = ref({
-  company: '',
+  company: 'MuTech',
   role: '',
   location: '',
   description: '',
@@ -48,7 +48,7 @@ const jobPost = ref({
 const initializeForm = () => {
   if (props.initialData) {
     jobPost.value = {
-      company: props.initialData.company || '',
+      company: props.initialData.company || 'MuTech',
       role: props.initialData.role || '',
       location: props.initialData.location || '',
       description: props.initialData.description || '',

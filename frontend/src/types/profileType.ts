@@ -13,6 +13,7 @@ export interface BaseProfile {
   phoneNumber: string
   contactEmailVerified: boolean
   termOfServiceAccepted: boolean
+  isVerified: boolean
 }
 
 export interface CompanyProfile extends BaseProfile {

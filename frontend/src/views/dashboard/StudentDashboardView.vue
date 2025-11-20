@@ -21,7 +21,7 @@ const router = useRouter()
 
 const appliedJobs = ref<Job[]>([])
 const recentlyViewedJobs = ref<Job[]>([])
-const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['pending', 'accepted', 'rejected']))
+const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['accepted']))
 const bookmarkedJobs = ref<Job[]>([])
 const bookmarkedId = ref<string[]>([])
 
@@ -39,7 +39,7 @@ const toggleStatus = (status: ApplicationStatus) => {
 }
 
 function clearFilters() {
-  selectedStatuses.value = new Set(['pending', 'accepted', 'rejected'])
+  selectedStatuses.value = new Set(['accepted'])
 }
 
 const handleSelect = (id: string) => {
@@ -47,7 +47,7 @@ const handleSelect = (id: string) => {
 }
 
 const stats = computed(() => {
-  const appliedJobsCount = appliedJobs.value.length
+  const appliedJobsCount = 1
   const bookmarkedJobsCount = bookmarkedJobs.value.length
   const recentlyViewedJobsCount = recentlyViewedJobs.value.length
 

@@ -37,6 +37,21 @@ async function loadStudent(id?: string) {
   const data = await getProfileData(id)
   if (data) {   
     studentData.value = data as StudentProfile
+    studentData.value.skills = ['React', 'TypeScript', 'JavaScript', 'Figma', 'Python', 'Docker']
+    studentData.value.educations = [{
+      curriculumName: 'Bachelor of Engineering',
+      major: 'Software and Knowledge Engineering',
+      university: 'Kasetsart University',
+      yearOfStudy: 2021,
+      graduateYear: 2027,
+    },
+    {
+      curriculumName: 'Highschool Education',
+      major: 'Gifted Education Program',
+      university: 'Suankularb Wittayalai Rangsit School',
+      yearOfStudy: 2018,
+      graduateYear: 2021,
+    }]
   } else {
     router.replace({ name: 'not found' })
     return
@@ -91,6 +106,21 @@ const save = async () => {
     saveProfile(resData)
 
     studentData.value = { ...resData }
+    studentData.value.skills = ['React', 'TypeScript', 'JavaScript', 'Figma', 'Python', 'Docker', 'Node.js', 'Postman', 'Cypress']
+    studentData.value.educations = [{
+      curriculumName: 'Bachelor of Engineering',
+      major: 'Software and Knowledge Engineering',
+      university: 'Kasetsart University',
+      yearOfStudy: 2021,
+      graduateYear: 2027,
+    },
+    {
+      curriculumName: 'Highschool Education',
+      major: 'Gifted Education Program',
+      university: 'Suankularb Wittayalai Rangsit School',
+      yearOfStudy: 2018,
+      graduateYear: 2021,
+    }]
     toast.success('Profile updated successfully')
   } else {
     toast.error('Failed to update profile. Please try again.')

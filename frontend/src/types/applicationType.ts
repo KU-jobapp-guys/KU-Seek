@@ -1,7 +1,7 @@
 export interface JobApplication {
   id: number
   jobId: string
-  studentId: number
+  studentId: string
   resume: string
   letterOfApplication: string
   phoneNumber: string

@@ -85,11 +85,15 @@ async function toggleBookmark() {
 
 <template>
   <div v-if="job" class="h-full w-full shadow-xl relative overflow-y-auto">
-    <div class="relative w-full h-[240px] bg-gray-600 rounded-t-md"></div>
+    <img
+        :src="job.bannerPhoto"
+        alt="Company"
+        class="relative w-full h-[240px] bg-gray-600 rounded-t-md"
+      />
 
     <div class="absolute left-8 -translate-y-1/2">
       <img
-        src="https://via.placeholder.com/120"
+        :src="job.profilePhoto"
         alt="Company"
         class="w-40 h-40 bg-black rounded-full border-8 border-white"
       />

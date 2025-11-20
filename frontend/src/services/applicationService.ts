@@ -35,7 +35,7 @@ export function mapBackendApplication(b: unknown): JobApplication {
   const mapped: JobApplication = {
     id,
     jobId: String(jobDetails.job_id ?? jobDetails.jobId ?? obj.job_id ?? obj.jobId ?? ''),
-    studentId,
+    studentId: String(applicant.userId ?? ''),
     resume: String(obj.resume ?? ''),
     letterOfApplication: String(obj.letter_of_application ?? obj.letterOfApplication ?? obj.letterOfApplication ?? ''),
     phoneNumber: String(obj.phone_number ?? obj.phoneNumber ?? applicant.phone_number ?? applicant.phoneNumber ?? ''),
@@ -120,7 +120,7 @@ export async function fetchUserAppliedJobs(): Promise<Job[]> {
 
       if (jobObj.salaryMin == null) jobObj.salaryMin = 0
       if (jobObj.salaryMax == null) jobObj.salaryMax = 0
-
+      console.log("job: ", jobObj)
       return (jobObj as unknown) as Job
     })
   } catch (err) {
@@ -146,6 +146,7 @@ export async function fetchApplicationsByJob(jobId: string): Promise<JobApplicat
       return []
     }
     const data = await res.json()
+    console.log('raw: ', data)
     return normalizeApplications(data)
   } catch (err) {
     console.error('Error fetching applications by job', err)

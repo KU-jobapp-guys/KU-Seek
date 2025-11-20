@@ -40,6 +40,7 @@ export const dropdownConfig: DropdownConfig[] = [
     placeholder: 'Anywhere',
     options: [
       { value: 'bangkok', label: 'Bangkok' },
+      { value: 'nontaburi', label: 'Nontaburi' },
       { value: 'chiangmai', label: 'Chiang Mai' },
       { value: 'phuket', label: 'Phuket' },
       { value: 'pattaya', label: 'Pattaya' },

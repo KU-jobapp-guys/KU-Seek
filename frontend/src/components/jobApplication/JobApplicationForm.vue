@@ -15,11 +15,11 @@ const step = ref(1)
 const resumeOption = ref('upload')
 
 const form = reactive({
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  address: '',
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@gmail.com',
+  phone: '0861438384',
+  address: 'Bangkok, Thailand',
   experience: '',
   expectedSalary: '',
   confirm: false,
@@ -281,19 +281,7 @@ async function handleSubmit(e: Event) {
               <span v-if="resumeOption === 'upload' && !form.resume" class="text-red-500">*</span>
             </h2>
 
-            <div class="space-y-2 mb-4">
-              <label class="flex items-center space-x-2">
-                <input type="radio" v-model="resumeOption" value="profile" />
-                <span>Use resume from profile</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" v-model="resumeOption" value="upload" />
-                <span>Upload new resume</span>
-              </label>
-            </div>
-
               <div
-              v-if="resumeOption === 'upload'"
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'resume')"
               @dragover.prevent

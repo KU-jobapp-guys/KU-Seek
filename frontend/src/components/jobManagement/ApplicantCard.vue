@@ -132,7 +132,6 @@ function formatDate(date: Date) {
         </router-link>
 
         <a
-          v-if="applicant.resume"
           role="button"
           @click="getFileInBrowser(applicant.resume)"
           class="px-4 py-2 bg-[#0F52BA] hover:bg-[#0F52BA]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
@@ -142,7 +141,6 @@ function formatDate(date: Date) {
         </a>
 
         <button
-          v-if="applicant.letterOfApplication"
           role="button"
           @click="getFileInBrowser(applicant.letterOfApplication)"
           class="px-4 py-2 bg-[#4682B4] hover:bg-[#4682B4]/40 text-white rounded-lg transition-colors flex items-center justify-center gap-2"

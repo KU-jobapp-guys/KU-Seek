@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { fetchJobs } from '@/services/jobService'
 import { fetchApplicationsByJob, updateApplicationStatus } from '@/services/applicationService'
 import type { Job } from '@/types/jobType'
@@ -20,6 +21,7 @@ import ApplicantCard from '@/components/jobManagement/ApplicantCard.vue'
 import ConfirmSaveModal from '@/components/jobManagement/ConfirmSaveModal.vue'
 
 const route = useRoute()
+const toast = useToast()
 const router = useRouter()
 
 const jobDetail = ref<Job>()
@@ -91,6 +93,7 @@ async function loadApplicants(id?: string) {
   }
   try {
     const apps = await fetchApplicationsByJob(id)
+    console.log('apps: ', apps)
     applicantsList.value = sortApplicant(apps)
   } catch (err) {
     console.error('Error loading applicants', err)
@@ -119,11 +122,12 @@ function handleModalClick(status: 'save' | 'cancel') {
 
 async function saveChanges() {
   const data = await updateApplicationStatus(route.params.id as string, pendingChanges.value)
+  console.log('data: ', data)
   if (!data) {
-    alert('Failed to save changes.')
+    toast.error('Failed to save changes.')
     return
   } else {
-    alert('Changes saved successfully!')
+    toast.success('Changes saved successfully!')
     applicantsList.value = sortApplicant(data)
   }
   pendingChanges.value.clear()

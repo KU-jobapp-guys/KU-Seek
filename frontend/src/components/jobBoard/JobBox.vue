@@ -43,21 +43,16 @@ async function toggleBookmark() {
     class="h-full text-base bg-[#F9F9F9] px-6 md:px-12 py-8 w-full mb-4 rounded-md shadow-md cursor-pointer"
     @click="handleJobSelected"
   >
-    <div :class="job.status ? 'block' : 'hidden'" class="mb-4">
-      <span
-        :class="getStatusColor(job.status)"
-        class="px-3 py-1 rounded-full text-sm font-medium border capitalize"
-      >
-        {{ job.status }}
-      </span>
-    </div>
+    
 
     <div class="flex justify-between items-start mb-2">
       <div>
         <p class="text-xl font-bold">{{ job.role }}</p>
         <p>{{ job.company }}</p>
       </div>
-      <div class="shrink-0 bg-gray-300 h-12 w-12 md:w-20 md:h-20 rounded-full" />
+      <div class="shrink-0 bg-gray-300 h-12 w-12 md:w-20 md:h-20 rounded-full">
+        <img :src="job.profilePhoto" />
+      </div>
     </div>
 
     <div class="text-sm">
@@ -70,7 +65,7 @@ async function toggleBookmark() {
       </p>
     </div>
 
-    <p class="mt-4">{{ job.description }}</p>
+    <p class="mt-4 line-clamp-3">{{ job.description }}</p>
 
     <div class="w-full flex justify-between mt-4 text-sm text-gray-500">
       <p>{{ getPostTime(job.postTime) }}</p>

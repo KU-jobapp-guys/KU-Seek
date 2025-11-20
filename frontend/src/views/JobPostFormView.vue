@@ -2,10 +2,12 @@
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
 const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
 const router = useRouter()
+const toast = useToast()
 
 
 type FormPayload = {
@@ -95,7 +97,7 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
       return
     }
 
-    alert('Job Post submitted successfully!')
+    toast.success('Job Post submitted successfully!')
     router.replace("/company/dashboard")
 
   } catch (err) {

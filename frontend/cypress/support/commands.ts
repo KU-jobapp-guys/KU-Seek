@@ -1,37 +1,33 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+
+Cypress.Commands.add("testLogin", (userId: string) => {
+  const base = "http://localhost:8000"
+
+  // Step 1 — Fetch CSRF token
+  cy.request({
+    method: "GET",
+    url: `${base}/api/v1/csrf-token`,
+  }).then((res) => {
+    const csrfToken =
+      res.body?.csrf_token ||
+      res.body?.token ||
+      res.body?.csrf ||
+      ""
+
+    expect(csrfToken).to.be.a("string")
+
+    // Step 2 — Login using CSRF token
+    cy.request({
+      method: "POST",
+      url: `${base}/api/v1/testing/login`,
+      headers: {
+        "X-CSRFToken": csrfToken,
+        "Content-Type": "application/json",
+      },
+      body: {
+        user_id: userId,
+      },
+      failOnStatusCode: false, // optional
+    })
+  })
+})

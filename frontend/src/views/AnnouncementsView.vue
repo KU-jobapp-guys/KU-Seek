@@ -46,7 +46,7 @@ const filteredAnnouncements = computed(() =>
 
     <!-- Filters + Announcements share the same width container -->
     <section class="relative -mt-24 md:-mt-40">
-      <div class="max-w-5xl mx-auto px-4 md:px-6">
+      <div class="mx-auto px-[8vw] md:px-[12vw]">
         <FilterTabs v-model:selectedProf="selectedProf" v-model:selectedCompany="selectedCompany" />
 
         <main class="mt-8">

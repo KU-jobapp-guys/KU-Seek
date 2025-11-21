@@ -19,9 +19,9 @@ const showIndustryDropdown = ref(false)
 const addWorkField = () => {
   if (
     workFieldInput.value.trim() &&
-    !editForm.value.workFields.includes(workFieldInput.value.trim())
+    !(editForm.value.workFields || []).includes(workFieldInput.value.trim())
   ) {
-    editForm.value.workFields = [...editForm.value.workFields, workFieldInput.value.trim()]
+    editForm.value.workFields = [...(editForm.value.workFields || []), workFieldInput.value.trim()]
   }
   workFieldInput.value = ''
 }
@@ -97,12 +97,14 @@ watch(
           <div class="relative w-full">
             <label :class="ProfileStyle.formLabel">
               Industry
-              <span v-if="!editForm.industry?.trim()" :class="ProfileStyle.errorText">
+              <span v-if="!editForm.industry" :class="ProfileStyle.errorText">
                 (This field is required)
               </span>
             </label>
             <button
-              :class="['w-full flex justify-between items-center', ProfileStyle.inputBox]"
+              :class="['w-full flex justify-between items-center', ProfileStyle.inputBox,
+                !editForm.industry ? 'border-red-500' : ''
+              ]"
               @click="toggleDropdownField('industry')"
             >
               <span>{{ editForm.industry || 'Select Industry' }}</span>
@@ -133,7 +135,9 @@ watch(
               </span>
             </label>
             <button
-              :class="['w-full flex justify-between items-center', ProfileStyle.inputBox]"
+              :class="['w-full flex justify-between items-center', ProfileStyle.inputBox,
+                !editForm.size ? 'border-red-500' : ''
+              ]"
               @click="toggleDropdownField('size')"
             >
               <span>{{ editForm.size || 'Select company size' }}</span>
@@ -178,7 +182,7 @@ watch(
           <div>
             <label :class="ProfileStyle.formLabel">
               Specialties
-              <span v-if="editForm.workFields.length === 0" :class="ProfileStyle.errorText">
+              <span v-if="(editForm.workFields || []).length === 0" :class="ProfileStyle.errorText">
                 (At least one specialty is required)
               </span>
             </label>
@@ -189,7 +193,7 @@ watch(
                 type="text"
                 :class="[
                   ProfileStyle.inputBox,
-                  editForm.workFields.length === 0 ? ProfileStyle.errorBox : '',
+                  (editForm.workFields || []).length === 0 ? ProfileStyle.errorBox : '',
                 ]"
                 placeholder="Add a specialty (press Enter)"
               />

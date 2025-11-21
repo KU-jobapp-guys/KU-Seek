@@ -12,7 +12,6 @@ const router = useRouter()
 
 // Step control
 const step = ref(1)
-const resumeOption = ref('upload')
 
 const form = reactive({
   firstName: '',
@@ -38,7 +37,6 @@ function validatePersonalInfo() {
   errors.email = ''
 
   if (form.phone.trim() && !validatePhone(form.phone)) {
-    // Customized message for 9–10 digits only
     errors.phone = 'Phone number must contain 9–10 number digits.'
   }
 
@@ -94,8 +92,10 @@ const salaryOptions = [
 // Validation checker
 const isFormValid = computed(() => {
   validatePersonalInfo()
+
   const hasValidPhone = form.phone.trim() && !errors.phone
   const hasValidEmail = form.email.trim() && !errors.email
+
   const hasPersonalInfo =
     form.firstName.trim() &&
     form.lastName.trim() &&
@@ -103,15 +103,19 @@ const isFormValid = computed(() => {
     hasValidPhone &&
     form.address.trim()
 
-  const hasResume =
-    resumeOption.value === 'profile' || (resumeOption.value === 'upload' && form.resume)
+  const hasResume = !!form.resume
   const hasLetter = !!form.applicationLetter
   const hasExperience = !!form.experience
   const hasExpectedSalary = !!form.expectedSalary
   const confirmed = form.confirm
 
   return (
-    hasPersonalInfo && hasResume && hasLetter && hasExperience && hasExpectedSalary && confirmed
+    hasPersonalInfo &&
+    hasResume &&
+    hasLetter &&
+    hasExperience &&
+    hasExpectedSalary &&
+    confirmed
   )
 })
 
@@ -126,8 +130,7 @@ function getMissingFields() {
   else if (errors.phone) missing.push(`Phone (${errors.phone})`)
   if (!form.email.trim()) missing.push('Email')
   else if (errors.email) missing.push(`Email (${errors.email})`)
-  if (resumeOption.value === 'upload' && !form.resume)
-    missing.push('Resume file (or select "Use resume from profile")')
+  if (!form.resume) missing.push('Resume file')
   if (!form.applicationLetter) missing.push('Application Letter')
   if (!form.experience) missing.push('Years of Experience')
   if (!form.expectedSalary) missing.push('Expected Salary')
@@ -153,7 +156,6 @@ async function handleSubmit(e: Event) {
     return
   }
 
-  // Build FormData using camelCase keys
   const formData = new FormData()
   formData.append('firstName', form.firstName)
   formData.append('lastName', form.lastName)
@@ -162,14 +164,13 @@ async function handleSubmit(e: Event) {
   formData.append('yearsOfExperience', form.experience)
   formData.append('expectedSalary', form.expectedSalary)
 
-  // Files
   if (form.resume) formData.append('resume', form.resume)
   if (form.applicationLetter) formData.append('applicationLetter', form.applicationLetter)
 
   try {
     const result = await submitApplication(jobId, formData)
     if (!result) {
-      alert('Application submitted but server returned no data. Please check the server logs.')
+      alert('Application submitted but server returned no data.')
       return
     }
     alert('Application submitted successfully!')
@@ -275,25 +276,14 @@ async function handleSubmit(e: Event) {
 
         <!-- Step 2 -->
         <div v-if="step === 2" class="space-y-8">
+          <!-- Your Resume (Upload only) -->
           <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-4">
               Your Resume
-              <span v-if="resumeOption === 'upload' && !form.resume" class="text-red-500">*</span>
+              <span v-if="!form.resume" class="text-red-500">*</span>
             </h2>
 
-            <div class="space-y-2 mb-4">
-              <label class="flex items-center space-x-2">
-                <input type="radio" v-model="resumeOption" value="profile" />
-                <span>Use resume from profile</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" v-model="resumeOption" value="upload" />
-                <span>Upload new resume</span>
-              </label>
-            </div>
-
-              <div
-              v-if="resumeOption === 'upload'"
+            <div
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'resume')"
               @dragover.prevent
@@ -312,11 +302,13 @@ async function handleSubmit(e: Event) {
             </div>
           </div>
 
+          <!-- Application Letter -->
           <div class="p-6 border rounded-lg bg-white shadow-sm">
             <h2 class="font-semibold text-lg mb-4">
               Application Letter
               <span v-if="!form.applicationLetter" class="text-red-500">*</span>
             </h2>
+
             <div
               class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition"
               @drop.prevent="onDrop($event, 'applicationLetter')"

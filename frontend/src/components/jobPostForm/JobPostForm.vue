@@ -441,7 +441,6 @@ onMounted(() => {
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
           Required Skills
-          <span v-if="isEmpty(jobPost.skills)" class="text-red-500">*</span>
         </h2>
         <SearchableTagInput
           v-model="jobPost.skills"
@@ -457,7 +456,6 @@ onMounted(() => {
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
           Tags
-          <span v-if="isEmpty(jobPost.tags)" class="text-red-500">*</span>
         </h2>
         <TagInput v-model="jobPost.tags" placeholder="e.g. Urgent, Remote, Internship" />
       </section>
@@ -466,7 +464,6 @@ onMounted(() => {
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">
           Contacts
-          <span v-if="isEmpty(jobPost.contacts)" class="text-red-500">*</span>
         </h2>
         <ContactField v-model="jobPost.contacts" />
       </section>

@@ -9,6 +9,8 @@ import TagInput from './inputs/TagInput.vue'
 import ContactField from './inputs/ContactField.vue'
 import SalaryInput from './inputs/SalaryInput.vue'
 import SearchableTagInput from './inputs/SearchableTagInput.vue'
+import CalendarInput from './inputs/CalendarInput.vue'
+import TimeInput from './inputs/TimeInput.vue'
 
 const props = defineProps<{
   initialData?: Job
@@ -21,6 +23,9 @@ const emit = defineEmits<{
 
 const isEditMode = computed(() => !!props.initialData)
 
+// If we fetch the authenticated user's company, lock the company input
+const companyLocked = ref(false)
+
 // Form state
 const jobPost = ref({
   company: '',
@@ -30,8 +35,12 @@ const jobPost = ref({
   jobType: '',
   skills: [] as string[],
   tags: [] as string[],
+  capacity: '',
   salaryMin: '',
   salaryMax: '',
+  jobLevel: '',
+  endDate: '',
+  workHours: '',
   contacts: [] as { type: string; link: string }[],
 })
 
@@ -49,11 +58,31 @@ const initializeForm = () => {
       salaryMin: props.initialData.salaryMin.toString() || '',
       salaryMax: props.initialData.salaryMax.toString() || '',
       contacts: props.initialData.contacts || [],
+      capacity: props.initialData.capacity ? String(props.initialData.capacity) : '',
+      jobLevel: props.initialData.jobLevel || '',
+      endDate: props.initialData.endDate ? String(props.initialData.endDate) : '',
+      workHours: props.initialData.workHours || '',
     }
   }
 }
 
 const isSalaryValid = ref(true)
+
+// Inline field errors (shown like SalaryInput's error)
+const endDateError = ref('')
+const workHoursError = ref('')
+
+const getTomorrowDateString = () => {
+  const now = new Date()
+  now.setDate(now.getDate() + 1)
+  const yyyy = now.getFullYear()
+  const mm = String(now.getMonth() + 1).padStart(2, '0')
+  const dd = String(now.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+// Live validity computed including inline errors
+const capacityError = ref('')
 
 const isFormValid = computed(() => {
   return (
@@ -62,33 +91,119 @@ const isFormValid = computed(() => {
     jobPost.value.location.trim() !== '' &&
     jobPost.value.description.trim() !== '' &&
     jobPost.value.jobType.trim() !== '' &&
-    jobPost.value.skills.length > 0 &&
     jobPost.value.salaryMin.trim() !== '' &&
     jobPost.value.salaryMax.trim() !== '' &&
     Number(jobPost.value.salaryMin) > 0 &&
     Number(jobPost.value.salaryMax) > 0 &&
-    isSalaryValid.value
+    jobPost.value.jobLevel.trim() !== '' &&
+    jobPost.value.capacity.trim() !== '' &&
+    Number(jobPost.value.capacity) > 0 &&
+    jobPost.value.endDate.trim() !== '' &&
+    jobPost.value.workHours.trim() !== '' &&
+    isSalaryValid.value &&
+    !endDateError.value &&
+    !workHoursError.value &&
+    !capacityError.value
   )
 })
+
+watch(
+  () => jobPost.value.endDate,
+  (v) => {
+    const minDate = getTomorrowDateString()
+    if (v && v < minDate) {
+      endDateError.value = 'End date cannot be in the past.'
+    } else {
+      endDateError.value = ''
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => jobPost.value.workHours,
+  (v) => {
+    if (!v) {
+      workHoursError.value = ''
+      return
+    }
+    const parts = v.split(' - ').map((p) => p.trim())
+    if (parts.length !== 2) {
+      workHoursError.value = 'Please provide working hours in the format "9:00 AM - 5:00 PM".'
+      return
+    }
+      const parseTimeToMinutes = (s: string) => {
+        const m12 = s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+        if (m12) {
+          let hh = Number(m12[1])
+          const mm = Number(m12[2])
+          const ampm = m12[3].toUpperCase()
+          if (ampm === 'AM') {
+            if (hh === 12) hh = 0
+          } else {
+            if (hh !== 12) hh += 12
+          }
+          return hh * 60 + mm
+        }
+
+        return NaN
+      }
+
+      const sMin = parseTimeToMinutes(parts[0])
+      const eMin = parseTimeToMinutes(parts[1])
+      if (isNaN(sMin) || isNaN(eMin)) {
+        workHoursError.value = 'Invalid time format.'
+      } else if (sMin >= eMin) {
+        workHoursError.value = 'Start time must be earlier than end time.'
+      } else {
+        workHoursError.value = ''
+      }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => jobPost.value.capacity,
+  (v) => {
+    if (!v || v.toString().trim() === '') {
+      capacityError.value = 'Capacity is required.'
+      return
+    }
+    // Only allow positive integers
+    const trimmed = v.toString().trim()
+    if (!/^\d+$/.test(trimmed)) {
+      capacityError.value = 'Capacity must be a whole number.'
+      return
+    }
+    const num = Number(trimmed)
+    if (Number.isNaN(num) || num <= 0) {
+      capacityError.value = 'Capacity must be greater than zero.'
+      return
+    }
+    capacityError.value = ''
+  },
+  { immediate: true },
+)
 
 const handleSubmit = (): void => {
   const min = Number(jobPost.value.salaryMin)
   const max = Number(jobPost.value.salaryMax)
 
-  if (min <= 0 || max <= 0) {
-    alert('Salary cannot be zero or negative.')
+  if (min <= 0 || max <= 0 || !isSalaryValid.value) {
     return
   }
 
   if (!isFormValid.value) {
-    alert('Please complete all fields before submitting.')
     return
   }
+
+  if (endDateError.value || workHoursError.value || capacityError.value) return
 
   const payload = {
     ...jobPost.value,
     salaryMin: Number(jobPost.value.salaryMin),
     salaryMax: Number(jobPost.value.salaryMax),
+    capacity: Number(jobPost.value.capacity),
   }
 
   emit('submit', payload)
@@ -107,18 +222,47 @@ watch(
 )
 
 onMounted(() => {
-  const form = document.querySelector('form')
-  if (form) {
-    form.addEventListener('keydown', (e) => {
-      // Allow Enter in textareas only
-      const target = e.target as HTMLElement
-      const isTextarea = target.tagName === 'TEXTAREA'
+  // Try to auto-fill company name for authenticated users when not editing
+  ;(async () => {
+    if (!isEditMode.value) {
+      try {
+        const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+        const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
+        const headers: Record<string, string> = {}
+        if (token) headers['access_token'] = token
 
-      if (e.key === 'Enter' && !isTextarea) {
-        e.preventDefault()
+        console.log(token)
+
+        const res = await fetch(`${base}/api/v1/company`, { method: 'GET', headers, credentials: 'include' })
+        console.log(res.json)
+        if (res.ok) {
+          const data = await res.json().catch(() => null)
+          if (data && typeof data === 'object') {
+            const name = (data.name || (data.profile && data.profile.firstName ? `${data.profile.firstName} ${data.profile.lastName}` : null) || data.companyName || data.company || '') as string
+            if (name) {
+              jobPost.value.company = name
+              companyLocked.value = true
+            }
+          }
+        }
+      } catch {
+        // ignore - leave company editable
       }
-    })
-  }
+    }
+
+    const form = document.querySelector('form')
+    if (form) {
+      form.addEventListener('keydown', (e) => {
+        // Allow Enter in textareas only
+        const target = e.target as HTMLElement
+        const isTextarea = target.tagName === 'TEXTAREA'
+
+        if (e.key === 'Enter' && !isTextarea) {
+          e.preventDefault()
+        }
+      })
+    }
+  })()
 })
 </script>
 
@@ -143,12 +287,20 @@ onMounted(() => {
       <!-- Basic Information -->
       <section class="bg-white shadow-lg rounded-2xl p-8 mx-4 md:mx-0">
         <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">Basic Information</h2>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <BaseInput
-            v-model="jobPost.company"
-            label="Company Name"
-            placeholder="e.g. Techhahaha Inc."
-          />
+          <div class="flex flex-col space-y-1">
+            <label class="text-sm font-medium text-gray-700">Company Name</label>
+            <input
+              id="companyName"
+              v-model="jobPost.company"
+              type="text"
+              :readonly="companyLocked"
+              :class="['px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none', companyLocked ? 'bg-gray-100 cursor-not-allowed' : '']"
+              :aria-readonly="companyLocked"
+            />
+          </div>
+
           <BaseInput
             v-model="jobPost.role"
             label="Job Title"
@@ -172,12 +324,45 @@ onMounted(() => {
               <option value="Contract">Contract</option>
             </select>
           </div>
+          
+          <div class="flex flex-col">
+            <label class="text-sm font-medium text-gray-700 mb-1">Job Level</label>
+            <select
+              v-model="jobPost.jobLevel"
+              class="px-3 py-2 border text-black rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          >
+              <option disabled value="" class="text-gray-400">Select job level</option>
+              <option value="Junior">Junior</option>
+              <option value="Mid-Level">Mid-Level</option>
+              <option value="Senior-Level">Senior-Level</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col space-y-1">
+            <BaseInput
+              v-model="jobPost.capacity"
+              label="Capacity"
+              placeholder="e.g. 4, 5, 6"
+            />
+            <p v-if="capacityError" class="text-red-500 text-sm mt-1">{{ capacityError }}</p>
+          </div>
 
           <SalaryInput
             v-model:salaryMin="jobPost.salaryMin"
             v-model:salaryMax="jobPost.salaryMax"
             @validity="isSalaryValid = $event"
           />
+
+          <div class="flex flex-col">
+            <CalendarInput v-model="jobPost.endDate" />
+          </div>
+
+          <div class="flex flex-col">
+            <TimeInput v-model="jobPost.workHours" :emitCombined="true" />
+            <p v-if="workHoursError" class="text-red-500 text-sm mt-1">{{ workHoursError }}</p>
+          </div>
+
+          
         </div>
       </section>
 

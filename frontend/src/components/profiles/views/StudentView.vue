@@ -75,13 +75,13 @@ const profileStyle = {
     </div>
 
     <div
-      v-for="(edu, eduIndex) in studentData.education"
+      v-for="(edu, eduIndex) in studentData.educations"
       :key="eduIndex"
       :class="profileStyle.contentBox"
     >
-      <p class="font-bold">{{ edu.curriculum_name }}, {{ edu.major }}</p>
+      <p class="font-bold">{{ edu.curriculumName }}, {{ edu.major }}</p>
       <p>{{ edu.university }}</p>
-      <p class="text-sm">{{ edu.year_of_study }} - {{ edu.graduate_year }}</p>
+      <p class="text-sm">{{ edu.yearOfStudy }} - {{ edu.graduateYear }}</p>
     </div>
   </section>
 </template>

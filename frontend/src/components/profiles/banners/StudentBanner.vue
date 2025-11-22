@@ -37,17 +37,17 @@ watch(
   >
     <div class="flex flex-col w-full">
       <h1 class="font-bold text-4xl mr-2">
-        {{ studentData.first_name + ' ' + studentData.last_name }}
+        {{ studentData.firstName + ' ' + studentData.lastName }}
       </h1>
       <div class="flex w-full justify-between items-end">
         <div class="flex flex-col w-full">
-          <p class="font-semibold">({{ studentData.gender }}, {{ studentData.age }})</p>
+          <p v-if="studentData.gender && studentData.age" class="font-semibold">({{ studentData.gender }}, {{ studentData.age }})</p>
           <p>{{ studentData.location }}</p>
         </div>
 
         <div class="flex items-center gap-2">
           <div
-            v-if="studentData.is_verified"
+            v-if="studentData.isVerified"
             class="flex items-center gap-x-2 bg-green-600 text-white px-2 md:px-4 py-2 rounded-full"
           >
             <p class="hidden md:block">Verified</p>
@@ -55,7 +55,7 @@ watch(
           </div>
 
           <button
-            v-if="isOwner(studentData.id) && !studentData.is_verified"
+            v-if="isOwner(studentData.id) && !studentData.isVerified"
             class="text-base bg-red-600 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-gray-600/60 hover:bg-red-500"
           >
             <span class="hidden md:block">Verify Your Account</span>

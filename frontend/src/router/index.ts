@@ -9,13 +9,18 @@ import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import CompanyProfile from '@/views/profile/CompanyProfile.vue'
 import JobApplicationView from '@/views/JobApplicationView.vue'
 import LoginView from '@/views/LoginView.vue'
+import LogoutView from '@/views/LogoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
 import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 import AnnouncementsView from '@/views/AnnouncementsView.vue'
 import Registration from '@/views/RegistrationView.vue'
+import SettingView from '@/views/SettingView.vue'
+
 import JobManagement from '@/views/JobManagement.vue'
+import AdminView from '@/views/admin/AdminView.vue'
+import AdminLoginView from '@/views/admin/AdminLoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +35,18 @@ const router = createRouter({
       name: 'registration',
       component: Registration,
       meta: {noFooter: true}
+    },
+    {
+      path: '/admin/dashboard',
+      name: 'admin dashboard',
+      component: AdminView,
+      meta: {admin: true, noFooter: true}
+    },
+    {
+      path: '/admin',
+      name: 'admin login',
+      component: AdminLoginView,
+      meta: {admin: true, noFooter: true}
     },
     {
       path: '/student/profile/:id',
@@ -55,6 +72,11 @@ const router = createRouter({
       path: '/professor/profile/:id',
       name: 'professorProfile',
       component: ProfessorProfile,
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      component: SettingView,
     },
     {
       path: '/student/dashboard',
@@ -110,6 +132,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: LogoutView,
     },
     {
       path: '/:pathMatch(.*)*',

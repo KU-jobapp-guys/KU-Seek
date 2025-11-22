@@ -2,45 +2,33 @@
 import { computed, onMounted, ref } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
-import type { Profile } from '@/types/profileType'
-import { getUserId } from '@/libs/userUtils'
-import { mockCompany } from '@/data/mockCompany'
-import { mockStudents } from '@/data/mockStudent'
-import { mockProfessor } from '@/data/mockProfessor'
+import { getUserId, useUserStore } from '@/libs/userUtils'
 import defaultProfile from '@/assets/images/defaultProfile.png'
+
 
 type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
 type Page = { name: string; route: string }
 
 const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${import.meta.env.VITE_FRONTEND_URL}/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 
-const props = defineProps<{
-  role: UserRole
-}>()
-
 const userId = getUserId()
-const userData = ref<Profile | null>(null)
+const userRole = ref<UserRole>(localStorage.getItem('userRole') as UserRole || 'visitor')
+const userStore = useUserStore()
 
-const companyList = ['Dashboard', 'Logout']
-const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard', 'Logout']
+const companyList = ['Dashboard']
+const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard']
 const profileList = ['Profile', 'Setting', 'Logout']
 const defaultList = ['Register', { name: 'Login', route: `${oauth_url}` }]
 const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
-  if (props.role === 'company') return companyList
-  if (props.role && ['student', 'professor', 'staff'].includes(props.role)) return kuList
+  if (userRole.value === 'company') return companyList
+  if (userRole.value && ['student', 'professor', 'staff'].includes(userRole.value)) return kuList
   return defaultList
 })
 
-const mockData = {
-  company: mockCompany,
-  student: mockStudents,
-  professor: mockProfessor,
-}
-
 function makeLink(page: string | Page) {
-  const role = props.role
+  const role = userRole.value
   if (typeof page === 'object') {
     return page.route
   }
@@ -59,12 +47,24 @@ function makeLink(page: string | Page) {
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
 
-onMounted(() => {
-  const role = props.role
-  if (role && role !== 'visitor' && role !== 'staff') {
-    userData.value = mockData[role].find((u) => u.id === userId) || null
+const syncUserRole = () => {
+  userRole.value = (localStorage.getItem('userRole') as UserRole) || 'visitor'
+}
+
+onMounted(async () => {
+  syncUserRole()
+  window.addEventListener('userRoleChanged', syncUserRole)
+  if (!userStore.profileImage) {
+    console.log('No user data in store, fetching...')
+    // const userData = await fetchUserProfile()
+    // userStore.setUserData({
+    //   image: userData.profileImage,
+    //   name: userData.name,
+    //   email: userData.email
+    // })
   }
 })
+
 </script>
 
 <template>
@@ -87,7 +87,7 @@ onMounted(() => {
       </ul>
 
       <!-- Mobile Dropdown -->
-      <Menu v-if="props.role" as="div" class="relative inline-block md:hidden">
+      <Menu v-if="userRole" as="div" class="relative inline-block md:hidden">
         <MenuButton
           class="flex w-full items-center justify-center"
           @click="openMenu = openMenu === 'page' ? null : 'page'"
@@ -157,13 +157,13 @@ onMounted(() => {
       </Menu>
 
       <!-- Profile Dropdown -->
-      <Menu v-if="userData" as="div" class="relative inline-block">
+      <Menu v-if="userRole !== 'visitor'" as="div" class="relative inline-block">
         <MenuButton
           class="flex items-center justify-center"
           @click="openMenu = openMenu === 'profile' ? null : 'profile'"
         >
           <img
-            :src="userData.profilePhoto || defaultProfile"
+            :src="userStore.profileImage || defaultProfile"
             class="rounded-full w-11 h-11 object-cover ring-2 ring-white/20 hover:ring-white/40 transition-all"
           />
         </MenuButton>

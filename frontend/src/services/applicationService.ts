@@ -1,5 +1,7 @@
-import type { JobApplication } from '@/types/applicationType'
+import { getAuthHeader } from './helperService'
 import type { Job } from '@/types/jobType'
+import type { JobApplication } from '@/types/applicationType'
+
 
 type updateStatusType = Map<number, 'pending' | 'accepted' | 'rejected'>
 
@@ -55,11 +57,6 @@ export function mapBackendApplication(b: unknown): JobApplication {
 export function normalizeApplications(data: unknown): JobApplication[] {
   const list = Array.isArray(data) ? data : []
   return list.map(mapBackendApplication)
-}
-
-function getAuthHeader(): Record<string, string> {
-  const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
-  return token ? { access_token: token } : {}
 }
 
 async function fetchCsrfToken(base: string): Promise<string> {

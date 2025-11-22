@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { Save, X } from 'lucide-vue-next'
 import type { Job } from '@/types/jobType'
 import type { CompanyProfile } from '@/types/profileType'
 import { useEditableProfile } from '@/libs/profileEditing'
+import { getProfileData, updateUserData } from '@/services/profileServices'
 import { isOwner } from '@/libs/userUtils'
 import { ProfileStyle } from '@/configs/profileStyleConfig'
-import { mockCompany } from '@/data/mockCompany'
 import { fetchJobs } from '@/services/jobService'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import CompanyEdit from '@/components/profiles/edits/CompanyEdit.vue'
@@ -18,12 +19,13 @@ import NoProfile from '@/components/profiles/NoProfile.vue'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 
 const isLoading = ref(true)
 const companyData = ref<CompanyProfile | null>(null)
 const companyJobs = ref<Job[]>([])
 
-const { isEditing, editData, editProfile, cancelEdit, saveProfile } =
+const { isEditing, editData, editProfile, cancelEdit, checkProfile, saveProfile } =
   useEditableProfile<CompanyProfile>()
 
 const loadCompany = async (id?: string) => {
@@ -32,9 +34,11 @@ const loadCompany = async (id?: string) => {
     return
   }
 
-  companyData.value = mockCompany.find((c) => c.id === id) || null
-
-  if (!companyData.value) {
+  const data = await getProfileData(id)
+  
+  if (data) {   
+    companyData.value = data as CompanyProfile
+  } else {
     router.replace({ name: 'not found' })
     return
   }
@@ -62,8 +66,30 @@ const edit = () => {
 const cancel = () => {
   cancelEdit()
 }
-const save = () => {
-  saveProfile(companyData)
+
+const save = async () => {
+  if (!checkProfile()) return
+
+  const data = editData.value
+
+  if (!data) return
+
+  const plainData: CompanyProfile = {
+    ...data,
+    profilePhoto: data.profilePhoto || '',
+    bannerPhoto: data.bannerPhoto || '',
+  }
+
+  const res = await updateUserData(plainData)
+  
+  if (res && res.ok) {
+    const resData = (await res.json()) as CompanyProfile
+    saveProfile(resData)
+    companyData.value = { ...resData } 
+    toast.success('Profile updated successfully')
+  } else {
+    toast.error('Failed to update profile. Please try again.')
+  }
 }
 
 const renderReady = () => {

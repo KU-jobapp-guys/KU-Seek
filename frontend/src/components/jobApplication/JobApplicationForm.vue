@@ -3,6 +3,11 @@ import type { Job } from '@/types/jobType'
 import { ref, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { submitApplication } from '@/services/applicationService'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+const showError = (msg: string) => toastRef.value?.addToast(msg, 'error')
 
 // Props
 const props = defineProps<{ job?: Job }>()
@@ -146,13 +151,13 @@ async function handleSubmit(e: Event) {
 
   if (!isFormValid.value) {
     const missing = getMissingFields()
-    alert(`Please fix the following before submitting:\n\n- ${missing.join('\n- ')}`)
+    showError(`Please fix the following before submitting:\n\n- ${missing.join('\n- ')}`)
     return
   }
 
   const jobId = job?.jobId ?? (route.params.id as string | undefined)
   if (!jobId) {
-    alert('Cannot determine job id for this application.')
+    showError('Cannot determine job id for this application.')
     return
   }
 
@@ -170,15 +175,15 @@ async function handleSubmit(e: Event) {
   try {
     const result = await submitApplication(jobId, formData)
     if (!result) {
-      alert('Application submitted but server returned no data.')
+      showError('Application submitted but server returned no data.')
       return
     }
-    alert('Application submitted successfully!')
+    showSuccess('Application submitted successfully!')
     router.push(`/explore-job`)
   } catch (err) {
     console.error('Error submitting application', err)
     const msg = err instanceof Error ? err.message : String(err)
-    alert(msg)
+    showError(msg)
   }
 }
 </script>
@@ -402,5 +407,6 @@ async function handleSubmit(e: Event) {
         </div>
       </form>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

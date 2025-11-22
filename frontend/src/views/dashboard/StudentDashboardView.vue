@@ -14,6 +14,15 @@ import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
 import { BriefcaseBusiness, Bookmark, Eye } from 'lucide-vue-next'
 
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+import SearchInput from '@/components/dashboards/SearchInput.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+const showError = (msg: string) => toastRef.value?.addToast(msg, 'error')
+
+const searchQuery = ref('')
+
 type ApplicationStatus = 'pending' | 'accepted' | 'rejected'
 
 const openSection = ref<string>('Total Jobs Applied')
@@ -27,6 +36,7 @@ const bookmarkedId = ref<string[]>([])
 
 const toggleSection = (section: string) => {
   openSection.value = section
+  searchQuery.value = ''
 }
 
 const toggleStatus = (status: ApplicationStatus) => {
@@ -40,6 +50,8 @@ const toggleStatus = (status: ApplicationStatus) => {
 
 function clearFilters() {
   selectedStatuses.value = new Set(['pending', 'accepted', 'rejected'])
+  searchQuery.value = ''
+  showSuccess('Reset filters successfully!')
 }
 
 const handleSelect = (id: string) => {
@@ -63,8 +75,37 @@ const statusCounts = computed(() => {
 })
 
 const filteredAppliedJobs = computed(() => {
-  return appliedJobs.value.filter((job) =>
-    selectedStatuses.value.has(job.status as ApplicationStatus),
+    const query = searchQuery.value.trim().toLowerCase()
+  return appliedJobs.value.filter((job) => {
+    if (!selectedStatuses.value.has(job.status as ApplicationStatus)) return false
+    if (!query) return true
+    return (
+      job.role.toLowerCase().includes(query) ||
+      job.company.toLowerCase().includes(query) ||
+      job.location.toLowerCase().includes(query)
+    )
+  })
+})
+
+const filteredBookmarkedJobs = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return bookmarkedJobs.value
+  return bookmarkedJobs.value.filter(
+    (job) =>
+      job.role.toLowerCase().includes(query) ||
+      job.company.toLowerCase().includes(query) ||
+      job.location.toLowerCase().includes(query)
+  )
+})
+
+const filteredRecentlyViewedJobs = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return recentlyViewedJobs.value
+  return recentlyViewedJobs.value.filter(
+    (job) =>
+      job.role.toLowerCase().includes(query) ||
+      job.company.toLowerCase().includes(query) ||
+      job.location.toLowerCase().includes(query)
   )
 })
 
@@ -78,6 +119,7 @@ async function fetchJobs() {
     recentlyViewedJobs.value = []
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
+    showError('Failed to fetch jobs')
   }
 }
 
@@ -102,9 +144,15 @@ const isBookmarked = ((jobId: string) => {
 function handleBookmark(payload: {jobId: string, bm: boolean}) {
   if (isBookmarked(payload.jobId) && !payload.bm) {
     bookmarkedId.value = bookmarkedId.value.filter(id => id !== payload.jobId)
+    showSuccess('Bookmark removed!')
   } else if (!isBookmarked(payload.jobId) && payload.bm) {
     bookmarkedId.value.push(payload.jobId)
+    showSuccess('Job bookmarked!')
   }
+}
+
+function handleSearch(value: string) {
+  searchQuery.value = value
 }
 
 onMounted(() => {
@@ -164,6 +212,12 @@ onMounted(() => {
             </div>
           </div>
 
+          <SearchInput
+            v-model="searchQuery"
+            placeholder="Search jobs by title, company, or department..."
+            @search="handleSearch"
+          />
+
           <div class="min-h-[200px] max-h-[600px] overflow-y-auto pr-2">
             <div
               v-if="filteredAppliedJobs.length > 0"
@@ -199,10 +253,17 @@ onMounted(() => {
             <h1 class="text-4xl font-bold">Bookmarked Jobs</h1>
           </div>
 
-          <div v-if="bookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
+          <SearchInput
+            v-model="searchQuery"
+            placeholder="Search jobs by title, company, or department..."
+            @search="handleSearch"
+          />
+
+          <div v-if="filteredBookmarkedJobs.length > 0" class="max-h-[600px] overflow-y-auto pr-2">
+            
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in bookmarkedJobs"
+                v-for="job in filteredBookmarkedJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="isBookmarked(job.jobId)"
@@ -211,7 +272,7 @@ onMounted(() => {
               />
             </div>
           </div>
-          <p v-else class="text-gray-500 text-center py-12 text-lg">No bookmarked jobs yet.</p>
+          <p v-else class="text-gray-500 text-center py-12 text-lg">No matching bookmarked jobs.</p>
         </section>
 
         <!-- Recently Viewed Section -->
@@ -228,10 +289,16 @@ onMounted(() => {
             <h1 class="text-4xl font-bold">Recently Viewed Jobs</h1>
           </div>
 
+          <SearchInput
+            v-model="searchQuery"
+            placeholder="Search jobs by title, company, or department..."
+            @search="handleSearch"
+          />
+
           <div class="max-h-[600px] overflow-y-auto pr-2">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in recentlyViewedJobs"
+                v-for="job in filteredRecentlyViewedJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="isBookmarked(job.jobId)"
@@ -243,5 +310,6 @@ onMounted(() => {
         </section>
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

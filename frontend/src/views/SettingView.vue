@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useToast } from 'vue-toastification'
 import { User, Mail, GraduationCap, Building2, Edit, Trash } from 'lucide-vue-next'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { getSettingData, updateUserData } from '@/services/profileServices'
@@ -8,8 +7,12 @@ import type { CompanyProfile, Profile, StudentProfile } from '@/types/profileTyp
 import { ProfileStyle } from '@/configs/profileStyleConfig'
 import DeleteAccountModal from '@/components/settings/DeleteAccountModal.vue'
 import ChangeContactEmailModal from '@/components/settings/ChangeContactEmailModal.vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 
-const toast = useToast()
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+const showError = (msg: string) => toastRef.value?.addToast(msg, 'error')
+
 const userType = localStorage.getItem('userRole')
 const isEditing = ref(false)
 const isSaving = ref(false)
@@ -162,10 +165,10 @@ async function saveSetting() {
       originalData.value = JSON.parse(JSON.stringify(newData))
       Object.keys(touched).forEach(key => delete touched[key])
       isEditing.value = false
-      toast.success('Settings updated successfully.')
+      showSuccess('Settings updated successfully.')
     }
     else {
-      toast.error('Failed to update settings. Please try again.')
+      showError('Failed to update settings. Please try again.')
     }
     
   } catch (error) {
@@ -505,5 +508,6 @@ onMounted(() => {
 
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

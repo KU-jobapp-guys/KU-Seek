@@ -18,6 +18,11 @@ import {
 import DashboardStatCard from '@/components/dashboards/StatCards/StatCard.vue'
 import ApplicantCard from '@/components/jobManagement/ApplicantCard.vue'
 import ConfirmSaveModal from '@/components/jobManagement/ConfirmSaveModal.vue'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+const showError = (msg: string) => toastRef.value?.addToast(msg, 'error')
 
 const route = useRoute()
 const router = useRouter()
@@ -120,10 +125,10 @@ function handleModalClick(status: 'save' | 'cancel') {
 async function saveChanges() {
   const data = await updateApplicationStatus(route.params.id as string, pendingChanges.value)
   if (!data) {
-    alert('Failed to save changes.')
+    showError('Failed to save changes.')
     return
   } else {
-    alert('Changes saved successfully!')
+    showSuccess('Changes saved successfully!')
     applicantsList.value = sortApplicant(data)
   }
   pendingChanges.value.clear()
@@ -296,4 +301,5 @@ onMounted(() => {
       @handleModalClick="handleModalClick"
     />
   </section>
+  <ToastContainer ref="toastRef" />
 </template>

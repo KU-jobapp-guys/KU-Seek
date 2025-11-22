@@ -72,7 +72,7 @@ async function fetchCsrfToken(base: string): Promise<string> {
 
 
 export async function fetchUserAppliedJobs(): Promise<Job[]> {
-  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000.'
   const url = new URL(`${base}/api/v1/application`)
   try {
     const csrfToken = await fetchCsrfToken(base)

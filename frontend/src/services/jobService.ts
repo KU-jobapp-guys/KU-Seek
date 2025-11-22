@@ -10,7 +10,11 @@ export async function fetchJobs(filters?: Record<string, string>): Promise<Job[]
     })
   }
 
-  const res = await fetch(url.toString())
+  const res = await fetch(url.toString(),{
+    headers: {
+      ...getAuthHeader(),
+    }
+    })
   if (!res.ok) {
     console.error('Failed to fetch jobs:', res.status)
     return []
@@ -33,7 +37,11 @@ export async function fetchJob(jobId: string | number): Promise<Job | null> {
   const url = new URL(`${base}/api/v1/jobs`)
   url.searchParams.append('job_id', String(jobId))
 
-  const res = await fetch(url.toString())
+  const res = await fetch(url.toString(),{
+    headers: {
+        ...getAuthHeader(),
+    }
+  })
   if (!res.ok) {
     console.error('Failed to fetch job:', res.status)
     return null

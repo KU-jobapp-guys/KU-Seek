@@ -11,6 +11,8 @@ import { useRouter } from 'vue-router';
 const router = useRouter()
 
 async function logout() {
+
+    const returnPath = localStorage.getItem("userRole") === 'admin' ? '/admin' : '/'
     try {
         const csrfToken = localStorage.getItem("csrf_token")
         if (!csrfToken) {
@@ -30,7 +32,7 @@ async function logout() {
             localStorage.removeItem("userRole")
             localStorage.removeItem("user_jwt")
             window.dispatchEvent(new Event('userRoleChanged'))
-            router.replace({path: '/'})
+            router.replace({path: returnPath})
         } else {
             backToPreviousPage()
             return

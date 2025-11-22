@@ -37,10 +37,10 @@ function clearFilters() {
 <template>
   <!-- Container -->
   <div
-    class="relative max-w-5xl mx-auto -mt-24 md:-mt-36 z-20 bg-gradient-to-br from-white via-gray-50 to-blue-50/70 backdrop-blur-sm shadow-2xl overflow-hidden"
+    class="relative mx-auto -mt-24 md:-mt-36 z-20 bg-gradient-to-br from-white via-gray-50 to-blue-50/70 backdrop-blur-sm shadow-2xl overflow-hidden"
   >
     <!-- Top gradient bar -->
-    <div class="h-4 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
+    <div class="h-4 w-full bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600"></div>
 
     <!-- Inner content -->
     <div class="p-6 md:p-8 flex flex-col gap-6">

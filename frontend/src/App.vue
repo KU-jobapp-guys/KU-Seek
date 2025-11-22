@@ -4,13 +4,14 @@ import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref, onMounted, watch } from 'vue'
 
-type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
+type AllUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' | 'admin'
+type NormalUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' 
 
-const userRole = ref<UserRole>('visitor')
+const userRole = ref<AllUserRole>('visitor')
 
 // Load role from localStorage on mount
 onMounted(() => {
-  const savedRole = localStorage.getItem('userRole') as UserRole | null
+  const savedRole = localStorage.getItem('userRole') as NormalUserRole | null
   if (savedRole) {
     userRole.value = savedRole
   }
@@ -23,14 +24,17 @@ watch(userRole, (newRole) => {
 </script>
 
 <template>
-  <NavBar />
+  <div class="flex flex-col min-h-screen">
+    <header id="navbar">
+      <NavBar v-if="!$route.meta.admin" v-model:role="userRole as NormalUserRole" />
+    </header>
 
-  <div class="min-h-screen mt-8 md:mt-16">
-    <RouterView />
-  </div>
+    <main class="flex-1" :class="!$route.meta.admin ? 'mt-4 md:mt-8' : ''">
+      <RouterView />
+    </main>
 
-  <div id="footer">
-    <div v-if="$route.meta.noFooter" class="hidden"></div>
-    <Footer v-else></Footer>
+    <footer id="footer" v-if="!$route.meta.noFooter">
+      <Footer />
+    </footer>
   </div>
 </template>

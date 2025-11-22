@@ -19,6 +19,8 @@ import Registration from '@/views/RegistrationView.vue'
 import SettingView from '@/views/SettingView.vue'
 
 import JobManagement from '@/views/JobManagement.vue'
+import AdminView from '@/views/admin/AdminView.vue'
+import AdminLoginView from '@/views/admin/AdminLoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +35,18 @@ const router = createRouter({
       name: 'registration',
       component: Registration,
       meta: {noFooter: true}
+    },
+    {
+      path: '/admin/dashboard',
+      name: 'admin dashboard',
+      component: AdminView,
+      meta: {admin: true, noFooter: true}
+    },
+    {
+      path: '/admin',
+      name: 'admin login',
+      component: AdminLoginView,
+      meta: {admin: true, noFooter: true}
     },
     {
       path: '/student/profile/:id',

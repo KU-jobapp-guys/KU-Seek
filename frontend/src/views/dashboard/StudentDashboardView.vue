@@ -8,7 +8,7 @@ import StatCarousel from '@/components/dashboards/StatCards/StatCarousel.vue'
 import { statusOptions } from '@/configs/statusOption'
 import EmptyFilter from '@/components/dashboards/EmptyFilter.vue'
 import { fetchBookmarkId as fetchBookmarkService } from '@/services/bookmarkService'
-import { fetchJob } from '@/services/jobService'
+import { fetchJob, fetchHistoryId as fetchHistoryService } from '@/services/jobService'
 
 import type { Job } from '@/types/jobType'
 import { StudentStats } from '@/configs/dashboardStatConfig'
@@ -24,6 +24,8 @@ const recentlyViewedJobs = ref<Job[]>([])
 const selectedStatuses = ref<Set<ApplicationStatus>>(new Set(['accepted']))
 const bookmarkedJobs = ref<Job[]>([])
 const bookmarkedId = ref<string[]>([])
+const historyJobs = ref<Job[]>([])
+const historyId = ref<string[]>([])
 
 const toggleSection = (section: string) => {
   openSection.value = section
@@ -49,7 +51,7 @@ const handleSelect = (id: string) => {
 const stats = computed(() => {
   const appliedJobsCount = 1
   const bookmarkedJobsCount = bookmarkedJobs.value.length
-  const recentlyViewedJobsCount = recentlyViewedJobs.value.length
+  const recentlyViewedJobsCount = historyJobs.value.length
 
   return { appliedJobsCount, bookmarkedJobsCount, recentlyViewedJobsCount }
 })
@@ -94,6 +96,19 @@ async function fetchBookmark() {
   }
 }
 
+async function fetchHistory() {
+  try {
+    historyId.value = await fetchHistoryService()
+    const jobs = await Promise.all(
+      (historyId.value || []).map((jobId) => fetchJob(jobId))
+    )
+    historyJobs.value = jobs.filter((job): job is Job => job !== null)
+  } catch {
+    historyId.value = []
+    historyJobs.value = []
+  }
+}
+
 // const isBookmarked = (jobId: string) => bookmarkedId.value.includes(jobId.toString())
 const isBookmarked = ((jobId: string) => {
   return Object.values(bookmarkedId.value).includes(jobId.toString())
@@ -110,6 +125,7 @@ function handleBookmark(payload: {jobId: string, bm: boolean}) {
 onMounted(() => {
   fetchJobs()
   fetchBookmark()
+  fetchHistory()
 })
 </script>
 
@@ -231,7 +247,7 @@ onMounted(() => {
           <div class="max-h-[600px] overflow-y-auto pr-2">
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-8">
               <JobCard
-                v-for="job in recentlyViewedJobs"
+                v-for="job in historyJobs"
                 :key="job.jobId"
                 :job="job"
                 :bookmarked="isBookmarked(job.jobId)"

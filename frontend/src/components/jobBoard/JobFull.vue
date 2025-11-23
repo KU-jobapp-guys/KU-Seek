@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
 import type { Job } from '@/types/jobType'
-import { fetchJobs } from '@/services/jobService'
+import { fetchJobs, addStudentHistory } from '@/services/jobService'
 import { useRouter } from 'vue-router'
 import { MapPin, Bookmark, BookmarkCheck, Clock,
   Banknote, BriefcaseBusiness, PenBox } from 'lucide-vue-next'
@@ -42,12 +42,16 @@ const loadJob = async (id?: string) => {
 onMounted(() => {
   loadJob(props.jobId)
   loadApplied()
+  addStudentHistory(props.jobId).catch((err) => {
+    console.error('Failed to add to history', err)
+  })
 })
 
 watch(
   () => props.jobId,
   (newId) => {
     loadJob(newId)
+    addStudentHistory(newId)
   },
 )
 

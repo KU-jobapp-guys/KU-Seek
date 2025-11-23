@@ -118,3 +118,66 @@ export async function fetchCompanyJobs(): Promise<Job[]> {
   }
 }
 
+export async function fetchHistoryId(): Promise<string[]> {
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+  const url = new URL(`${base}/api/v1/student/histories`)
+  try {            
+    const res = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+      },
+      credentials: 'include',
+    })
+
+    if (!res.ok) {
+      const bodyText = await res.text().catch(() => '<no body>')
+      console.error('Failed to fetch student histories', {
+        url: url.toString(),
+        status: res.status,
+        statusText: res.statusText,
+        body: bodyText,
+      })
+      return []
+    }
+
+    type History = {
+      job_id: number
+      student_id: number
+      viewed_at: string
+    }
+
+    const data = await res.json()
+    const list = Array.isArray(data) ? data as History[] : []
+
+    return list.map((item) => item.job_id.toString())
+
+  } catch (err) {
+    console.error('Error fetching student histories', err)
+    return []
+  }
+}
+
+
+export async function addStudentHistory(jobId: string) {
+  try {
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+    const url = new URL(`${base}/api/v1/student/histories`)
+    const res = await fetch(url.toString(), {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': localStorage.getItem('user_jwt') || '',
+        'X-CSRFToken': localStorage.getItem('csrf_token') || '',
+      },
+      body: JSON.stringify({ job_id: Number(jobId) })
+    })
+    return res
+  }
+  catch (error) {
+    console.error('Add new student history error:', error)
+    return null
+  }
+}

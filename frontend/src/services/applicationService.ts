@@ -120,7 +120,6 @@ export async function fetchUserAppliedJobs(): Promise<Job[]> {
 
       if (jobObj.salaryMin == null) jobObj.salaryMin = 0
       if (jobObj.salaryMax == null) jobObj.salaryMax = 0
-      console.log("job: ", jobObj)
       return (jobObj as unknown) as Job
     })
   } catch (err) {

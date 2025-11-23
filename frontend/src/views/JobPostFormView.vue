@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import JobPostForm from '@/components/jobPostForm/JobPostForm.vue'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+const showError = (msg: string) => toastRef.value?.addToast(msg, 'error')
 
 const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
@@ -91,16 +96,16 @@ const handleSubmit = async (formPayload: FormPayload): Promise<void> => {
       console.error('Job post failed:', res.status, data)
       const dataObj = (data && typeof data === 'object') ? (data as Record<string, unknown>) : null
       const msg = (dataObj && (String(dataObj.message ?? dataObj.detail ?? dataObj.error))) || `Failed to submit job post (status ${res.status})`
-      alert(msg)
+      showError(msg)
       return
     }
 
-    alert('Job Post submitted successfully!')
+    showSuccess('Job Post submitted successfully!')
     router.replace("/company/dashboard")
 
   } catch (err) {
     console.error('Error submitting job post:', err)
-    alert('Failed to submit job post.')
+    showError('Failed to submit job post.')
   }
 }
 
@@ -111,4 +116,5 @@ onMounted(() => {
 
 <template>
   <JobPostForm @submit="handleSubmit" />
+  <ToastContainer ref="toastRef" />
 </template>

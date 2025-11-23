@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { SearchIcon } from 'lucide-vue-next'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 const props = defineProps<{
   selectedCompany: string
@@ -18,6 +22,7 @@ watch(
 function clearFilters() {
   localCompany.value = ''
   emits('update:selectedCompany', '')
+  showSuccess('Reset filters successfully!')
 }
 </script>
 
@@ -59,5 +64,6 @@ function clearFilters() {
         </button>
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

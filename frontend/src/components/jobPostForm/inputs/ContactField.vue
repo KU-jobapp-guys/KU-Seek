@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 interface Contact {
   type: string
@@ -17,90 +17,76 @@ const emit = defineEmits<{
 const contactTypes = ['Email', 'Phone', 'Facebook', 'LinkedIn', 'Website']
 
 const newContact = ref<Contact>({ type: '', link: '' })
-const error = ref('')
 
-// --- Validation helpers ---
-const validatePhone = (phone: string): boolean => {
-  const phoneRegex = /^[+]?[0-9\s\-()]{7,15}$/
-  return phoneRegex.test(phone)
-}
+// Validators
+const validatePhone = (v: string) => /^[0-9]{9,10}$/.test(v)
+const validateEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 
-const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-const validateURL = (url: string): boolean => {
+const validateURL = (url: string) => {
   try {
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url
-    const parsed = new URL(url)
-    return parsed.hostname.includes('.')
+    return new URL(url).hostname.includes('.')
   } catch {
     return false
   }
 }
 
-const validateFacebook = (url: string): boolean => {
+const validateFacebook = (url: string) => {
   try {
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url
-    const parsed = new URL(url)
-    return parsed.hostname.includes('facebook.com') || parsed.hostname.endsWith('fb.com')
+    const host = new URL(url).hostname
+    return host.includes('facebook.com') || host.endsWith('fb.com')
   } catch {
     return false
   }
 }
 
-const validateLinkedIn = (url: string): boolean => {
+const validateLinkedIn = (url: string) => {
   try {
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url
-    const parsed = new URL(url)
-    return parsed.hostname.includes('linkedin.com')
+    return new URL(url).hostname.includes('linkedin.com')
   } catch {
     return false
   }
 }
 
-// --- Add Contact ---
-const addContact = (): void => {
-  error.value = ''
-
-  if (!newContact.value.type || !newContact.value.link.trim()) {
-    error.value = 'Please fill out all fields.'
-    return
+// Format phone input
+watch(
+  () => newContact.value.link,
+  (val) => {
+    if (newContact.value.type === 'Phone') {
+      const digits = val.replace(/\D/g, '').slice(0, 10)
+      newContact.value.link = digits
+    }
   }
+)
 
+// LIVE validation (this is the fix)
+const validationError = computed(() => {
   const { type, link } = newContact.value
 
-  if (type === 'Phone' && !validatePhone(link)) {
-    error.value = 'Invalid phone number format.'
-    return
-  }
+  if (!type || !link.trim()) return ''
+  if (type === 'Phone' && !validatePhone(link)) return 'Phone must be 9–10 digits.'
+  if (type === 'Email' && !validateEmail(link)) return 'Invalid email address.'
+  if (type === 'Facebook' && !validateFacebook(link)) return 'Invalid Facebook link.'
+  if (type === 'LinkedIn' && !validateLinkedIn(link)) return 'Invalid LinkedIn link.'
+  if (type === 'Website' && !validateURL(link)) return 'Invalid website URL.'
 
-  if (type === 'Email' && !validateEmail(link)) {
-    error.value = 'Invalid email address.'
-    return
-  }
+  return ''
+})
 
-  if (type === 'Facebook' && !validateFacebook(link)) {
-    error.value = 'Invalid Facebook profile/page link.'
-    return
-  }
+// Disable add button only when invalid
+const canAdd = computed(() => validationError.value === '' && newContact.value.type && newContact.value.link)
 
-  if (type === 'LinkedIn' && !validateLinkedIn(link)) {
-    error.value = 'Invalid LinkedIn profile link.'
-    return
-  }
-
-  if (type === 'Website' && !validateURL(link)) {
-    error.value = 'Invalid website URL.'
-    return
-  }
+// Add contact
+const addContact = () => {
+  if (!canAdd.value) return
 
   emit('update:modelValue', [...props.modelValue, { ...newContact.value }])
   newContact.value = { type: '', link: '' }
 }
-
-const removeContact = (index: number): void => {
+  
+const removeContact = (index: number) => {
   const updated = [...props.modelValue]
   updated.splice(index, 1)
   emit('update:modelValue', updated)
@@ -109,7 +95,7 @@ const removeContact = (index: number): void => {
 
 <template>
   <div class="space-y-3">
-    <!-- Existing Contacts -->
+    <!-- Existing contacts -->
     <div
       v-for="(contact, index) in modelValue"
       :key="index"
@@ -118,38 +104,38 @@ const removeContact = (index: number): void => {
       <span class="px-3 py-1 bg-gray-200 rounded-lg text-sm">
         {{ contact.type }}: {{ contact.link }}
       </span>
-      <button type="button" class="text-red-500" @click="removeContact(index)">✕</button>
+      <button class="text-red-500" @click="removeContact(index)">✕</button>
     </div>
 
-    <!-- New Contact Input -->
+    <!-- Input row -->
     <div class="flex gap-2">
       <select v-model="newContact.type" class="flex-1 px-3 py-2 border rounded-xl text-black">
         <option value="">Select type</option>
-        <option v-for="type in contactTypes" :key="type" :value="type">{{ type }}</option>
+        <option v-for="type in contactTypes" :key="type" :value="type">
+          {{ type }}
+        </option>
       </select>
 
       <input
         v-model="newContact.link"
-        :placeholder="
-          newContact.type === 'Phone'
-            ? 'Enter phone number'
-            : newContact.type === 'Email'
-              ? 'Enter email address'
-              : 'Enter link or username'
-        "
+        :type="newContact.type === 'Phone' ? 'tel' : 'text'"
+        :inputmode="newContact.type === 'Phone' ? 'numeric' : 'text'"
         class="flex-1 px-3 py-2 border rounded-xl text-black"
+        placeholder="Enter value"
       />
 
       <button
-        type="button"
-        class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
         @click="addContact"
+        :disabled="!canAdd"
+        class="px-4 py-2 bg-blue-600 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
       >
         +
       </button>
     </div>
 
-    <!-- Error Message -->
-    <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+    <!-- Live error message -->
+    <p v-if="validationError" class="text-red-500 text-sm">
+      {{ validationError }}
+    </p>
   </div>
 </template>

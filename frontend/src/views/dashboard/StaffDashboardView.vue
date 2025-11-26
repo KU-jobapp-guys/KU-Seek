@@ -9,6 +9,12 @@ import type { Job } from '@/types/jobType'
 import { ProfessorStats } from '@/configs/dashboardStatConfig'
 import { Bookmark, Eye } from 'lucide-vue-next'
 
+import ToastContainer from '@/components/additions/ToastContainer.vue'
+
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
+const showError = (msg: string) => toastRef.value?.addToast(msg, 'error')
+
 const openSection = ref<string>('Bookmarked')
 const router = useRouter()
 
@@ -42,6 +48,7 @@ async function fetchJobs() {
     })
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
+    showError('Failed to fetch jobs')
   }
 }
 
@@ -56,9 +63,11 @@ function handleBookmark(payload: { id: string; bookmarked: boolean }) {
   if (bookmarked) {
     if (!bookmarkedJobs.value.some((j) => j.jobId === id)) {
       bookmarkedJobs.value.push(job)
+      showSuccess('Job bookmarked!')
     }
   } else {
     bookmarkedJobs.value = bookmarkedJobs.value.filter((j) => j.jobId !== id)
+    showSuccess('Bookmark removed!')
   }
 
   localStorage.setItem('bookmarkedJobs', JSON.stringify(bookmarkedJobs.value.map((j) => j.jobId)))
@@ -143,5 +152,6 @@ onMounted(() => {
         </section>
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

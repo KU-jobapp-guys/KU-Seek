@@ -1,6 +1,6 @@
 <template>
   <TOSModal v-if="showModal" @closetos="closeTOS" @agreetos="handleSubmit" />
-  <div class="relative w-full min-h-screen mt-16 overflow-hidden bg-white flex justify-center items-center">
+  <div class="relative w-full min-h-screen mt-8 overflow-hidden bg-white flex justify-center items-center">
     <!-- Background -->
     <div class="absolute inset-0 flex">
       <!-- Left side background -->

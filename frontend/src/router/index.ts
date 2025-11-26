@@ -16,8 +16,8 @@ import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 import AnnouncementsView from '@/views/AnnouncementsView.vue'
 import Registration from '@/views/RegistrationView.vue'
+import CredentialRegistration from '@/views/CredentialRegistration.vue'
 import SettingView from '@/views/SettingView.vue'
-
 import JobManagement from '@/views/JobManagement.vue'
 import AdminView from '@/views/admin/AdminView.vue'
 import AdminLoginView from '@/views/admin/AdminLoginView.vue'
@@ -34,6 +34,12 @@ const router = createRouter({
       path: '/registration',
       name: 'registration',
       component: Registration,
+      meta: {noFooter: true}
+    },
+    {
+      path: '/registration/credential',
+      name: 'credential registration',
+      component: CredentialRegistration,
       meta: {noFooter: true}
     },
     {

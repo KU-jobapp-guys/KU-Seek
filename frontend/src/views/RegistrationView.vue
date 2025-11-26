@@ -57,12 +57,12 @@
 
     <!-- Link back to landing page-->
     <RouterLink
-    to="/"
-    class="absolute top-6 left-6 z-20 text-white font-semibold hover:underline transition"
-  >
-    <span class="text-lg">← </span>
-    <span>Back to Landing Page</span>
-  </RouterLink>
+      to="/"
+      class="absolute top-6 left-6 z-20 text-white font-semibold hover:underline transition"
+    >
+      <span class="text-lg">← </span>
+      <span>Back to Landing Page</span>
+    </RouterLink>
 
     <!-- Foreground Content -->
     <div class="relative z-10 flex w-full h-full px-8 justify-center items-end">
@@ -119,7 +119,7 @@
 
           <!-- Scrollable Fields -->
           <div class="flex-1 overflow-y-auto space-y-4 px-2">
-            <form @submit.prevent="handleSubmit" class="space-y-4">
+            <form class="space-y-4">
               <!-- Shared Fields -->
               <div>
                 <label class="block text-gray-600 text-sm mb-1">First Name</label>
@@ -203,14 +203,23 @@
           <!-- Submit Button -->
           <button
             type="button"
-            @click="handleSubmit"
+            @click="handleSubmit('google')"
             :disabled="!isFormValid"
             class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
           >
             Register with Google Oauth
           </button>
 
-        <!-- Login button -->
+          <button
+            type="button"
+            @click="handleSubmit('credential')"
+            :disabled="!isFormValid"
+            class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+          >
+            Register with Username and Password
+          </button>
+
+          <!-- Login button -->
           <div class="mt-4 text-sm text-gray-600 text-left">
             Already have an account?
             <button
@@ -228,8 +237,10 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const form_role = ref<'staff' | 'company'>('staff')
+const router = useRouter()
 
 const staffFileText = ref('Upload one of the following: Physical/Digital KU ID, Transcript')
 const companyFileText = ref('Upload a business license or equivalent document')
@@ -298,7 +309,7 @@ function loginWithGoogle() {
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${import.meta.env.VITE_FRONTEND_URL}/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 }
 
-async function handleSubmit() {
+async function handleSubmit(state: string) {
   // Store file separately as base64
   if (form.file) {
     const reader = new FileReader()
@@ -315,7 +326,8 @@ async function handleSubmit() {
       const user_data = JSON.stringify(userDataWithoutFile)
       localStorage.setItem("userInfo", user_data)
       
-      loginWithGoogle()
+      if (state === 'google') loginWithGoogle()
+      else router.push('/registration/credential')
     }
     reader.readAsDataURL(form.file)
   }

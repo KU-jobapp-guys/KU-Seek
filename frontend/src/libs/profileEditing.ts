@@ -7,7 +7,8 @@ export type EditableProfile<T> = {
   originalData: Ref<T | null>
   editProfile: (data: T) => void
   cancelEdit: () => void
-  saveProfile: (targetData: Ref<T | null>) => void
+  checkProfile: () => boolean
+  saveProfile: (newData: Profile) => void
   handleUpdate: (data: T) => void
 }
 
@@ -32,25 +33,25 @@ export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
     editData.value = data
   }
 
-  const saveProfile = (targetData: Ref<T | null>) => {
-    if (!editData.value) return
+  const checkProfile = () => {
+    if (!editData.value) return false
 
     const firstError = document.querySelector('.error-form')
     if (firstError) {
       setTimeout(() => {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
-      return
+      return false
     }
+    
+    return true
+  }
 
-    targetData.value = editData.value
-    // send data to backend here
-
+  const saveProfile = (newData: Profile) => {
     isEditing.value = false
     editData.value = null
     originalData.value = null
-
-    return
+    Object.assign(originalData, newData)
   }
 
   return {
@@ -59,6 +60,7 @@ export function useEditableProfile<T extends Profile>(): EditableProfile<T> {
     originalData,
     editProfile,
     cancelEdit,
+    checkProfile,
     saveProfile,
     handleUpdate,
   }

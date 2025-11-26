@@ -13,7 +13,10 @@ import {
   fetchBookmarkId as fetchBookmarkService, 
   postBookmark as postBookmarkService, 
   deleteBookmark as deleteBookmarkService } from '@/services/bookmarkService'
+import ToastContainer from '@/components/additions/ToastContainer.vue'
 
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null)
+const showSuccess = (msg: string) => toastRef.value?.addToast(msg, 'success')
 
 const route = useRoute()
 const router = useRouter()
@@ -30,11 +33,14 @@ const companyFilter = ref<string | undefined>(route.query.company as string) // 
 async function fetchJobs(newFilters: Partial<Filters> = {}) {
   filters.value = { ...filters.value, ...newFilters }
 
-  const mapped = await fetchJobsService()
+  const mapped = await fetchJobsService({ ...(filters.value as Record<string, string>), status: 'accepted' })
 
-  jobs.value = mapped.filter((j: Job) => {
+  const accepted = mapped.filter((j: Job) => String((j as unknown as Record<string, unknown>).status ?? '').toLowerCase() === 'accepted')
+
+  jobs.value = accepted.filter((j: Job) => {
     return Object.entries(filters.value).every(([key, value]) => {
       if (!value) return true
+      if (key === 'status') return true
       const field = (j as unknown as Record<string, unknown>)[key]
       return String(field ?? '')
         .toLowerCase()
@@ -62,10 +68,12 @@ async function handleBookmark(payload: {jobId: string, bm: boolean}) {
   if (isBookmarked(payload.jobId) && !payload.bm) {
     if (await deleteBookmarkService(payload.jobId)) {
       bookmarked.value = bookmarked.value.filter(id => id !== payload.jobId)
+      showSuccess('Bookmark removed!')
     }
   } else if (!isBookmarked(payload.jobId) && payload.bm) {
     if (await postBookmarkService(payload.jobId)) {
       bookmarked.value.push(payload.jobId)
+      showSuccess('Job bookmarked!')
     }
   }
 
@@ -128,5 +136,6 @@ onMounted(() => {
         <p>Try adjusting your filters or checking for spelling errors.</p>
       </div>
     </div>
+    <ToastContainer ref="toastRef" />
   </div>
 </template>

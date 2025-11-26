@@ -1,5 +1,7 @@
-import type { JobApplication } from '@/types/applicationType'
+import { getAuthHeader } from './helperService'
 import type { Job } from '@/types/jobType'
+import type { JobApplication } from '@/types/applicationType'
+
 
 type updateStatusType = Map<number, 'pending' | 'accepted' | 'rejected'>
 
@@ -57,11 +59,6 @@ export function normalizeApplications(data: unknown): JobApplication[] {
   return list.map(mapBackendApplication)
 }
 
-function getAuthHeader(): Record<string, string> {
-  const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
-  return token ? { access_token: token } : {}
-}
-
 async function fetchCsrfToken(base: string): Promise<string> {
   try {
     const res = await fetch(`${base}/api/v1/csrf-token`, { credentials: 'include' })
@@ -75,7 +72,7 @@ async function fetchCsrfToken(base: string): Promise<string> {
 
 
 export async function fetchUserAppliedJobs(): Promise<Job[]> {
-  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+  const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000.'
   const url = new URL(`${base}/api/v1/application`)
   try {
     const csrfToken = await fetchCsrfToken(base)

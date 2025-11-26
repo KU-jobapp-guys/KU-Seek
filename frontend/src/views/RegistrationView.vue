@@ -1,4 +1,5 @@
 <template>
+  <TOSModal v-if="showModal" @closetos="closeTOS" @agreetos="handleSubmit" />
   <div class="relative w-full min-h-screen mt-8 overflow-hidden bg-white flex justify-center items-center">
     <!-- Background -->
     <div class="absolute inset-0 flex">
@@ -203,7 +204,7 @@
           <!-- Submit Button -->
           <button
             type="button"
-            @click="handleSubmit('google')"
+            @click="isGoogleUser = true; showTOS()"
             :disabled="!isFormValid"
             class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
           >
@@ -212,7 +213,7 @@
 
           <button
             type="button"
-            @click="handleSubmit('credential')"
+            @click="isGoogleUser = false; showTOS()"
             :disabled="!isFormValid"
             class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
           >
@@ -238,9 +239,13 @@
 <script setup lang="ts">
 import { reactive, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import TOSModal from '@/components/tos/tosModal.vue'
 
 const form_role = ref<'staff' | 'company'>('staff')
+const showModal = ref<boolean>(false)
 const router = useRouter()
+
+const isGoogleUser = ref<boolean>(false)
 
 const staffFileText = ref('Upload one of the following: Physical/Digital KU ID, Transcript')
 const companyFileText = ref('Upload a business license or equivalent document')
@@ -309,7 +314,18 @@ function loginWithGoogle() {
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${import.meta.env.VITE_FRONTEND_URL}/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
 }
 
-async function handleSubmit(state: string) {
+function showTOS() {
+  document.body.style.overflow = 'hidden'
+  showModal.value = true
+}
+
+function closeTOS() {
+  document.body.style.overflow = ''
+  showModal.value = false
+}
+
+async function handleSubmit() {
+  showTOS()
   // Store file separately as base64
   if (form.file) {
     const reader = new FileReader()
@@ -326,7 +342,7 @@ async function handleSubmit(state: string) {
       const user_data = JSON.stringify(userDataWithoutFile)
       localStorage.setItem("userInfo", user_data)
       
-      if (state === 'google') loginWithGoogle()
+      if (isGoogleUser.value) loginWithGoogle()
       else router.push('/registration/credential')
     }
     reader.readAsDataURL(form.file)

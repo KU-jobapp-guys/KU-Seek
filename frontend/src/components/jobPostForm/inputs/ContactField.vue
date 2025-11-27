@@ -22,32 +22,39 @@ const newContact = ref<Contact>({ type: '', link: '' })
 const validatePhone = (v: string) => /^[0-9]{9,10}$/.test(v)
 const validateEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 
-const validateURL = (url: string) => {
+// Ensure a protocol so the URL constructor can parse it correctly
+const ensureProtocol = (u: string) => (/^https?:\/\//i.test(u) ? u : 'https://' + u)
+
+// Parse hostname safely and normalize to lowercase. Returns empty string on error.
+const parseHostname = (u: string): string => {
   try {
-    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
-    return new URL(url).hostname.includes('.')
+    const url = new URL(ensureProtocol(u))
+    return url.hostname.toLowerCase()
   } catch {
-    return false
+    return ''
   }
+}
+
+const isAllowedHost = (host: string, allowedHosts: string[]) =>
+  allowedHosts.some((allowed) => host === allowed || host.endsWith('.' + allowed))
+
+const validateURL = (url: string) => {
+  const host = parseHostname(url)
+  return host.length > 0 && host.includes('.')
 }
 
 const validateFacebook = (url: string) => {
-  try {
-    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
-    const host = new URL(url).hostname
-    return host.includes('facebook.com') || host.endsWith('fb.com')
-  } catch {
-    return false
-  }
+  const host = parseHostname(url)
+  if (!host) return false
+  const allowed = ['facebook.com', 'fb.com']
+  return isAllowedHost(host, allowed)
 }
 
 const validateLinkedIn = (url: string) => {
-  try {
-    if (!/^https?:\/\//i.test(url)) url = 'https://' + url
-    return new URL(url).hostname.includes('linkedin.com')
-  } catch {
-    return false
-  }
+  const host = parseHostname(url)
+  if (!host) return false
+  const allowed = ['linkedin.com']
+  return isAllowedHost(host, allowed)
 }
 
 // Format phone input

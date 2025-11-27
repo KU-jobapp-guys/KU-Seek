@@ -1,4 +1,6 @@
 <template>
+  <LoadingScreen v-if="isLoading" />
+
   <div class="relative w-full min-h-screen mt-8 overflow-hidden bg-white flex justify-center items-center">
     <!-- Background -->
     <div class="absolute inset-0 flex">
@@ -71,108 +73,34 @@
         <div class="w-full space-y-4 flex-1 flex flex-col justify-center">
           <h3 class="text-xl font-semibold mb-2">Password Requirements:</h3>
           
-          <!-- Email Valid -->
-          <div class="flex items-center gap-3">
+          <!-- Validation Items -->
+          <div 
+            v-for="(item, index) in validationItems" 
+            :key="index"
+            class="flex items-center gap-3"
+          >
             <div :class="[
               'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-              isEmailValid ? 'bg-green-500' : 'bg-white/20'
+              item.isValid ? 'bg-green-500' : 'bg-white/20'
             ]">
-              <svg v-if="isEmailValid" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Checkmark -->
+              <svg v-if="item.isValid" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
+              <!-- X mark -->
               <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </div>
-            <span :class="isEmailValid ? 'font-semibold' : 'text-blue-100'">Valid email address</span>
-          </div>
-
-          <!-- At least 8 characters -->
-          <div class="flex items-center gap-3">
-            <div :class="[
-              'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-              hasMinLength ? 'bg-green-500' : 'bg-white/20'
-            ]">
-              <svg v-if="hasMinLength" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>
-            <span :class="hasMinLength ? 'font-semibold' : 'text-blue-100'">At least 8 characters</span>
-          </div>
-
-          <!-- Has uppercase -->
-          <div class="flex items-center gap-3">
-            <div :class="[
-              'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-              hasUppercase ? 'bg-green-500' : 'bg-white/20'
-            ]">
-              <svg v-if="hasUppercase" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>
-            <span :class="hasUppercase ? 'font-semibold' : 'text-blue-100'">Contains uppercase letter</span>
-          </div>
-
-          <!-- Has lowercase -->
-          <div class="flex items-center gap-3">
-            <div :class="[
-              'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-              hasLowercase ? 'bg-green-500' : 'bg-white/20'
-            ]">
-              <svg v-if="hasLowercase" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>
-            <span :class="hasLowercase ? 'font-semibold' : 'text-blue-100'">Contains lowercase letter</span>
-          </div>
-
-          <!-- Has number -->
-          <div class="flex items-center gap-3">
-            <div :class="[
-              'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-              hasNumber ? 'bg-green-500' : 'bg-white/20'
-            ]">
-              <svg v-if="hasNumber" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>
-            <span :class="hasNumber ? 'font-semibold' : 'text-blue-100'">Contains number</span>
-          </div>
-
-          <!-- Passwords match -->
-          <div class="flex items-center gap-3">
-            <div :class="[
-              'w-6 h-6 rounded-full flex items-center justify-center transition-all',
-              passwordsMatch ? 'bg-green-500' : 'bg-white/20'
-            ]">
-              <svg v-if="passwordsMatch" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>
-            <span :class="passwordsMatch ? 'font-semibold' : 'text-blue-100'">Passwords match</span>
+            <span :class="item.isValid ? 'font-semibold' : 'text-blue-100'">{{ item.label }}</span>
           </div>
         </div>
+
+        <button @click="router.push('/registration')" class="flex items-center gap-x-2 bg-white hover:bg-gray-200 rounded-full text-blue-600 px-2 py-1">
+          <div class="bg-blue-500 rounded-full"><ChevronLeft class="text-white w-6 h-6 rounded-full" /></div>
+          Back to Registration
+        </button>
       </div>
 
       <!-- Credentials Form -->
@@ -282,9 +210,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import { Eye, EyeOff, ChevronLeft } from 'lucide-vue-next'
+import { useToast } from 'vue-toastification'
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 
 const router = useRouter()
+const toast = useToast()
 
 const email = ref('')
 const password = ref('')
@@ -294,12 +225,13 @@ const showConfirmPassword = ref(false)
 const errors = ref<Record<string, string>>({})
 const userInfo = ref<any>(null)
 
+const isLoading = ref<boolean>(false)
+
 onMounted(() => {
   // Load user info from localStorage
   const storedInfo = localStorage.getItem('userInfo')
-  if (storedInfo) {
-    userInfo.value = JSON.parse(storedInfo)
-  }
+  if (!storedInfo) router.push('/registration')
+  else userInfo.value = JSON.parse(storedInfo)
 })
 
 // Individual validation checks
@@ -315,6 +247,16 @@ const hasNumber = computed(() => /\d/.test(password.value))
 const passwordsMatch = computed(() => {
   return password.value && confirmPassword.value && password.value === confirmPassword.value
 })
+
+// Validation checklist items
+const validationItems = computed(() => [
+  { label: 'Valid email address', isValid: isEmailValid.value },
+  { label: 'At least 8 characters', isValid: hasMinLength.value },
+  { label: 'Contains uppercase letter', isValid: hasUppercase.value },
+  { label: 'Contains lowercase letter', isValid: hasLowercase.value },
+  { label: 'Contains number', isValid: hasNumber.value },
+  { label: 'Passwords match', isValid: passwordsMatch.value }
+])
 
 const validateEmail = (email: string) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -364,25 +306,71 @@ const isFormValid = computed(() => {
 const handleSubmit = async () => {
   if (!validateForm()) return
 
+  isLoading.value = true
+
   // Combine credentials with stored user info
   const registrationData = {
     ...userInfo.value,
     email: email.value,
     password: password.value
   }
-
   // Retrieve stored file
-  const storedFile = localStorage.getItem('userFile')
+  const user_file = localStorage.getItem('userFile')
   
-  console.log('Registration Data:', registrationData)
-  console.log('File:', storedFile ? JSON.parse(storedFile) : null)
-  
-  // Clear localStorage after successful registration
-  localStorage.removeItem('userInfo')
-  localStorage.removeItem('userFile')
-  
-  // Redirect to login or home
-  router.push('/dashboard')
+  let csrf_token: string
+
+  try {
+    const csrf_res = await fetch('http://localhost:8000/api/v1/csrf-token', {
+      method: 'GET',
+      credentials: 'include',
+    })
+    if (csrf_res.ok) {
+      const csrf_json = await csrf_res.json()
+      csrf_token = csrf_json.csrf_token
+      localStorage.setItem('csrf_token', csrf_token)
+    } else {
+      throw new Error('Login request failed, please try again.')
+    }
+
+    const formData = new FormData();
+    
+    if (registrationData) {
+      formData.append('user_info', JSON.stringify(registrationData))
+    }
+
+    if (user_file) {
+      const fileData = JSON.parse(user_file)
+      // Convert base64 back to File object
+      const base64Response = await fetch(fileData.data)
+      const blob = await base64Response.blob()
+      const file = new File([blob], fileData.name, { type: fileData.type })
+      formData.append('id_doc', file)
+    }
+
+    const res = await fetch("http://localhost:8000/api/v1/auth/credential", {
+      method: "POST",
+      credentials: 'include',
+      headers: {
+        'X-CSRFToken': csrf_token,
+      },
+      body: formData
+    })
+
+    if (res.ok) {
+      const user_jwt = await res.json()
+      localStorage.setItem('user_jwt', user_jwt.access_token)
+      localStorage.setItem('userRole', user_jwt.type)
+      localStorage.setItem('user_id', user_jwt.user_id)
+      window.dispatchEvent(new Event('userRoleChanged'))
+      router.replace({ name: `${user_jwt.type} dashboard` })
+    } else {
+      const error = await res.json()
+      toast.error(error.message)
+      isLoading.value = false
+    }
+  } catch (error) {
+    toast.error(error)
+  }
 }
 
 function loginWithGoogle() {

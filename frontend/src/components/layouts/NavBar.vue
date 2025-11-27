@@ -9,8 +9,6 @@ import defaultProfile from '@/assets/images/defaultProfile.png'
 type UserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff'
 type Page = { name: string; route: string }
 
-const oauth_url = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${import.meta.env.VITE_FRONTEND_URL}/login&prompt=consent&response_type=code&client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&scope=openid%20email%20profile&access_type=offline`
-
 const userId = getUserId()
 const userRole = ref<UserRole>(localStorage.getItem('userRole') as UserRole || 'visitor')
 const userStore = useUserStore()
@@ -18,7 +16,7 @@ const userStore = useUserStore()
 const companyList = ['Dashboard']
 const kuList = ['Explore Job', 'Explore Company', 'Announcements', 'Dashboard']
 const profileList = ['Profile', 'Setting', 'Logout']
-const defaultList = ['Register', { name: 'Login', route: `${oauth_url}` }]
+const defaultList = ['Register', 'Login']
 const openMenu = ref<'page' | 'profile' | null>(null)
 
 const pageList = computed(() => {
@@ -43,6 +41,9 @@ function makeLink(page: string | Page) {
   }
   if (page === 'Register') {
     return `/registration`
+  }
+  if (page === 'Login') {
+    return `/login/credential`
   }
   return `/${page.toLowerCase().replace(/\s+/g, '-')}`
 }
@@ -78,11 +79,10 @@ onMounted(async () => {
       <ul class="hidden md:flex items-center gap-8">
         <li
           v-for="page in pageList"
-          :key="typeof page === 'string' ? page : page.name"
+          :key=page
           class="text-base hover:text-green-300"
         >
-          <a v-if="typeof page === 'object'" :href="page.route">{{ page.name }}</a>
-          <a v-else :href="makeLink(page)">{{ page }}</a>
+          <a :href="makeLink(page)">{{ page }}</a>
         </li>
       </ul>
 
@@ -130,17 +130,6 @@ onMounted(async () => {
               <div v-for="page in pageList" :key="typeof page === 'string' ? page : page.name">
                 <MenuItem v-slot="{ active }">
                   <a
-                    v-if="typeof page === 'object'"
-                    :href="page.route"
-                    :class="[
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-8 py-3 text-lg focus:outline-none hover:bg-gray-50',
-                    ]"
-                  >
-                    {{ page.name }}
-                  </a>
-                  <a
-                    v-else
                     :href="makeLink(page)"
                     :class="[
                       active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',

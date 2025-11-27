@@ -224,10 +224,10 @@
           <div class="mt-4 text-sm text-gray-600 text-left">
             Already have an account?
             <button
-              @click="loginWithGoogle()"
+              @click="router.push('/login/credential')"
               class="text-blue-600 font-semibold hover:underline focus:outline-none ml-1"
             >
-              Sign in with Google
+              Login
             </button>
           </div>
         </div>
@@ -237,7 +237,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TOSModal from '@/components/tos/tosModal.vue'
 
@@ -266,6 +266,24 @@ const form = reactive({
   companySize: '',
   file: null as File | null,
   fileName: '',
+})
+
+onMounted(() => {
+  // Restore user info
+  const storedUserInfo = localStorage.getItem('userInfo')
+  if (storedUserInfo) {
+    const parsedUserInfo = JSON.parse(storedUserInfo)
+    Object.assign(form, parsedUserInfo)
+  }
+
+  // Restore uploaded file
+  const storedFile = localStorage.getItem('userFile')
+  if (storedFile) {
+    console.log('have stored file')
+    const parsedFile = JSON.parse(storedFile)
+    form.fileName = parsedFile.name
+    form.file = base64ToFile(parsedFile.data, parsedFile.name, parsedFile.type)
+  }
 })
 
 const regex = /^\d{10}$/ // checks if string is all numeric
@@ -355,5 +373,17 @@ function handleFileUpload(event: Event) {
     form.file = target.files[0]
     form.fileName = target.files[0].name
   }
+}
+
+function base64ToFile(base64: string, filename: string, type: string) {
+  const arr = base64.split(',')
+  const mime = arr[0].match(/:(.*?);/)![1] || type
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
 }
 </script>

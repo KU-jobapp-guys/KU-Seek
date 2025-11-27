@@ -1,13 +1,15 @@
 <template>
-  <div>Redirecting to the dashboard...</div>
+  <LoadingScreen />
 </template>
 
 <script setup lang="ts">
+import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
-const emit = defineEmits(['update:role'])
 const router = useRouter()
 const route = useRoute()
+const toast = useToast()
 
 async function handleURICallback() {
   let csrf_token: string
@@ -67,10 +69,11 @@ async function handleURICallback() {
       localStorage.setItem('userRole', user_jwt.type)
       localStorage.setItem('user_id', user_jwt.user_id)
       window.dispatchEvent(new Event('userRoleChanged'))
-      emit('update:role', user_jwt.type)
       router.replace({ name: `${user_jwt.type} dashboard` })
     } else {
-      throw new Error(`Login request failed, please try again.`)
+      const error = await res.json()
+      toast.error(error.message)
+      router.replace({ name: 'landing' })
     }
   } catch (error) {
     console.error('Authentication error:', error)

@@ -58,12 +58,12 @@
 
     <!-- Link back to landing page-->
     <RouterLink
-    to="/"
-    class="absolute top-6 left-6 z-20 text-white font-semibold hover:underline transition"
-  >
-    <span class="text-lg">← </span>
-    <span>Back to Landing Page</span>
-  </RouterLink>
+      to="/"
+      class="absolute top-6 left-6 z-20 text-white font-semibold hover:underline transition"
+    >
+      <span class="text-lg">← </span>
+      <span>Back to Landing Page</span>
+    </RouterLink>
 
     <!-- Foreground Content -->
     <div class="relative z-10 flex w-full h-full px-8 justify-center items-end">
@@ -120,7 +120,7 @@
 
           <!-- Scrollable Fields -->
           <div class="flex-1 overflow-y-auto space-y-4 px-2">
-            <form @submit.prevent="handleSubmit" class="space-y-4">
+            <form class="space-y-4">
               <!-- Shared Fields -->
               <div>
                 <label class="block text-gray-600 text-sm mb-1">First Name</label>
@@ -204,21 +204,30 @@
           <!-- Submit Button -->
           <button
             type="button"
-            @click="showTOS"
+            @click="isGoogleUser = true; showTOS()"
             :disabled="!isFormValid"
             class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
           >
             Register with Google Oauth
           </button>
 
-        <!-- Login button -->
+          <button
+            type="button"
+            @click="isGoogleUser = false; showTOS()"
+            :disabled="!isFormValid"
+            class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-2 rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+          >
+            Register with Username and Password
+          </button>
+
+          <!-- Login button -->
           <div class="mt-4 text-sm text-gray-600 text-left">
             Already have an account?
             <button
-              @click="loginWithGoogle()"
+              @click="router.push('/login/credential')"
               class="text-blue-600 font-semibold hover:underline focus:outline-none ml-1"
             >
-              Sign in with Google
+              Login
             </button>
           </div>
         </div>
@@ -228,11 +237,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import TOSModal from '@/components/tos/tosModal.vue'
 
 const form_role = ref<'staff' | 'company'>('staff')
 const showModal = ref<boolean>(false)
+const router = useRouter()
+
+const isGoogleUser = ref<boolean>(false)
 
 const staffFileText = ref('Upload one of the following: Physical/Digital KU ID, Transcript')
 const companyFileText = ref('Upload a business license or equivalent document')
@@ -253,6 +266,24 @@ const form = reactive({
   companySize: '',
   file: null as File | null,
   fileName: '',
+})
+
+onMounted(() => {
+  // Restore user info
+  const storedUserInfo = localStorage.getItem('userInfo')
+  if (storedUserInfo) {
+    const parsedUserInfo = JSON.parse(storedUserInfo)
+    Object.assign(form, parsedUserInfo)
+  }
+
+  // Restore uploaded file
+  const storedFile = localStorage.getItem('userFile')
+  if (storedFile) {
+    console.log('have stored file')
+    const parsedFile = JSON.parse(storedFile)
+    form.fileName = parsedFile.name
+    form.file = base64ToFile(parsedFile.data, parsedFile.name, parsedFile.type)
+  }
 })
 
 const regex = /^\d{10}$/ // checks if string is all numeric
@@ -312,6 +343,7 @@ function closeTOS() {
 }
 
 async function handleSubmit() {
+  showTOS()
   // Store file separately as base64
   if (form.file) {
     const reader = new FileReader()
@@ -328,7 +360,8 @@ async function handleSubmit() {
       const user_data = JSON.stringify(userDataWithoutFile)
       localStorage.setItem("userInfo", user_data)
       
-      loginWithGoogle()
+      if (isGoogleUser.value) loginWithGoogle()
+      else router.push('/registration/credential')
     }
     reader.readAsDataURL(form.file)
   }
@@ -340,5 +373,17 @@ function handleFileUpload(event: Event) {
     form.file = target.files[0]
     form.fileName = target.files[0].name
   }
+}
+
+function base64ToFile(base64: string, filename: string, type: string) {
+  const arr = base64.split(',')
+  const mime = arr[0].match(/:(.*?);/)![1] || type
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
 }
 </script>

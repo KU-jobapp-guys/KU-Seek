@@ -8,7 +8,7 @@ import JobBoardView from '@/views/JobBoardView.vue'
 import CompanyBoardView from '@/views/CompanyBoardView.vue'
 import CompanyProfile from '@/views/profile/CompanyProfile.vue'
 import JobApplicationView from '@/views/JobApplicationView.vue'
-import LoginView from '@/views/LoginView.vue'
+import LoginView from '@/views/CredentialLoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import JobView from '@/views/JobView.vue'
@@ -16,11 +16,12 @@ import StudentProfile from '@/views/profile/StudentProfile.vue'
 import ProfessorProfile from '@/views/profile/ProfessorProfile.vue'
 import AnnouncementsView from '@/views/AnnouncementsView.vue'
 import Registration from '@/views/RegistrationView.vue'
+import CredentialRegistration from '@/views/CredentialRegistration.vue'
 import SettingView from '@/views/SettingView.vue'
-
 import JobManagement from '@/views/JobManagement.vue'
 import AdminView from '@/views/admin/AdminView.vue'
 import AdminLoginView from '@/views/admin/AdminLoginView.vue'
+import OAuthLoginView from '@/views/OAuthLoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,12 @@ const router = createRouter({
       path: '/registration',
       name: 'registration',
       component: Registration,
+      meta: {noFooter: true}
+    },
+    {
+      path: '/registration/credential',
+      name: 'credential registration',
+      component: CredentialRegistration,
       meta: {noFooter: true}
     },
     {
@@ -129,9 +136,15 @@ const router = createRouter({
       component: JobApplicationView,
     },
     {
-      path: '/login',
+      path: '/login/credential',
       name: 'login',
       component: LoginView,
+      meta: {noFooter: true}
+    },
+    {
+      path: '/login',
+      name: 'oauth login',
+      component: OAuthLoginView,
     },
     {
       path: '/logout',

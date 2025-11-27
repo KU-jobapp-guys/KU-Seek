@@ -5,6 +5,7 @@ import ConnectCompany from './ConnectCompany.vue'
 import type { Company } from '@/types/companyType'
 import { fetchCsrfToken, getAuthHeader } from '@/services/helperServices'
 import { useToast } from 'vue-toastification'
+import api from '@/plugins/axios.client'
 
 const searchTerm = ref('')
 const selectedCompanyId = ref<string | null>(null)
@@ -46,8 +47,7 @@ async function confirmConnection() {
     }
     if (csrfToken) headers['X-CSRFToken'] = String(csrfToken)
 
-    const res = await fetch(`${base}/api/v1/connections`, {
-      method: 'POST',
+    const res = await api.post(`${base}/api/v1/connections`, {
       headers,
       body: JSON.stringify({
         company_id: Number(selectedCompanyId.value),
@@ -55,7 +55,7 @@ async function confirmConnection() {
       credentials: 'include'
     })
 
-    if (res.ok) {
+    if (res.data) {
       emit('addConnection', selectedCompanyId.value)
       toast.success("Successfully added new connection.")
     } else {

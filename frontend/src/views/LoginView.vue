@@ -4,10 +4,13 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import api from '../plugins/axios.client'
 
 const emit = defineEmits(['update:role'])
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
 async function handleURICallback() {
   let csrf_token: string
@@ -24,18 +27,19 @@ async function handleURICallback() {
       throw new Error('No code found in callback URL')
     }
 
-    const csrf_res = await fetch('http://localhost:8000/api/v1/csrf-token', {
-      method: 'GET',
-      credentials: 'include',
-    })
-    if (csrf_res.ok) {
-      const csrf_json = await csrf_res.json()
-      csrf_token = csrf_json.csrf_token
-      localStorage.setItem('csrf_token', csrf_token)
-    } else {
-      throw new Error('Login request failed, please try again.')
-    }
+    try {
+      const csrf_res = await api.get(
+        'http://localhost:8000/api/v1/csrf-token',
+        {
+          withCredentials: true,
+        }
+      );
 
+      csrf_token = csrf_res.data.csrf_token;
+      localStorage.setItem('csrf_token', csrf_token);
+    } catch (error) {
+      throw new Error('Login request failed, please try again.');
+    }
     const formData = new FormData();
     formData.append("code", code.toString())
     
@@ -52,17 +56,22 @@ async function handleURICallback() {
       formData.append('id_doc', file)
     }
 
-    const res = await fetch("http://localhost:8000/api/v1/auth/oauth", {
-      method: "POST",
-      credentials: 'include',
-      headers: {
-        'X-CSRFToken': csrf_token,
-      },
-      body: formData
-    })
+    const res = await api.post(
+      "http://localhost:8000/api/v1/auth/oauth",
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "X-CSRFToken": csrf_token,
+        }
+      }
+    );
 
-    if (res.ok) {
-      const user_jwt = await res.json()
+    if (res.status == 200) {
+      const user_jwt = res.data
+      authStore.setAuthData(user_jwt)
+      console.log(authStore.token)
+      // to be removed
       localStorage.setItem('user_jwt', user_jwt.access_token)
       localStorage.setItem('userRole', user_jwt.type)
       localStorage.setItem('user_id', user_jwt.user_id)

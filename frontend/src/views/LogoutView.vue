@@ -8,7 +8,9 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 const router = useRouter()
+const authStore = useAuthStore()
 
 async function logout() {
 
@@ -27,6 +29,8 @@ async function logout() {
         },
         })
         if (res.ok) {
+            authStore.logout()
+            //to be removed
             localStorage.removeItem("csrf_token")
             localStorage.removeItem("access_token")
             localStorage.removeItem("userRole")

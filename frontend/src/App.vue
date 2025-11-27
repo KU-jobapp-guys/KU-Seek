@@ -3,15 +3,17 @@ import { RouterView } from 'vue-router'
 import NavBar from './components/layouts/NavBar.vue'
 import Footer from './components/layouts/AppFooter.vue'
 import { ref, onMounted, watch } from 'vue'
+import { useAuthStore } from './stores/auth'
 
 type AllUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' | 'admin'
 type NormalUserRole = 'company' | 'student' | 'professor' | 'visitor' | 'staff' 
 
 const userRole = ref<AllUserRole>('visitor')
+const authStore = useAuthStore()
 
 // Load role from localStorage on mount
 onMounted(() => {
-  const savedRole = localStorage.getItem('userRole') as NormalUserRole | null
+  const savedRole = authStore.role as NormalUserRole | null
   if (savedRole) {
     userRole.value = savedRole
   }
@@ -19,7 +21,7 @@ onMounted(() => {
 
 // Save role to localStorage whenever it changes
 watch(userRole, (newRole) => {
-  localStorage.setItem('userRole', newRole)
+  authStore.role = newRole
 })
 </script>
 

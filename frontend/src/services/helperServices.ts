@@ -1,8 +1,13 @@
+import api from '@/plugins/axios.client'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
 export async function fetchCsrfToken(base: string): Promise<string> {
   try {
-    const res = await fetch(`${base}/api/v1/csrf-token`, { credentials: 'include' })
-    if (!res.ok) return ''
-    const json = await res.json()
+    const res = await api.get(`${base}/api/v1/csrf-token`, { withCredentials: true })
+    if (res.status != 200) return ''
+    const json = res.data
     return (json && (json.csrf_token || json.token || json.csrf)) ?? ''
   } catch {
     return ''
@@ -10,6 +15,6 @@ export async function fetchCsrfToken(base: string): Promise<string> {
 }
 
 export function getAuthHeader(): Record<string, string> {
-  const token = localStorage.getItem('user_jwt') ?? localStorage.getItem('access_token')
+  const token = authStore.token
   return token ? { access_token: token } : {}
 }

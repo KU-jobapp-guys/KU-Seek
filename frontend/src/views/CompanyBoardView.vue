@@ -5,6 +5,7 @@ import CompanyCard from '@/components/dashboards/CompanyCard.vue'
 import { ref, onMounted, computed } from 'vue'
 import CompanySearchBar from '@/components/dashboards/CompanySearchBar.vue'
 import search from '@/assets/icons/search.svg'
+import api from '@/plugins/axios.client'
 
 const companies = ref<Company[]>([])
 const selectedCompany = ref('')
@@ -21,16 +22,15 @@ if (token) {
 onMounted(async () => {
   try {
     const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
-    const res = await fetch(`${base}/api/v1/companies`, {
-      method: 'GET',
+    const res = await api.get(`${base}/api/v1/companies`, {
       headers,
-      credentials: 'include'
+      withCredentials: true
     })
-    if (res.ok) {
-      companies.value = await res.json()
+    if (res.status == 200) {
+      companies.value = res.data
 
     } else {
-      console.error('Failed to fetch companies', res.status, await res.text())
+      console.error('Failed to fetch companies', res.status)
     }
   } catch (err) {
     console.error('Error fetching companies', err)

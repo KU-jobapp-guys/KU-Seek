@@ -1,24 +1,25 @@
 import { getAuthHeader, fetchCsrfToken } from "./helperService"
 import type { UserRequest, JobRequest } from "@/types/adminType"
+import api from '@/plugins/axios.client'
+
 
 export async function fetchUsers(): Promise<UserRequest[] | null> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/admin/users`)
 
-  const res = await fetch(url.toString(), {
-    method: 'GET',
+  const res = await api.get(url.toString(), {
     headers: {
       ...getAuthHeader(),
     },
-    credentials: 'include',
+    withCredentials: true,
   })
 
-  if (!res.ok) {
+  if (res.status != 200) {
     console.error('Failed to fetch users:', res.status)
     return []
   }
 
-  const data = await res.json()
+  const data = await res.data
   console.log("user data: ", data)
   return data as UserRequest[]
 }
@@ -40,11 +41,10 @@ export async function updateUserStatus(approve: boolean, userId: string, toDelet
     "delete": toDelete
   }]
 
-  const res = await fetch(url.toString(), {
-    method: 'POST',
+  const res = await api.post(url.toString(), {
     headers,
     body: JSON.stringify(form),
-    credentials: 'include',
+    withCredentials: true,
   })
 
   return res
@@ -54,20 +54,19 @@ export async function fetchJobs(): Promise<JobRequest[] | null> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/admin/jobs`)
 
-  const res = await fetch(url.toString(), {
-    method: 'GET',
+  const res = await api.get(url.toString(), {
     headers: {
       ...getAuthHeader(),
     },
-    credentials: 'include',
+    withCredentials: true,
   })
 
-  if (!res.ok) {
+  if (res.status != 200) {
     console.error('Failed to fetch jobs:', res.status)
     return []
   }
 
-  const data = await res.json()
+  const data = await res.data
   console.log("data: ", data)
 
   return data as JobRequest[]
@@ -90,11 +89,10 @@ export async function updateJobStatus(approve: boolean, jobId: string, toDelete:
     "delete": toDelete
   }]
 
-  const res = await fetch(url.toString(), {
-    method: 'POST',
+  const res = await api.post(url.toString(), {
     headers,
     body: JSON.stringify(form),
-    credentials: 'include',
+    withCredentials: true,
   })
 
   return res
@@ -104,12 +102,11 @@ export async function getVerificationDocument(fileId: string) {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/file/${fileId}`)
 
-  const res = await fetch(url.toString(), {
-    method: 'GET',
+  const res = await api.get(url.toString(), {
     headers: {
       ...getAuthHeader(),
     },
-    credentials: 'include',
+    withCredentials: true,
   })
 
   return res

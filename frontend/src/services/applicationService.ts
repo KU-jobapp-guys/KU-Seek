@@ -1,6 +1,7 @@
 import { getAuthHeader } from './helperService'
 import type { Job } from '@/types/jobType'
 import type { JobApplication } from '@/types/applicationType'
+import api from '@/plugins/axios.client'
 
 
 type updateStatusType = Map<number, 'pending' | 'accepted' | 'rejected'>
@@ -61,9 +62,9 @@ export function normalizeApplications(data: unknown): JobApplication[] {
 
 async function fetchCsrfToken(base: string): Promise<string> {
   try {
-    const res = await fetch(`${base}/api/v1/csrf-token`, { credentials: 'include' })
-    if (!res.ok) return ''
-    const json = await res.json()
+    const res = await api.get(`${base}/api/v1/csrf-token`, { withCredentials: true })
+    if (res.status == 200) return ''
+    const json = res.data
     return (json && (json.csrf_token || json.token || json.csrf)) ?? ''
   } catch {
     return ''
@@ -77,21 +78,20 @@ export async function fetchUserAppliedJobs(): Promise<Job[]> {
   try {
     const csrfToken = await fetchCsrfToken(base)
 
-    const res = await fetch(url.toString(), {
-      method: 'GET',
+    const res = await api.get(url.toString(), {
       headers: {
         ...getAuthHeader(),
         'X-CSRFToken': String(csrfToken),
       },
-      credentials: 'include',
+      withCredentials: true,
     })
 
-    if (!res.ok) {
+    if (res.status != 200) {
       console.error('Failed to fetch user applied jobs', res.status)
       return []
     }
 
-    const data = await res.json()
+    const data = res.data
     const list = Array.isArray(data) ? (data as unknown[]) : []
     return list.map((it) => {
       const raw = it as Record<string, unknown>
@@ -131,18 +131,17 @@ export async function fetchApplicationsByJob(jobId: string): Promise<JobApplicat
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
   const url = new URL(`${base}/api/v1/application/${encodeURIComponent(jobId)}`)
   try {
-    const res = await fetch(url.toString(), {
-      method: 'GET',
+    const res = await api.get(url.toString(), {
       headers: {
         ...getAuthHeader(),
       },
-      credentials: 'include',
+      withCredentials: true,
     })
-    if (!res.ok) {
+    if (res.status != 200) {
       console.error('Failed to fetch applications for job', jobId, res.status)
       return []
     }
-    const data = await res.json()
+    const data = res.data
     return normalizeApplications(data)
   } catch (err) {
     console.error('Error fetching applications by job', err)

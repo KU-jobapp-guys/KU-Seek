@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import type { Job } from '@/types/jobType'
+import api from '@/plugins/axios.client'
 
 // Import components
 import BaseInput from './inputs/BaseInput.vue'
@@ -233,10 +234,9 @@ onMounted(() => {
 
         console.log(token)
 
-        const res = await fetch(`${base}/api/v1/company`, { method: 'GET', headers, credentials: 'include' })
-        console.log(res.json)
-        if (res.ok) {
-          const data = await res.json().catch(() => null)
+        const res = await api.get(`${base}/api/v1/company`, { method: 'GET', headers, withCredentials: true })
+        if (res.status == 200) {
+          const data = res.data.catch(() => null)
           if (data && typeof data === 'object') {
             const name = (data.name || (data.profile && data.profile.firstName ? `${data.profile.firstName} ${data.profile.lastName}` : null) || data.companyName || data.company || '') as string
             if (name) {

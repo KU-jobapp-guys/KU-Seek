@@ -106,8 +106,9 @@ export const useAuthStore = defineStore<"auth", AuthStore>("auth", () => {
      */
     const refreshToken = async (): Promise<void> => {
         try {
-            const response = await api.post<{ token: string }>("/refresh");
-            const newToken = response.data.token;
+            const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+            const response = await api.get(`${base}/api/v1/refresh`, { withCredentials: true });
+            const newToken = response.data;
 
             if (!newToken) {
                 throw new Error("No token received from refresh");

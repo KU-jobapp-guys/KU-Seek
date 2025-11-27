@@ -1,8 +1,6 @@
 import type { Job } from '@/types/jobType'
-import api from '@/plugins/axios.client'
 import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
 
 export async function fetchJobs(filters?: Record<string, string>): Promise<Job[]> {
   const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
@@ -84,6 +82,7 @@ export async function fetchCsrfToken(base: string): Promise<string> {
 }
 
 export function getAuthHeader(): Record<string, string> {
+  const authStore = useAuthStore()
   const token = authStore.token
   return token ? { access_token: token } : {}
 }

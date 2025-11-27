@@ -1,9 +1,9 @@
 import api from '@/plugins/axios.client'
 import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
 
 function getAuthHeader(): string {
+  const authStore = useAuthStore()
   const token = authStore.token
   return token ? token : ""
 }

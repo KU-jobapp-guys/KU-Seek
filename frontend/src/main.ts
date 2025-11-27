@@ -7,6 +7,7 @@ import router from './router'
 import { createPinia } from 'pinia'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+import authPlugin from './plugins/auth.client'
 
 const app = createApp(App)
 
@@ -16,6 +17,7 @@ app.use(Toast, {
   position: 'bottom-right',
   timeout: 3000,
 })
+app.use(authPlugin)
 
 app.mount('#app')
 

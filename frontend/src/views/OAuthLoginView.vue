@@ -7,7 +7,6 @@ import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
-const emit = defineEmits(['update:role'])
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()

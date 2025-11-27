@@ -213,6 +213,7 @@ import { useRouter, RouterLink } from 'vue-router'
 import { Eye, EyeOff, ChevronLeft } from 'lucide-vue-next'
 import { useToast } from 'vue-toastification'
 import LoadingScreen from '@/components/layouts/LoadingScreen.vue'
+import type { UserInfo } from '@/types/userInfo'
 
 const router = useRouter()
 const toast = useToast()
@@ -223,7 +224,7 @@ const confirmPassword = ref('')
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const errors = ref<Record<string, string>>({})
-const userInfo = ref<any>(null)
+const userInfo = ref<UserInfo | null>(null)
 
 const isLoading = ref<boolean>(false)
 
